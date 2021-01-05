@@ -1,11 +1,21 @@
 #include "library/autodj/autodjprocessor.h"
 
+#include <stdio.h>
+
+#include <QThread>
+#include <fstream>
+#include <iostream>
+#include <string>
+
 #include "control/controlproxy.h"
 #include "control/controlpushbutton.h"
+#include "effects/effectparameterslot.h"
+#include "effects/effectrack.h"
 #include "engine/engine.h"
 #include "library/trackcollection.h"
 #include "mixer/basetrackplayer.h"
 #include "mixer/playermanager.h"
+#include "mixxx.h"
 #include "moc_autodjprocessor.cpp"
 #include "track/track.h"
 #include "util/math.h"
@@ -624,6 +634,1822 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     if (sDebug) {
         //qDebug() << this << "playerPositionChanged" << pAttributes->group
         //         << thisPlayPosition;
+    }
+
+    std::ofstream confirmado;
+
+    m_PlayPosition1 = new ControlProxy(QString("[Channel1]"), "playposition");
+    m_Playing1 = new ControlProxy(QString("[Channel1]"), "play");
+
+    m_PlayPosition2 = new ControlProxy(QString("[Channel2]"), "playposition");
+    m_Playing2 = new ControlProxy(QString("[Channel2]"), "play");
+
+    DeckAttributes& leftDecko = *m_decks[0];
+    DeckAttributes& rightDecko = *m_decks[1];
+
+    m_LoopIn1 = new ControlProxy(QString("[Channel1]"), "loop_in");
+    m_LoopOut1 = new ControlProxy(QString("[Channel1]"), "loop_out");
+    m_LoopToggle1 = new ControlProxy(QString("[Channel1]"), "reloop_toggle");
+
+    m_LoopIn2 = new ControlProxy(QString("[Channel2]"), "loop_in");
+    m_LoopOut2 = new ControlProxy(QString("[Channel2]"), "loop_out");
+    m_LoopToggle2 = new ControlProxy(QString("[Channel2]"), "reloop_toggle");
+
+    //ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_set");
+    //ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_set");
+
+    ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_gotoandplay");
+    ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_gotoandplay");
+
+    ControlProxy* m_photCue11Set = new ControlProxy(QString("[Channel1]"), "hotcue_1_set");
+    ControlProxy* m_photCue21Set = new ControlProxy(QString("[Channel2]"), "hotcue_1_set");
+
+    ControlProxy* m_photCue11Clear = new ControlProxy(QString("[Channel1]"), "hotcue_1_clear");
+    ControlProxy* m_photCue21Clear = new ControlProxy(QString("[Channel2]"), "hotcue_1_clear");
+
+    ControlProxy* m_trackSamples1 = new ControlProxy(QString("[Channel1]"), "track_samples");
+    ControlProxy* m_trackSamples2 = new ControlProxy(QString("[Channel2]"), "track_samples");
+
+    if (this->wuwei == true) {
+        std::cout << "OH NO I'VE ENTERED WUWEI MODE. NOW ALL I DO IS STARE AT "
+                     "WALLS WHILE YOU STARE AT SCREENS!\n";
+        m_Playing1->set(0.0);
+        m_Playing2->set(0.0);
+        return;
+    }
+
+    /* if (this->Playing2Queue == 1)
+    {
+        if (m_Playing2->get() != 1.0)
+	{
+             m_Playing2->set(1.0);
+	     return;
+	}*/
+
+    //std::cout << "CUE POSITION: " + std::to_string(m_PlayPosition2->get()) + " DESIRED POSITION: " + std::to_string(this->m_PlayPositionDesired2) + "\n";
+    //bool ApproximateEqual = std::fabs(m_PlayPosition2->get() - this->m_PlayPositionDesired2) <= ( (std::fabs(m_PlayPosition2->get()) < fabs(this->m_PlayPositionDesired2) ? fabs(this->m_PlayPositionDesired2) : fabs(m_PlayPosition2->get())) * 0.01);
+
+    /*if (ApproximateEqual == true && this->track2Loaded->getLocation() == pathToSong2)
+	{
+	    ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_set");
+	    m_pCue2->set(1.0);
+
+            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+            this->Playing2Queue = 0;
+   
+            this->LOCK = false;
+	    return;
+	}*/
+
+    //if (this->track2Loaded->getLocation() == rightDecko.getLoadedTrack()->getLocation())
+    /*if (rightDecko.isPlaying() && rightDecko.getLoadedTrack()->getLocation() == this->track2Loaded->getLocation())
+	{
+	    m_PlayPosition2->set(this->m_PlayPositionDesired2);
+
+	    ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_set");
+	    m_pCue2->set(1.0);
+
+            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+            this->Playing2Queue = 0;
+   
+            this->LOCK = false;
+
+	    return;
+	}
+
+        else
+	{
+	    return;
+	}
+    }
+
+    if (this->Playing1Queue == 1)
+    {
+        if (m_Playing1->get() != 1.0)
+	{
+             m_Playing1->set(1.0);
+	     return;
+	}
+
+        std::cout << "CUE POSITION: " + std::to_string(m_PlayPosition1->get()) + " DESIRED POSITION: " + std::to_string(this->m_PlayPositionDesired1) + "\n";*/
+    //std::cout << track1Loaded->getLocation().toStdString() + "\n";
+    //bool ApproximateEqual = std::fabs(m_PlayPosition1->get() - this->m_PlayPositionDesired1) <= ( (std::fabs(m_PlayPosition1->get()) < fabs(this->m_PlayPositionDesired1) ? fabs(this->m_PlayPositionDesired1) : fabs(m_PlayPosition1->get())) * 0.01);
+
+    /*if (ApproximateEqual == true && this->track1Loaded->getLocation() == pathToSong1)
+	{
+	    ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_set");
+	    m_pCue1->set(1.0);
+
+	    confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+            this->Playing1Queue = 0;
+
+            this->LOCK = false;
+	    return;
+	}*/
+
+    /*        if (leftDecko.isPlaying() && leftDecko.getLoadedTrack()->getLocation() == this->track1Loaded->getLocation())
+	{
+	    m_PlayPosition1->set(this->m_PlayPositionDesired1);
+
+	    ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_set");
+	    m_pCue1->set(1.0);
+
+	    confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+            this->Playing1Queue = 0;
+
+            this->LOCK = false;
+	    return;
+	}
+
+        else
+	{
+	    return;
+	}
+    }*/
+
+    if (this->LOCK == true) {
+        if (this->WIP1 == 1) {
+            return;
+        }
+
+        else if (this->WIP1 == 2) {
+            m_LoopIn1->set(1);
+            m_LoopIn1->set(0);
+            this->WIP1 = 3;
+
+            return;
+        }
+
+        else if (this->WIP1 == 3) {
+            m_PlayPosition1->set(this->gambi_loopout1);
+            this->WIP1 = 4;
+
+            return;
+        }
+
+        else if (this->WIP1 == 4) {
+            if (m_PlayPosition1->get() >= this->gambi_loopout1) {
+                m_LoopOut1->set(1);
+                m_LoopOut1->set(0);
+
+                confirmado.open("/home/dumbo/confirmixxx.txt");
+                confirmado << std::to_string(this->counter) + "\n";
+                confirmado.close();
+
+                this->counter++;
+
+                this->WIP1 = 0;
+                this->LOCK = false;
+
+                return;
+
+            }
+
+            else {
+                return;
+            }
+        }
+
+        else if (this->WIP1 == 5) {
+            m_PlayPosition1->set(this->gambi_loopin1);
+            this->WIP1 = 2;
+
+            return;
+        }
+
+        if (this->WIP2 == 1) {
+            return;
+        }
+
+        else if (this->WIP2 == 2) {
+            m_LoopIn2->set(1);
+            m_LoopIn2->set(0);
+            this->WIP2 = 3;
+
+            return;
+        }
+
+        else if (this->WIP2 == 3) {
+            m_PlayPosition2->set(this->gambi_loopout2);
+            this->WIP2 = 4;
+
+            return;
+        }
+
+        else if (this->WIP2 == 4) {
+            if (m_PlayPosition2->get() >= this->gambi_loopout2) {
+                m_LoopOut2->set(1);
+                m_LoopOut2->set(0);
+
+                confirmado.open("/home/dumbo/confirmixxx.txt");
+                confirmado << std::to_string(this->counter) + "\n";
+                confirmado.close();
+
+                this->counter++;
+
+                this->WIP2 = 0;
+                this->LOCK = false;
+
+                return;
+
+            }
+
+            else {
+                return;
+            }
+        }
+
+        else if (this->WIP2 == 5) {
+            m_PlayPosition2->set(this->gambi_loopin2);
+            this->WIP2 = 2;
+
+            return;
+        }
+
+        std::cout << this->pathToSong1.toStdString() + "\n";
+
+        if (Playing1Queue == 2 && leftDecko.getLoadedTrack()->getLocation() == this->pathToSong1) {
+            //m_pCue1->set(1.0);
+
+            uint64_t totalSamples1 =
+                    (unsigned long long)((double)this->track1Loaded
+                                                 ->getSampleRate() *
+                            this->track1Loaded->getDuration() * 2);
+
+            /*QList<CuePointer> CueList = this->track1Loaded->getCuePoints();
+		    QList<CuePointer>::const_iterator it;
+                    uint64_t totalSamples1 = (unsigned long long)((double)this->track1Loaded->getSampleRate() * this->track1Loaded->getDuration() * 2);
+
+		    for(it = CueList.constBegin(); it != CueList.constEnd(); it++)
+		    {
+		        Cue* mainCue1 = it->get();
+			if (mainCue1->getType() == Cue::CueType::LOAD)
+			{
+			    //std::cout << std::to_string(this->track1Loaded->getDuration()) + "\n";
+		            mainCue1->setPosition(0.5*totalSamples1);
+			}
+	            }*/
+
+            this->track1Loaded->setCuePoint(this->m_PlayPositionDesired1 * totalSamples1);
+
+            Playing1Queue = 3;
+
+            //m_PlayPosition1->set(this->m_PlayPositionDesired1);
+
+            return;
+        }
+
+        else if (Playing1Queue == 3 &&
+                leftDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong1) {
+            Playing1Queue = 4;
+
+            m_pCue1->set(1.0);
+
+            //m_PlayPosition1->set(this->m_PlayPositionDesired1);
+
+            return;
+        }
+
+        else if (Playing1Queue == 4 &&
+                leftDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong1) {
+            /*bool ApproximateEqual = std::fabs(m_PlayPosition1->get() - this->m_PlayPositionDesired1) <= ( (std::fabs(m_PlayPosition1->get()) < fabs(this->m_PlayPositionDesired1) ? fabs(this->m_PlayPositionDesired1) : fabs(m_PlayPosition1->get())) * 0.001);
+
+                    if (ApproximateEqual)
+		    {
+	                m_Playing1->set(1.0);
+                    }
+
+		    else
+		    {
+		        return;
+		    }*/
+
+            if (m_PlayPosition1->get() < this->m_PlayPositionDesired1) {
+                m_pCue1->set(1.0);
+                return;
+            }
+
+            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+
+            Playing1Queue = 0;
+            this->LOCK = false;
+            return;
+
+        }
+
+        else if (Playing1Queue == 1 &&
+                leftDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong1) {
+            //m_Playing1->set(0.0);
+            Playing1Queue = 2;
+            //m_PlayPosition1->set(this->m_PlayPositionDesired1);
+
+            return;
+        }
+
+        //return;
+        //}
+
+        /*if (Playing2Queue > 0 && Playing2Queue < 50)
+	{
+	    Playing2Queue++;
+	    return;
+	}
+
+	else if (Playing2Queue > 1 && Playing2Queue >= 50)
+	{*/
+        if (Playing2Queue == 2 && rightDecko.getLoadedTrack()->getLocation() == this->pathToSong2) {
+            //m_pCue2->set(1.0);
+
+            uint64_t totalSamples2 =
+                    (unsigned long long)((double)this->track2Loaded
+                                                 ->getSampleRate() *
+                            this->track2Loaded->getDuration() * 2);
+
+            this->track2Loaded->setCuePoint(this->m_PlayPositionDesired2 * totalSamples2);
+
+            Playing2Queue = 3;
+
+            //m_PlayPosition2->set(this->m_PlayPositionDesired2);
+            return;
+        }
+
+        else if (Playing2Queue == 3 &&
+                rightDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong2) {
+            m_pCue2->set(1.0);
+
+            Playing2Queue = 4;
+
+            //m_PlayPosition2->set(this->m_PlayPositionDesired2);
+
+            return;
+        }
+
+        else if (Playing2Queue == 4 &&
+                rightDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong2) {
+            /*bool ApproximateEqual = std::fabs(m_PlayPosition2->get() - this->m_PlayPositionDesired2) <= ( (std::fabs(m_PlayPosition2->get()) < fabs(this->m_PlayPositionDesired2) ? fabs(this->m_PlayPositionDesired2) : fabs(m_PlayPosition2->get())) * 0.001);
+
+	            if (ApproximateEqual)
+		    {
+	                m_Playing2->set(1.0);
+		    }
+
+		    else
+		    {
+		        return;
+		    }*/
+
+            if (m_PlayPosition2->get() < m_PlayPositionDesired2) {
+                m_pCue2->set(1.0);
+                return;
+            }
+
+            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado << std::to_string(this->counter) + "\n";
+            confirmado.close();
+
+            this->counter++;
+
+            Playing2Queue = 0;
+            this->LOCK = false;
+
+            return;
+        }
+
+        else if (Playing2Queue == 1 &&
+                rightDecko.getLoadedTrack()->getLocation() ==
+                        this->pathToSong2) {
+            //m_Playing2->set(0.0);
+            Playing2Queue = 2;
+            //m_PlayPosition2->set(this->m_PlayPositionDesired2);
+
+            return;
+        }
+        //return;
+        //}
+
+        return;
+    }
+    const QString EQ_group_1 = EqualizerRack::formatEffectSlotGroupString(
+            0, 0, QString("[Channel1]"));
+
+    const QString EQ_group_2 = EqualizerRack::formatEffectSlotGroupString(
+            0, 0, QString("[Channel2]"));
+
+    m_EQ_1_LOW = new ControlProxy(EQ_group_1, EffectParameterSlot::formatItemPrefix(0));
+    m_EQ_1_MID = new ControlProxy(EQ_group_1, EffectParameterSlot::formatItemPrefix(1));
+    m_EQ_1_HIGH = new ControlProxy(EQ_group_1, EffectParameterSlot::formatItemPrefix(2));
+
+    m_EQ_2_LOW = new ControlProxy(EQ_group_2, EffectParameterSlot::formatItemPrefix(0));
+    m_EQ_2_MID = new ControlProxy(EQ_group_2, EffectParameterSlot::formatItemPrefix(1));
+    m_EQ_2_HIGH = new ControlProxy(EQ_group_2, EffectParameterSlot::formatItemPrefix(2));
+
+    std::ifstream controlbaby;
+
+    std::string comando;
+    std::string contador;
+
+    uint64_t contagiros;
+
+    std::string slope;
+    double slopenumerico;
+
+    std::string loopin1;
+    std::string loopout1;
+
+    std::string loopin2;
+    std::string loopout2;
+
+    double loopin_double1;
+    double loopout_double1;
+
+    double loopin_double2;
+    double loopout_double2;
+
+    if (FILE* file = fopen("/home/dumbo/controlmixxx.txt.lock", "r")) {
+        fclose(file);
+        return;
+    }
+
+    controlbaby.open("/home/dumbo/controlmixxx.txt");
+    std::getline(controlbaby, comando);
+    std::getline(controlbaby, contador);
+    controlbaby.close();
+
+    try {
+        contagiros = std::stoull(contador);
+    }
+
+    catch (const std::invalid_argument& e) {
+        this->wuwei = true;
+        std::cout << "INVALID ARGUMENT AT CONTAGIROS WAS \n" + contador;
+        return;
+    }
+
+    catch (const std::out_of_range& e) {
+        this->wuwei = true;
+        std::cout << "OUT OF RANGE ARGUMENT FOR CONTAGIROS\n";
+    }
+
+    if (this->wuwei == false) {
+        if (contagiros > this->counter) {
+            this->LOCK = true;
+
+            if (comando[0] == 'C') {
+                if (comando[1] == '1') {
+                    m_LoopToggle1->set(1);
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+
+                if (comando[1] == '2') {
+                    m_LoopToggle2->set(1);
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+            }
+
+            else if (comando[0] == 'K') {
+                if (comando[1] == '1') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR KEY 1 SLOPE\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR KEY 1 SLOPE\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    m_Key1 = new ControlProxy("[Channel1]", "key");
+                    m_Key1->set(slopenumerico);
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+
+                else if (comando[1] == '2') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR KEY 2 SLOPE\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR 2 KEY SLOPE\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    m_Key2 = new ControlProxy("[Channel2]", "key");
+                    m_Key2->set(slopenumerico);
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+
+            }
+
+            else if (comando[0] == 'F') {
+                if (comando[1] == 'X') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_X_L_B = false;
+                        this->CROSSFADER_X_R_B = false;
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_X_L_B = false;
+                        this->CROSSFADER_X_R_B = false;
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    if (m_pCOCrossfader->get() <= 0) {
+                        this->CROSSFADER_X_R_B = true;
+
+                        this->crescendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 10000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    else if (m_pCOCrossfader->get() >= 0) {
+                        this->CROSSFADER_X_L_B = true;
+
+                        this->diminuendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 10000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+                }
+            }
+
+            else if (comando[0] == 'T') {
+                if (comando[1] == '1') {
+                    if (m_Playing1->get() != 1) {
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    std::string bpmAsked1;
+                    double bpm_double1;
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        bpmAsked1 = bpmAsked1 + comando[usecamisinha];
+                    }
+
+                    try {
+                        bpm_double1 = std::stod(bpmAsked1);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR DECK 1 TEMPO\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 TEMPO\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    m_Bpm1 = new ControlProxy(QString("[Channel1]"), "rate");
+                    m_FileBpm1 = new ControlProxy(QString("[Channel1]"), "file_bpm");
+
+                    ControlProxy* m_pRateDir = new ControlProxy(QString("[Channel1]"), "rate_dir");
+                    ControlProxy* m_pRateRange = new ControlProxy(
+                            QString("[Channel1]"), "rateRange");
+                    double rateScale = m_pRateDir->get() * m_pRateRange->get();
+
+                    if (m_FileBpm1->get() == 0.0 || rateScale == 0.0) {
+                        std::cout << "BPM IS UNDEFINED\n";
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+
+                        return;
+                    }
+
+                    double dRateSlider = (bpm_double1 / m_FileBpm1->get() - 1.0) / rateScale;
+
+                    if (bpm_double1 > m_FileBpm1->get() && bpm_double1 <= m_FileBpm1->get() * 1.9) {
+                        std::cout << "FILE BPM IS: " +
+                                        std::to_string(m_FileBpm1->get()) +
+                                        " SETTING BPM TO: " +
+                                        std::to_string(bpm_double1) + "\n";
+                        m_Bpm1->set(dRateSlider);
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    else if (bpm_double1 < m_FileBpm1->get() &&
+                            bpm_double1 >= (m_FileBpm1->get() -
+                                                   m_FileBpm1->get() * 0.9)) {
+                        std::cout << "FILE BPM IS: " +
+                                        std::to_string(m_FileBpm1->get()) +
+                                        " SETTING BPM TO: " +
+                                        std::to_string(bpm_double1) + "\n";
+                        m_Bpm1->set(dRateSlider);
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    else {
+                        std::cout << "BPM IS EITHER THE SAME OR ELSE IT'S "
+                                     "BEYOND LIMITS. LEAVING UNCHANGED\n";
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                }
+
+                else if (comando[1] == '2') {
+                    if (m_Playing2->get() != 1) {
+                        this->LOCK = false;
+                        return;
+                    }
+                    std::string bpmAsked2;
+                    double bpm_double2;
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        bpmAsked2 = bpmAsked2 + comando[usecamisinha];
+                    }
+
+                    try {
+                        bpm_double2 = std::stod(bpmAsked2);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR DECK 2 TEMPO\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 TEMPO\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    m_Bpm2 = new ControlProxy(QString("[Channel2]"), "rate");
+                    m_FileBpm2 = new ControlProxy(QString("[Channel2]"), "file_bpm");
+
+                    ControlProxy* m_pRateDir = new ControlProxy(QString("[Channel2]"), "rate_dir");
+                    ControlProxy* m_pRateRange = new ControlProxy(
+                            QString("[Channel2]"), "rateRange");
+                    double rateScale = m_pRateDir->get() * m_pRateRange->get();
+
+                    if (m_FileBpm2->get() == 0.0 || rateScale == 0.0) {
+                        std::cout << "BPM IS UNDEFINED\n";
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+
+                        return;
+                    }
+
+                    double dRateSlider = (bpm_double2 / m_FileBpm2->get() - 1.0) / rateScale;
+
+                    if (bpm_double2 > m_FileBpm2->get() && bpm_double2 <= m_FileBpm2->get() * 1.9) {
+                        std::cout << "FILE BPM IS: " +
+                                        std::to_string(m_FileBpm2->get()) +
+                                        " SETTING BPM TO: " +
+                                        std::to_string(bpm_double2) + "\n";
+                        m_Bpm2->set(dRateSlider);
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    else if (bpm_double2 < m_FileBpm2->get() &&
+                            bpm_double2 >= (m_FileBpm2->get() -
+                                                   m_FileBpm2->get() * 0.9)) {
+                        std::cout << "FILE BPM IS: " +
+                                        std::to_string(m_FileBpm2->get()) +
+                                        " SETTING BPM TO: " +
+                                        std::to_string(bpm_double2) + "\n";
+                        m_Bpm2->set(dRateSlider);
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    else {
+                        std::cout << "BPM IS EITHER THE SAME OR ELSE IT'S "
+                                     "BEYOND LIMITS. LEAVING UNCHANGED\n";
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        return;
+                    }
+                }
+
+            }
+
+            else if (comando[0] == 'L') {
+                if (comando[1] == '1') {
+                    std::cout << "OLD DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
+
+                    this->pathToSong1 = "";
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha < comando.length();
+                            usecamisinha++) {
+                        this->pathToSong1 = this->pathToSong1 + comando[usecamisinha];
+                    }
+
+                    std::cout << "NEW DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
+
+                    m_Playing1->set(0.0);
+
+                    m_PlayPosition1->set(0);
+
+                    this->track1Loaded =
+                            MixxxMainWindow::m_pPlayerManager->slotLoadToDeck(
+                                    pathToSong1, 1);
+
+                    //if (this->counter == 0)
+                    //{
+                    //    m_Playing1->set(1.0);
+                    //}
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+
+                if (comando[1] == '2') {
+                    this->pathToSong2 = "";
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha < comando.length();
+                            usecamisinha++) {
+                        this->pathToSong2 = this->pathToSong2 + comando[usecamisinha];
+                    }
+
+                    m_Playing2->set(0.0);
+
+                    m_PlayPosition2->set(0);
+
+                    this->track2Loaded =
+                            MixxxMainWindow::m_pPlayerManager->slotLoadToDeck(
+                                    pathToSong2, 2);
+
+                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado << std::to_string(this->counter) + "\n";
+                    confirmado.close();
+
+                    this->counter++;
+
+                    this->LOCK = false;
+                    return;
+                }
+
+            }
+
+            else if (comando[0] == 'P') {
+                if (comando[1] == '1') {
+                    std::string cuePosition1;
+                    double cuePosition1_double;
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        cuePosition1 = cuePosition1 + comando[usecamisinha];
+                    }
+
+                    try {
+                        cuePosition1_double = std::stod(cuePosition1);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR PLAY CUE POSITION ON DECK 1\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR PLAY CUE POSITION ON DECK 1\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    this->m_PlayPositionDesired1 = cuePosition1_double;
+                    std::cout << "CUE POSITION: " +
+                                    std::to_string(m_PlayPosition1->get()) +
+                                    " DESIRED POSITION: " +
+                                    std::to_string(
+                                            this->m_PlayPositionDesired1) +
+                                    "\n";
+
+                    /*while (!(leftDecko.isPlaying()))
+ 	            {
+		         continue;
+	            }*/
+
+                    //if (leftDecko.getLoadedTrack() != this->track1Loaded)
+                    //{
+                    Playing1Queue = 1;
+                    //m_PlayPosition1->set(cuePosition1_double);
+                    m_Playing1->set(1.0);
+                    return;
+                    //}
+
+                }
+
+                else if (comando[1] == '2') {
+                    std::string cuePosition2;
+                    double cuePosition2_double;
+
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        cuePosition2 = cuePosition2 + comando[usecamisinha];
+                    }
+
+                    try {
+                        cuePosition2_double = std::stod(cuePosition2);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR PLAY CUE POSITION ON DECK 2\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT FOR PLAY CUE POSITION ON DECK 2\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    this->m_PlayPositionDesired2 = cuePosition2_double;
+
+                    std::cout << "CUE POSITION: " +
+                                    std::to_string(m_PlayPosition2->get()) +
+                                    " DESIRED POSITION: " +
+                                    std::to_string(
+                                            this->m_PlayPositionDesired2) +
+                                    "\n";
+
+                    /*while (!(rightDecko.isPlaying()))
+ 	            {
+		         continue;
+	            }*/
+
+                    //if (rightDecko.getLoadedTrack() != this->track2Loaded)
+                    //{
+                    Playing2Queue = 1;
+                    //m_PlayPosition2->set(cuePosition2_double);
+                    m_Playing2->set(1.0);
+                    return;
+                    //}
+                }
+            }
+
+            else if (comando[0] == 'O') {
+                if (comando[1] == '2') {
+                    for (long unsigned int usecamisinha = 2; usecamisinha <= 7; usecamisinha++) {
+                        loopin2 = loopin2 + comando[usecamisinha];
+                    }
+
+                    for (long unsigned int usecamisinha = 8; usecamisinha <= 13; usecamisinha++) {
+                        loopout2 = loopout2 + comando[usecamisinha];
+                    }
+
+                    try {
+                        loopin_double2 = std::stod("0." + loopin2);
+                        loopout_double2 = std::stod("0." + loopout2);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID LOOPING POSITIONS FOR DECK 2\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 2\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    this->WIP2 = 1;
+
+                    this->gambi_loopin2 = loopin_double2;
+                    this->gambi_loopout2 = loopout_double2;
+
+                    this->WIP2 = 5;
+
+                    return;
+                }
+
+                if (comando[1] == '1') {
+                    for (long unsigned int usecamisinha = 2; usecamisinha <= 7; usecamisinha++) {
+                        loopin1 = loopin1 + comando[usecamisinha];
+                    }
+
+                    for (long unsigned int usecamisinha = 8; usecamisinha <= 13; usecamisinha++) {
+                        loopout1 = loopout1 + comando[usecamisinha];
+                    }
+
+                    try {
+                        loopin_double1 = std::stod("0." + loopin1);
+                        loopout_double1 = std::stod("0." + loopout1);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID LOOPING POSITIONS FOR DECK 1\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 1\n";
+                        this->LOCK = false;
+                        return;
+                    }
+
+                    this->WIP1 = 1;
+
+                    this->gambi_loopin1 = loopin_double1;
+                    this->gambi_loopout1 = loopout_double1;
+
+                    this->WIP1 = 5;
+
+                    return;
+                }
+            }
+
+            else if (comando[0] == 'Q') {
+                if (comando[1] == '1') {
+                    if (comando[2] == 'H') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ HIGH OPEN\n";
+                                this->DECK_1_Q_H_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ HIGH OPEN\n";
+                                this->DECK_1_Q_H_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_HIGH->get() < 1) {
+                                this->DECK_1_Q_H_O_B = true;
+
+                                this->crescendo_EQ_1_HIGH = slopenumerico / 1000;
+                                this->DECK_1_Q_H_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ HIGH CLOSE\n";
+                                this->DECK_1_Q_H_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ HIGH CLOSE\n";
+                                this->DECK_1_Q_H_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_HIGH->get() > 0) {
+                                this->DECK_1_Q_H_C_B = true;
+
+                                this->diminuendo_EQ_1_HIGH = slopenumerico / 1000;
+                                this->DECK_1_Q_H_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'M') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ MID OPEN\n";
+                                this->DECK_1_Q_M_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ MID OPEN\n";
+                                this->DECK_1_Q_M_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_MID->get() < 1) {
+                                this->DECK_1_Q_M_O_B = true;
+
+                                this->crescendo_EQ_1_MID = slopenumerico / 1000;
+                                this->DECK_1_Q_M_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ MID CLOSE\n";
+                                this->DECK_1_Q_M_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ MID CLOSE\n";
+                                this->DECK_1_Q_M_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_MID->get() > 0) {
+                                this->DECK_1_Q_M_C_B = true;
+
+                                this->diminuendo_EQ_1_MID = slopenumerico / 1000;
+                                this->DECK_1_Q_M_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'L') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ LOW OPEN\n";
+                                this->DECK_1_Q_L_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ LOW OPEN\n";
+                                this->DECK_1_Q_L_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_LOW->get() < 1) {
+                                this->DECK_1_Q_L_O_B = true;
+
+                                this->crescendo_EQ_1_LOW = slopenumerico / 1000;
+                                this->DECK_1_Q_L_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 1 EQ LOW CLOSE\n";
+                                this->DECK_1_Q_L_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ LOW CLOSE\n";
+                                this->DECK_1_Q_L_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_1_LOW->get() > 0) {
+                                this->DECK_1_Q_L_C_B = true;
+
+                                this->diminuendo_EQ_1_LOW = slopenumerico / 1000;
+                                this->DECK_1_Q_L_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '2') {
+                    if (comando[2] == 'H') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 2 EQ HIGH OPEN\n";
+                                this->DECK_2_Q_H_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ HIGH OPEN\n";
+                                this->DECK_2_Q_H_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_HIGH->get() < 1) {
+                                this->DECK_2_Q_H_O_B = true;
+
+                                this->crescendo_EQ_2_HIGH = slopenumerico / 1000;
+                                this->DECK_2_Q_H_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 2 EQ HIGH CLOSE\n";
+                                this->DECK_2_Q_H_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ HIGH CLOSE\n";
+                                this->DECK_2_Q_H_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_HIGH->get() > 0) {
+                                this->DECK_2_Q_H_C_B = true;
+
+                                this->diminuendo_EQ_2_HIGH = slopenumerico / 1000;
+                                this->DECK_2_Q_H_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'M') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 2 EQ MID OPEN\n";
+                                this->DECK_2_Q_M_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ MID OPEN\n";
+                                this->DECK_2_Q_M_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_MID->get() < 1) {
+                                this->DECK_2_Q_M_O_B = true;
+
+                                this->crescendo_EQ_2_MID = slopenumerico / 1000;
+                                this->DECK_2_Q_M_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 2 EQ MID CLOSE\n";
+                                this->DECK_2_Q_M_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ MID CLOSE\n";
+                                this->DECK_2_Q_M_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_MID->get() > 0) {
+                                this->DECK_2_Q_M_C_B = true;
+
+                                this->diminuendo_EQ_2_MID = slopenumerico / 1000;
+                                this->DECK_2_Q_M_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'L') {
+                        if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR DECK 2 EQ LOW OPEN\n";
+                                this->DECK_2_Q_L_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW OPEN\n";
+                                this->DECK_2_Q_L_O_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_LOW->get() < 1) {
+                                this->DECK_2_Q_L_O_B = true;
+
+                                this->crescendo_EQ_2_LOW = slopenumerico / 1000;
+                                this->DECK_2_Q_L_O_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+
+                        else if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                                slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW CLOSE\n";
+                                this->DECK_2_Q_L_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW CLOSE\n";
+                                this->DECK_2_Q_L_C_B = false;
+                                this->LOCK = false;
+                                return;
+                            }
+
+                            if (m_EQ_2_LOW->get() > 0) {
+                                this->DECK_2_Q_L_C_B = true;
+
+                                this->diminuendo_EQ_2_LOW = slopenumerico / 1000;
+                                this->DECK_2_Q_L_C_V = 1000;
+
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+                                this->counter++;
+                                this->LOCK = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (this->DECK_1_Q_L_C_B == true && this->DECK_1_Q_L_C_V > 0) {
+        m_EQ_1_LOW->set(m_EQ_1_LOW->get() - this->diminuendo_EQ_1_LOW);
+        this->DECK_1_Q_L_C_V--;
+    }
+
+    if (this->DECK_1_Q_L_O_B == true && this->DECK_1_Q_L_O_V > 0) {
+        m_EQ_1_LOW->set(m_EQ_1_LOW->get() + this->crescendo_EQ_1_LOW);
+        this->DECK_1_Q_L_O_V--;
+    }
+
+    if (this->DECK_1_Q_M_C_B == true && this->DECK_1_Q_M_C_V > 0) {
+        m_EQ_1_MID->set(m_EQ_1_MID->get() - this->diminuendo_EQ_1_MID);
+        this->DECK_1_Q_M_C_V--;
+    }
+
+    if (this->DECK_1_Q_M_O_B == true && this->DECK_1_Q_M_O_V > 0) {
+        m_EQ_1_MID->set(m_EQ_1_MID->get() + this->crescendo_EQ_1_MID);
+        this->DECK_1_Q_M_O_V--;
+    }
+
+    if (this->DECK_1_Q_H_C_B == true && this->DECK_1_Q_H_C_V > 0) {
+        m_EQ_1_HIGH->set(m_EQ_1_HIGH->get() - this->diminuendo_EQ_1_HIGH);
+        this->DECK_1_Q_H_C_V--;
+    }
+
+    if (this->DECK_1_Q_H_O_B == true && this->DECK_1_Q_H_O_V > 0) {
+        m_EQ_1_HIGH->set(m_EQ_1_HIGH->get() + this->crescendo_EQ_1_HIGH);
+        this->DECK_1_Q_H_O_V--;
+    }
+
+    if (this->DECK_2_Q_L_C_B == true && this->DECK_2_Q_L_C_V > 0) {
+        m_EQ_2_LOW->set(m_EQ_2_LOW->get() - this->diminuendo_EQ_2_LOW);
+        this->DECK_2_Q_L_C_V--;
+    }
+
+    if (this->DECK_2_Q_L_O_B == true && this->DECK_2_Q_L_O_V > 0) {
+        m_EQ_2_LOW->set(m_EQ_2_LOW->get() + this->crescendo_EQ_2_LOW);
+        this->DECK_2_Q_L_O_V--;
+    }
+
+    if (this->DECK_2_Q_M_C_B == true && this->DECK_2_Q_M_C_V > 0) {
+        m_EQ_2_MID->set(m_EQ_2_MID->get() - this->diminuendo_EQ_2_MID);
+        this->DECK_2_Q_M_C_V--;
+    }
+
+    if (this->DECK_2_Q_M_O_B == true && this->DECK_2_Q_M_O_V > 0) {
+        m_EQ_2_MID->set(m_EQ_2_MID->get() + this->crescendo_EQ_2_MID);
+        this->DECK_2_Q_M_O_V--;
+    }
+
+    if (this->DECK_2_Q_H_C_B == true && this->DECK_2_Q_H_C_V > 0) {
+        m_EQ_2_HIGH->set(m_EQ_2_HIGH->get() - this->diminuendo_EQ_2_HIGH);
+        this->DECK_2_Q_H_C_V--;
+    }
+
+    if (this->DECK_2_Q_H_O_B == true && this->DECK_2_Q_H_O_V > 0) {
+        m_EQ_2_HIGH->set(m_EQ_2_HIGH->get() + this->crescendo_EQ_2_HIGH);
+        this->DECK_2_Q_H_O_V--;
+    }
+
+    if (this->CROSSFADER_X_L_B == true && this->CROSSFADER_X_V > 0) {
+        if (m_pCOCrossfader->get() >= 1.0) {
+            m_photCue21Clear->set(1.0);
+            m_photCue21Set->set(1.0);
+        }
+
+        m_pCOCrossfader->set(m_pCOCrossfader->get() - diminuendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
+
+    if (this->CROSSFADER_X_R_B == true && this->CROSSFADER_X_V > 0) {
+        if (m_pCOCrossfader->get() <= -1.0) {
+            m_photCue11Clear->set(1.0);
+            m_photCue11Set->set(1.0);
+        }
+
+        m_pCOCrossfader->set(m_pCOCrossfader->get() + crescendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
+
+    //std::cout << "EQ = " + std::to_string(m_EQ_1_LOW->get()) + "\n";
+    //std::cout << "DIMINUENDO = " + std::to_string(this->diminuendo_EQ_1_LOW) + "\n";
+
+    if (this->DECK_1_Q_L_C_B == true && (this->DECK_1_Q_L_C_V <= 0 || m_EQ_1_LOW->get() <= 0)) {
+        this->DECK_1_Q_L_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_1_Q_L_O_B == true && (this->DECK_1_Q_L_O_V <= 0 || m_EQ_1_LOW->get() >= 1)) {
+        this->DECK_1_Q_L_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_1_Q_M_C_B == true && (this->DECK_1_Q_M_C_V <= 0 || m_EQ_1_MID->get() <= 0)) {
+        this->DECK_1_Q_M_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_1_Q_M_O_B == true && (this->DECK_1_Q_M_O_V <= 0 || m_EQ_1_MID->get() >= 1)) {
+        this->DECK_1_Q_M_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_1_Q_H_C_B == true && (this->DECK_1_Q_H_C_V <= 0 || m_EQ_1_HIGH->get() <= 0)) {
+        this->DECK_1_Q_H_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_1_Q_H_O_B == true && (this->DECK_1_Q_H_O_V <= 0 || m_EQ_1_HIGH->get() >= 1)) {
+        this->DECK_1_Q_H_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_L_C_B == true && (this->DECK_2_Q_L_C_V <= 0 || m_EQ_2_LOW->get() <= 0)) {
+        this->DECK_2_Q_L_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_L_O_B == true && (this->DECK_2_Q_L_O_V <= 0 || m_EQ_2_LOW->get() >= 1)) {
+        this->DECK_2_Q_L_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_M_C_B == true && (this->DECK_2_Q_M_C_V <= 0 || m_EQ_2_MID->get() <= 0)) {
+        this->DECK_2_Q_M_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_M_O_B == true && (this->DECK_2_Q_M_O_V <= 0 || m_EQ_2_MID->get() >= 1)) {
+        this->DECK_2_Q_M_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_H_C_B == true && (this->DECK_2_Q_H_C_V <= 0 || m_EQ_2_HIGH->get() <= 0)) {
+        this->DECK_2_Q_H_C_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->DECK_2_Q_H_O_B == true && (this->DECK_2_Q_H_O_V <= 0 || m_EQ_2_HIGH->get() >= 1)) {
+        this->DECK_2_Q_H_O_B = false;
+        //std::cout << "STOP EQ! VAR: " + std::to_string(DECK_1_Q_L_C_V) + "\n";
+    }
+
+    if (this->CROSSFADER_X_L_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() <= -1.0)) {
+        this->CROSSFADER_X_L_B = false;
+        std::cout << "CROSSFADE DONE. STOPPING DECK 2\n";
+
+        m_Playing2->set(0.0);
+    }
+
+    if (this->CROSSFADER_X_R_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() >= 1.0)) {
+        this->CROSSFADER_X_R_B = false;
+
+        std::cout << "CROSSFADE DONE. STOPPING DECK 1\n";
+        m_Playing1->set(0.0);
+    }
+
+    if (m_Playing1->get() == 1.0) {
+        double playPosition1 = m_PlayPosition1->get();
+
+        confirmado.open("/home/dumbo/mixxxposition1.txt");
+        confirmado << std::to_string(playPosition1) + "\n";
+        confirmado.close();
+    }
+
+    if (m_Playing2->get() == 1.0) {
+        double playPosition2 = m_PlayPosition2->get();
+
+        confirmado.open("/home/dumbo/mixxxposition2.txt");
+        confirmado << std::to_string(playPosition2) + "\n";
+        confirmado.close();
     }
 
     // Auto-DJ needs at least two decks

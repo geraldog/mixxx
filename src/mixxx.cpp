@@ -139,6 +139,8 @@ const int MixxxMainWindow::kMicrophoneCount = 4;
 // static
 const int MixxxMainWindow::kAuxiliaryCount = 4;
 
+PlayerManager* MixxxMainWindow::m_pPlayerManager = nullptr;
+
 MixxxMainWindow::MixxxMainWindow(QApplication* pApp, const CmdlineArgs& args)
         : m_pWidgetParent(nullptr),
           m_pLaunchImage(nullptr),
@@ -146,7 +148,6 @@ MixxxMainWindow::MixxxMainWindow(QApplication* pApp, const CmdlineArgs& args)
           m_pEngine(nullptr),
           m_pSkinLoader(nullptr),
           m_pSoundManager(nullptr),
-          m_pPlayerManager(nullptr),
           m_pRecordingManager(nullptr),
 #ifdef __BROADCAST__
           m_pBroadcastManager(nullptr),

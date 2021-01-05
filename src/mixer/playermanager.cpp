@@ -630,14 +630,21 @@ void PlayerManager::slotLoadTrackToPlayer(TrackPointer pTrack, const QString& gr
     m_lastLoadedPlayer = group;
 }
 
-void PlayerManager::slotLoadToPlayer(const QString& location, const QString& group) {
+TrackPointer PlayerManager::slotLoadToPlayer(const QString& location, const QString& group) {
     // The library will get the track and then signal back to us to load the
     // track via slotLoadTrackToPlayer.
-    emit loadLocationToPlayer(location, group);
+    TrackPointer trackLoaded = emit(loadLocationToPlayer(location, group));
+
+    ControlProxy* m_FileBpm = new ControlProxy(group, "file_bpm");
+    ControlProxy* m_LocalBpm = new ControlProxy(group, "local_bpm");
+    m_FileBpm->set(trackLoaded->getBpm());
+    m_LocalBpm->set(trackLoaded->getBpm());
+    return trackLoaded;
 }
 
-void PlayerManager::slotLoadToDeck(const QString& location, int deck) {
-    slotLoadToPlayer(location, groupForDeck(deck-1));
+TrackPointer PlayerManager::slotLoadToDeck(const QString& location, int deck) {
+    TrackPointer trackLoaded = slotLoadToPlayer(location, groupForDeck(deck - 1));
+    return trackLoaded;
 }
 
 void PlayerManager::slotLoadToPreviewDeck(const QString& location, int previewDeck) {

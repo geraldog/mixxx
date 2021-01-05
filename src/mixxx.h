@@ -52,6 +52,9 @@ class MixxxMainWindow : public QMainWindow {
 
     void finalize();
 
+    // Keeps track of players
+    static PlayerManager* m_pPlayerManager;
+
     // creates the menu_bar and inserts the file Menu
     void createMenuBar();
     void connectMenuBar();
@@ -140,8 +143,6 @@ class MixxxMainWindow : public QMainWindow {
     // The sound manager
     SoundManager* m_pSoundManager;
 
-    // Keeps track of players
-    PlayerManager* m_pPlayerManager;
     // RecordingManager
     RecordingManager* m_pRecordingManager;
 #ifdef __BROADCAST__

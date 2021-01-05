@@ -239,6 +239,62 @@ class AutoDJProcessor : public QObject {
     // all the way mixed to the left side and 1 is all the way mixed to the
     // right side. (prevents AutoDJ logic from having to check for hamster mode
     // every time)
+    bool wuwei = false;
+
+    uint64_t counter = 0;
+    uint64_t DECK_1_Q_M_C_V = 0;
+    uint64_t DECK_1_Q_M_O_V = 0;
+    uint64_t DECK_1_Q_L_C_V = 0;
+    uint64_t DECK_1_Q_L_O_V = 0;
+    uint64_t DECK_1_Q_H_C_V = 0;
+    uint64_t DECK_1_Q_H_O_V = 0;
+
+    uint64_t DECK_2_Q_M_C_V = 0;
+    uint64_t DECK_2_Q_M_O_V = 0;
+    uint64_t DECK_2_Q_L_C_V = 0;
+    uint64_t DECK_2_Q_L_O_V = 0;
+    uint64_t DECK_2_Q_H_C_V = 0;
+    uint64_t DECK_2_Q_H_O_V = 0;
+
+    uint64_t CROSSFADER_X_V = 0;
+
+    int Playing1Queue = 0;
+    int Playing2Queue = 0;
+
+    bool DECK_1_Q_M_C_B = false;
+    bool DECK_1_Q_M_O_B = false;
+    bool DECK_1_Q_L_C_B = false;
+    bool DECK_1_Q_L_O_B = false;
+    bool DECK_1_Q_H_C_B = false;
+    bool DECK_1_Q_H_O_B = false;
+
+    bool DECK_2_Q_M_C_B = false;
+    bool DECK_2_Q_M_O_B = false;
+    bool DECK_2_Q_L_C_B = false;
+    bool DECK_2_Q_L_O_B = false;
+    bool DECK_2_Q_H_C_B = false;
+    bool DECK_2_Q_H_O_B = false;
+
+    bool CROSSFADER_X_L_B = false;
+    bool CROSSFADER_X_R_B = false;
+
+    double diminuendo_EQ_1_MID;
+    double crescendo_EQ_1_MID;
+    double diminuendo_EQ_1_LOW;
+    double crescendo_EQ_1_LOW;
+    double diminuendo_EQ_1_HIGH;
+    double crescendo_EQ_1_HIGH;
+
+    double diminuendo_EQ_2_MID;
+    double crescendo_EQ_2_MID;
+    double diminuendo_EQ_2_LOW;
+    double crescendo_EQ_2_LOW;
+    double diminuendo_EQ_2_HIGH;
+    double crescendo_EQ_2_HIGH;
+
+    double crescendo_CROSS_X;
+    double diminuendo_CROSS_X;
+
     double getCrossfader() const;
     void setCrossfader(double value);
 
@@ -288,6 +344,55 @@ class AutoDJProcessor : public QObject {
 
     ControlProxy* m_pCOCrossfader;
     ControlProxy* m_pCOCrossfaderReverse;
+
+    bool LOCK = false;
+
+    int WIP1 = 0;
+    double gambi_loopin1;
+    double gambi_loopout1;
+
+    int WIP2 = 0;
+    double gambi_loopin2;
+    double gambi_loopout2;
+
+    QString pathToSong1 = "1";
+    QString pathToSong2 = "1";
+
+    TrackPointer track1Loaded;
+    TrackPointer track2Loaded;
+
+    ControlProxy* m_Key1;
+    ControlProxy* m_Key2;
+
+    ControlProxy* m_LoopIn1;
+    ControlProxy* m_LoopOut1;
+    ControlProxy* m_LoopToggle1;
+
+    ControlProxy* m_LoopIn2;
+    ControlProxy* m_LoopOut2;
+    ControlProxy* m_LoopToggle2;
+
+    ControlProxy* m_PlayPosition1;
+    double m_PlayPositionDesired1 = 0;
+    ControlProxy* m_Playing1;
+
+    ControlProxy* m_PlayPosition2;
+    double m_PlayPositionDesired2 = 0;
+    ControlProxy* m_Playing2;
+
+    ControlProxy* m_EQ_1_LOW;
+    ControlProxy* m_EQ_1_MID;
+    ControlProxy* m_EQ_1_HIGH;
+
+    ControlProxy* m_EQ_2_LOW;
+    ControlProxy* m_EQ_2_MID;
+    ControlProxy* m_EQ_2_HIGH;
+
+    ControlProxy* m_Bpm1;
+    ControlProxy* m_FileBpm1;
+
+    ControlProxy* m_Bpm2;
+    ControlProxy* m_FileBpm2;
 
     ControlPushButton* m_pSkipNext;
     ControlPushButton* m_pFadeNow;
