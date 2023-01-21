@@ -795,7 +795,7 @@ void PlayerManager::slotLoadToSampler(const QString& location, int sampler) {
 }
 
 void PlayerManager::slotLoadToStem(const QString& location, int stem) {
-    slotLoadLocationToPlayer(location, groupForStem(stem - 1));
+    slotLoadLocationToPlayer(location, groupForStem(stem - 1), true);
 }
 
 void PlayerManager::slotLoadTrackIntoNextAvailableDeck(TrackPointer pTrack) {
