@@ -212,6 +212,8 @@ LibraryControl::LibraryControl(Library* pLibrary)
     m_pSortOrder = std::make_unique<ControlPushButton>(ConfigKey("[Library]", "sort_order"));
     m_pSortOrder->setButtonMode(ControlPushButton::TOGGLE);
     m_pSortColumnToggle = std::make_unique<ControlEncoder>(ConfigKey("[Library]", "sort_column_toggle"), false);
+    m_pSortFocusedColumn = std::make_unique<ControlPushButton>(
+            ConfigKey("[Library]", "sort_focused_column"));
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     connect(m_pSortColumn.get(),
             &ControlEncoder::valueChanged,
@@ -221,6 +223,14 @@ LibraryControl::LibraryControl(Library* pLibrary)
             &ControlEncoder::valueChanged,
             this,
             &LibraryControl::slotSortColumnToggle);
+    connect(m_pSortFocusedColumn.get(),
+            &ControlObject::valueChanged,
+            this,
+            [this](double value) {
+                if (value > 0.0) {
+                    slotSortColumnToggle(static_cast<int>(TrackModel::SortColumnId::CurrentIndex));
+                }
+            });
 
     // Font sizes
     m_pFontSizeKnob = std::make_unique<ControlObject>(
@@ -603,13 +613,13 @@ void LibraryControl::slotSelectTrack(double v) {
 
 void LibraryControl::slotMoveUp(double v) {
     if (v > 0) {
-        slotMoveVertical(1);
+        slotMoveVertical(-1);
     }
 }
 
 void LibraryControl::slotMoveDown(double v) {
     if (v > 0) {
-        slotMoveVertical(-1);
+        slotMoveVertical(1);
     }
 }
 
@@ -625,11 +635,11 @@ void LibraryControl::slotMoveVertical(double v) {
         return;
     }
     case FocusWidget::TracksTable: {
-        // This wraps around at top/bottom. Doesn't match Up/Down key behaviour
-        // and may not be desired.
-        //int i = static_cast<int>(v);
-        //slotSelectTrack(i);
-        //return;
+        // `WLibraryTableView`'s cursor movement function has been overridden to
+        // wrap the selection around at the top/bottom of the tracks list. This
+        // behavior is thus shared between `[Library],MoveVertical` and Up/Down
+        // cursor key presses. See `WLibraryTableView::moveCursor()` for an
+        // explanation on why this is useful.
         break;
     }
     case FocusWidget::Dialog: {
