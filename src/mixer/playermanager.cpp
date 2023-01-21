@@ -12,6 +12,7 @@
 #include "mixer/previewdeck.h"
 #include "mixer/sampler.h"
 #include "mixer/samplerbank.h"
+#include "mixer/stem.h"
 #include "moc_playermanager.cpp"
 #include "preferences/dialog/dlgprefdeck.h"
 #include "soundio/soundmanager.h"
@@ -204,6 +205,13 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
                 this,
                 &PlayerManager::slotAnalyzeTrack);
     }
+
+    // Connect the stems player to the analyzer queue so that loaded tracks are
+    // analyzed.
+    /*foreach(Stem* pStem, m_stem) {
+        connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotAnalyzeTrack);
+    }*/
+
 }
 
 QStringList PlayerManager::getVisualPlayerGroups() {
@@ -556,6 +564,63 @@ void PlayerManager::addAuxiliaryInner() {
     m_auxiliaries.append(pAuxiliary);
 }
 
+void PlayerManager::addStem() {
+    const auto locker = lockMutex(&m_mutex);
+    addStemInner();
+}
+
+void PlayerManager::addStemInner() {
+    // Do not lock m_mutex here.
+    int index = m_stem.count();
+    ChannelHandleAndGroup handleGroup =
+            m_pEngine->registerChannelGroup(groupForStem(m_stem.count()));
+    VERIFY_OR_DEBUG_ASSERT(!m_players.contains(handleGroup.handle())) {
+        return;
+    }
+
+    EngineChannel::ChannelOrientation channelOrientation;
+
+    if (m_stem.size() <= 4 || (m_stem.size() >= 9 && m_stem.size() <= 12)) {
+        channelOrientation = EngineChannel::LEFT;
+    }
+
+    else {
+        channelOrientation = EngineChannel::RIGHT;
+    }
+
+    Stem* pStem = new Stem(this,
+            m_pConfig,
+            m_pEngine,
+            m_pEffectsManager,
+            channelOrientation,
+            handleGroup);
+
+    connect(pStem,
+            &BaseTrackPlayer::trackUnloaded,
+            this,
+            &PlayerManager::slotSaveEjectedTrack);
+
+    /*if (m_pTrackAnalysisScheduler) {
+        connect(pStem,
+                &BaseTrackPlayer::newTrackLoaded,
+                this,
+                &PlayerManager::slotAnalyzeTrack);
+    }*/
+
+    // Connect the track loaded signal to the stem player so that loaded tracks are
+    // played at once.
+    connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
+
+    m_players[handleGroup.handle()] = pStem;
+    m_stem.append(pStem);
+
+    // Register the stem output with SoundManager.
+    m_pSoundManager->registerOutput(
+            AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
+
+
+}
+
 BaseTrackPlayer* PlayerManager::getPlayer(const QString& group) const {
     return getPlayer(m_pEngine->registerChannelGroup(group).handle());
 }
@@ -623,6 +688,16 @@ Auxiliary* PlayerManager::getAuxiliary(unsigned int auxiliary) const {
         return nullptr;
     }
     return m_auxiliaries[auxiliary - 1];
+}
+
+Stem* PlayerManager::getStem(unsigned int stem) const {
+    const auto locker = lockMutex(&m_mutex);
+    if (stem < 1 || stem > static_cast<unsigned int>(m_stem.size())) {
+        kLogger.warning() << "Warning getStem() called with invalid index: "
+                   << stem;
+        return nullptr;
+    }
+    return m_stem[stem - 1];
 }
 
 void PlayerManager::slotCloneDeck(const QString& source_group, const QString& target_group) {
@@ -693,6 +768,10 @@ void PlayerManager::slotLoadToPreviewDeck(const QString& location, int previewDe
 
 void PlayerManager::slotLoadToSampler(const QString& location, int sampler) {
     slotLoadLocationToPlayer(location, groupForSampler(sampler - 1));
+}
+
+void PlayerManager::slotLoadToStem(const QString& location, int stem) {
+    slotLoadLocationToPlayer(location, groupForStem(stem - 1));
 }
 
 void PlayerManager::slotLoadTrackIntoNextAvailableDeck(TrackPointer pTrack) {

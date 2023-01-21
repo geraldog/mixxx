@@ -35,6 +35,7 @@
 #include "util/translations.h"
 #include "util/versionstore.h"
 #include "vinylcontrol/vinylcontrolmanager.h"
+#include "mixer/stem.h"
 
 #ifdef __APPLE__
 #include "util/sandbox.h"
@@ -305,8 +306,12 @@ void CoreServices::initialize(QApplication* pApp) {
     m_pPlayerManager->addSampler();
     m_pPlayerManager->addSampler();
     m_pPlayerManager->addSampler();
-    m_pPlayerManager->addPreviewDeck();
 
+    for (unsigned int i=0; i < m_pPlayerManager->numDecks() * 4; i++) {
+        m_pPlayerManager->addStem();
+    }
+
+    m_pPlayerManager->addPreviewDeck();
     m_pEffectsManager->setup();
 
 #ifdef __VINYLCONTROL__
@@ -460,7 +465,6 @@ void CoreServices::initialize(QApplication* pApp) {
             m_pPlayerManager->slotLoadToDeck(musicFiles.at(i), i + 1);
         }
     }
-
     m_isInitialized = true;
 }
 
