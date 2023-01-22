@@ -1,5 +1,6 @@
 #include "mixer/deck.h"
 
+#include "track/track.h"
 #include "control/controlobject.h"
 #include "moc_deck.cpp"
 #include <QRegularExpression>
@@ -7,6 +8,7 @@
 namespace {
 
 const QRegularExpression kDeckRegex(QStringLiteral("^\\[Channel(\\d+)\\]$"));
+const QRegularExpression kFilenameRegex(QStringLiteral("([^\\/]+)\\.[^.\\/:*?\"<>|]+$"));
 
 int extractIntFromRegex(const QRegularExpression& regex, const QString& group) {
     const QRegularExpressionMatch match = regex.match(group);
@@ -29,6 +31,24 @@ int extractIntFromRegex(const QRegularExpression& regex, const QString& group) {
        return false;
     }
     return numberFromMatch;
+}
+
+QString extractFilenameFromRegex(const QRegularExpression& regex, const QString& group) {
+    const QRegularExpressionMatch match = regex.match(group);
+    DEBUG_ASSERT(match.isValid());
+    if (!match.hasMatch()) {
+        return "ERR_NO_FILE";
+    }
+    // The regex is expected to contain a single capture group with the number
+    constexpr int capturedNumberIndex = 1;
+    DEBUG_ASSERT(match.lastCapturedIndex() <= capturedNumberIndex);
+    if (match.lastCapturedIndex() < capturedNumberIndex) {
+        qWarning() << "No filename found in group" << group;
+        return "ERR_NO_FILE";
+    }
+    const QString capturedFilename = match.captured(capturedNumberIndex);
+    DEBUG_ASSERT(!capturedFilename.isNull());
+    return capturedFilename;
 }
 
 } //anonymous namespace
@@ -96,11 +116,12 @@ void Deck::threadedTensorflow(Deck* deck) {
 	}
 
         TrackPointer pTrack = deck->getLoadedTrack();
+        const QString fileName = extractFilenameFromRegex(kFilenameRegex, pTrack->getLocation());
 
-        QString firstScratchFile = QDir::homePath() + QString("/spleeterScratch_") + QString::number(firstStemNumber.toInt()) + QString(".wav");
-        QString secondScratchFile = QDir::homePath() + QString("/spleeterScratch_") + QString::number(firstStemNumber.toInt() + 1) + QString(".wav");
-        QString thirdScratchFile = QDir::homePath() + QString("/spleeterScratch_") + QString::number(firstStemNumber.toInt() + 2) + QString(".wav");
-        QString fourthScratchFile = QDir::homePath() + QString("/spleeterScratch_") + QString::number(firstStemNumber.toInt() + 3) + QString(".wav");
+        QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
+        QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
+        QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
+        QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
         deck->m_pPlayerManager->slotLoadToStem(firstScratchFile, firstStemNumber.toInt());
         deck->m_pPlayerManager->slotLoadToStem(secondScratchFile, firstStemNumber.toInt() + 1);

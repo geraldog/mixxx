@@ -12,6 +12,8 @@
 #include "track/track_decl.h"
 #include "util/class.h"
 
+#include "mixer/playermanager.h"
+
 class ControlPushButton;
 class TrackCollectionManager;
 class PlayerManagerInterface;
@@ -242,6 +244,82 @@ class AutoDJProcessor : public QObject {
     double getCrossfader() const;
     void setCrossfader(double value);
 
+    PlayerManager* m_pPlayerManager;
+
+    bool wuwei = false;
+
+    uint64_t counter = 0;
+    uint64_t DECK_1_Q_M_C_V = 0;
+    uint64_t DECK_1_Q_M_O_V = 0;
+    uint64_t DECK_1_Q_L_C_V = 0;
+    uint64_t DECK_1_Q_L_O_V = 0;
+    uint64_t DECK_1_Q_H_C_V = 0;
+    uint64_t DECK_1_Q_H_O_V = 0;
+
+    uint64_t DECK_2_Q_M_C_V = 0;
+    uint64_t DECK_2_Q_M_O_V = 0;
+    uint64_t DECK_2_Q_L_C_V = 0;
+    uint64_t DECK_2_Q_L_O_V = 0;
+    uint64_t DECK_2_Q_H_C_V = 0;
+    uint64_t DECK_2_Q_H_O_V = 0;
+
+    uint64_t CROSSFADER_X_V = 0;
+
+    int Playing1Queue = 0;
+    int Playing2Queue = 0;
+
+    bool DECK_1_Q_M_C_B = false;
+    bool DECK_1_Q_M_O_B = false;
+    bool DECK_1_Q_L_C_B = false;
+    bool DECK_1_Q_L_O_B = false;
+    bool DECK_1_Q_H_C_B = false;
+    bool DECK_1_Q_H_O_B = false;
+
+    bool DECK_2_Q_M_C_B = false;
+    bool DECK_2_Q_M_O_B = false;
+    bool DECK_2_Q_L_C_B = false;
+    bool DECK_2_Q_L_O_B = false;
+    bool DECK_2_Q_H_C_B = false;
+    bool DECK_2_Q_H_O_B = false;
+
+    bool CROSSFADER_X_L_B = false;
+    bool CROSSFADER_X_R_B = false;
+
+    double diminuendo_EQ_1_MID;
+    double crescendo_EQ_1_MID;
+    double diminuendo_EQ_1_LOW;
+    double crescendo_EQ_1_LOW;
+    double diminuendo_EQ_1_HIGH;
+    double crescendo_EQ_1_HIGH;
+
+    double diminuendo_EQ_2_MID;
+    double crescendo_EQ_2_MID;
+    double diminuendo_EQ_2_LOW;
+    double crescendo_EQ_2_LOW;
+    double diminuendo_EQ_2_HIGH;
+    double crescendo_EQ_2_HIGH;
+
+    double crescendo_CROSS_X;
+    double diminuendo_CROSS_X;
+
+    bool LOCK = false;
+
+    int WIP1 = 0;
+    double gambi_loopin1;
+    double gambi_loopout1;
+
+    int WIP2 = 0;
+    double gambi_loopin2;
+    double gambi_loopout2;
+
+    QString pathToSong1 = "1";
+    QString pathToSong2 = "1";
+
+    TrackPointer track1Loaded;
+    TrackPointer track2Loaded;
+
+    double m_PlayPositionDesired1 = 0;
+    double m_PlayPositionDesired2 = 0;
     // Following functions return seconds computed from samples or -1 if
     // track in deck has invalid sample rate (<= 0)
     double getIntroStartSecond(DeckAttributes* pDeck);

@@ -754,11 +754,12 @@ void PlayerManager::slotLoadTrackToPlayer(TrackPointer pTrack, const QString& gr
     m_lastLoadedPlayer = group;
 }
 
-void PlayerManager::slotLoadLocationToPlayer(
+TrackPointer PlayerManager::slotLoadLocationToPlayer(
         const QString& location, const QString& group, bool play) {
     // The library will get the track and then signal back to us to load the
     // track via slotLoadTrackToPlayer.
-    emit loadLocationToPlayer(location, group, play);
+    TrackPointer trackLoaded = emit loadLocationToPlayer(location, group, play);
+    return trackLoaded;
 }
 
 void PlayerManager::slotLoadLocationToPlayerMaybePlay(
@@ -782,8 +783,9 @@ void PlayerManager::slotLoadLocationToPlayerMaybePlay(
     slotLoadLocationToPlayer(location, group, play);
 }
 
-void PlayerManager::slotLoadToDeck(const QString& location, int deck) {
-    slotLoadLocationToPlayer(location, groupForDeck(deck - 1), false);
+TrackPointer PlayerManager::slotLoadToDeck(const QString& location, int deck) {
+    TrackPointer trackLoaded = slotLoadLocationToPlayer(location, groupForDeck(deck - 1), false);
+    return trackLoaded;
 }
 
 void PlayerManager::slotLoadToPreviewDeck(const QString& location, int previewDeck) {
@@ -795,7 +797,7 @@ void PlayerManager::slotLoadToSampler(const QString& location, int sampler) {
 }
 
 void PlayerManager::slotLoadToStem(const QString& location, int stem) {
-    slotLoadLocationToPlayer(location, groupForStem(stem - 1), true);
+    slotLoadLocationToPlayer(location, groupForStem(stem - 1), false);
 }
 
 void PlayerManager::slotLoadTrackIntoNextAvailableDeck(TrackPointer pTrack) {

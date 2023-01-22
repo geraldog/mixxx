@@ -84,17 +84,16 @@ void Stem::slotStemPlay(TrackPointer pTrack) {
         ControlProxy* m_StemReplayGain = new ControlProxy(stemName, "replaygain");
         ControlProxy* m_StemKeyLock = new ControlProxy(stemName, "keylock");
 
-        if (pTrack->trySetBpm(m_DeckFileBpm->get())) {
-            m_StemBpm->set(m_DeckBpm->get());
-        }
+        pTrack->trySetBpm(m_DeckFileBpm->get());
+        m_StemBpm->set(m_DeckBpm->get());
 
         m_StemKeyLock->set(m_DeckKeyLock->get());
-	m_StemReplayGain->set(m_DeckReplayGain->get() * 4);
+	m_StemReplayGain->set(m_DeckReplayGain->get());
         m_StemPlayPosition->set(m_DeckPlayPosition->get());
-        m_StemVolume->set(0.5);
+        m_StemVolume->set(0.8);
         m_StemPlay->set(1.0);
 
-	if (stemNumber % 5 == 0) {
+	if (stemNumber % 4 == 0) {
 	    if (deckNumber == "1") {
 	        QTimer::singleShot(100, this, &Stem::slotMuteDeck1);
 	    }
