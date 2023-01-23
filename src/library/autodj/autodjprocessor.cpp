@@ -197,31 +197,6 @@ AutoDJProcessor::AutoDJProcessor(
 }
 
 AutoDJProcessor::~AutoDJProcessor() {
-/*    delete m_Key1;
-    delete m_Key2;
-
-    delete m_LoopIn1;
-    delete m_LoopOut1;
-    delete m_LoopToggle1;
-
-    delete m_LoopIn2;
-    delete m_LoopOut2;
-    delete m_LoopToggle2;
-
-    delete m_PlayPosition1;
-    delete m_Playing1;
-
-    delete m_PlayPosition2;
-    delete m_Playing2;
-
-    delete m_EQ_1_LOW;
-    delete m_EQ_1_MID;
-    delete m_EQ_1_HIGH;
-
-    delete m_EQ_2_LOW;
-    delete m_EQ_2_MID;
-    delete m_EQ_2_HIGH;*/
-
     qDeleteAll(m_decks);
     m_decks.clear();
 
@@ -751,6 +726,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_EQ_2_LOW = new ControlProxy(EQ_group_2, EffectKnobParameterSlot::formatItemPrefix(0));
     ControlProxy* m_EQ_2_MID = new ControlProxy(EQ_group_2, EffectKnobParameterSlot::formatItemPrefix(1));
     ControlProxy* m_EQ_2_HIGH = new ControlProxy(EQ_group_2, EffectKnobParameterSlot::formatItemPrefix(2));
+    
+    ControlProxy* m_pStem1Volume = new ControlProxy("[Stem1]", "volume");
+    ControlProxy* m_pStem2Volume = new ControlProxy("[Stem2]", "volume");
+    ControlProxy* m_pStem3Volume = new ControlProxy("[Stem3]", "volume");
+    ControlProxy* m_pStem4Volume = new ControlProxy("[Stem4]", "volume");
+
+    ControlProxy* m_pStem5Volume = new ControlProxy("[Stem5]", "volume");
+    ControlProxy* m_pStem6Volume = new ControlProxy("[Stem6]", "volume");
+    ControlProxy* m_pStem7Volume = new ControlProxy("[Stem7]", "volume");
+    ControlProxy* m_pStem8Volume = new ControlProxy("[Stem8]", "volume");
 
     std::ifstream controlbaby;
 
@@ -1075,6 +1060,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 if (comando[1] == '1') {
                     ControlProxy* m_pStemEngage = new ControlProxy("[Channel1]", "LoadStems");
 		    m_pStemEngage->set(1.0);
+                    stemsDeck1Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1090,6 +1076,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 else if (comando[1] == '2') {
                     ControlProxy* m_pStemEngage = new ControlProxy("[Channel2]", "LoadStems");
 		    m_pStemEngage->set(1.0);
+		    stemsDeck2Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1103,6 +1090,728 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
             }
 
+            else if (comando[0] == 'S') {
+                if (comando[1] == '1') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 1 SLOPE\n";
+                                this->STEM_1_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 1 SLOPE\n";
+                                this->STEM_1_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem1Volume->get() > 0) {
+                                this->STEM_1_S_V_C_B = true;
+
+                                this->diminuendo_STEM_1_VOLUME = slopenumerico / 1000;
+                                this->STEM_1_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 1 SLOPE\n";
+                                this->STEM_1_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 1 SLOPE\n";
+                                this->STEM_1_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem1Volume->get() < 0.8) {
+                                this->STEM_1_S_V_O_B = true;
+
+                                this->crescendo_STEM_1_VOLUME = slopenumerico / 1000;
+                                this->STEM_1_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+		    }
+                }
+
+                else if (comando[1] == '2') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 2 SLOPE\n";
+                                this->STEM_2_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 2 SLOPE\n";
+                                this->STEM_2_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem2Volume->get() > 0) {
+                                this->STEM_2_S_V_C_B = true;
+
+                                this->diminuendo_STEM_2_VOLUME = slopenumerico / 1000;
+                                this->STEM_2_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 2 SLOPE\n";
+                                this->STEM_2_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 2 SLOPE\n";
+                                this->STEM_2_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem2Volume->get() < 0.8) {
+                                this->STEM_2_S_V_O_B = true;
+
+                                this->crescendo_STEM_2_VOLUME = slopenumerico / 1000;
+                                this->STEM_2_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '3') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 3 SLOPE\n";
+                                this->STEM_3_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 3 SLOPE\n";
+                                this->STEM_3_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem3Volume->get() > 0) {
+                                this->STEM_3_S_V_C_B = true;
+
+                                this->diminuendo_STEM_3_VOLUME = slopenumerico / 1000;
+                                this->STEM_3_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 3 SLOPE\n";
+                                this->STEM_3_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 3 SLOPE\n";
+                                this->STEM_3_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem3Volume->get() < 0.8) {
+                                this->STEM_3_S_V_O_B = true;
+
+                                this->crescendo_STEM_3_VOLUME = slopenumerico / 1000;
+                                this->STEM_3_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '4') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 4 SLOPE\n";
+                                this->STEM_4_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 4 SLOPE\n";
+                                this->STEM_4_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem4Volume->get() > 0) {
+                                this->STEM_4_S_V_C_B = true;
+
+                                this->diminuendo_STEM_4_VOLUME = slopenumerico / 1000;
+                                this->STEM_4_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 4 SLOPE\n";
+                                this->STEM_4_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 4 SLOPE\n";
+                                this->STEM_4_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem4Volume->get() < 0.8) {
+                                this->STEM_4_S_V_O_B = true;
+
+                                this->crescendo_STEM_4_VOLUME = slopenumerico / 1000;
+                                this->STEM_4_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '5') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 5 SLOPE\n";
+                                this->STEM_5_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 5 SLOPE\n";
+                                this->STEM_5_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem5Volume->get() > 0) {
+                                this->STEM_5_S_V_C_B = true;
+
+                                this->diminuendo_STEM_5_VOLUME = slopenumerico / 1000;
+                                this->STEM_5_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 5 SLOPE\n";
+                                this->STEM_5_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 5 SLOPE\n";
+                                this->STEM_5_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem5Volume->get() < 0.8) {
+                                this->STEM_5_S_V_O_B = true;
+
+                                this->crescendo_STEM_5_VOLUME = slopenumerico / 1000;
+                                this->STEM_5_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+		    }
+                }
+
+                else if (comando[1] == '6') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 6 SLOPE\n";
+                                this->STEM_6_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 6 SLOPE\n";
+                                this->STEM_6_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem6Volume->get() > 0) {
+                                this->STEM_6_S_V_C_B = true;
+
+                                this->diminuendo_STEM_6_VOLUME = slopenumerico / 1000;
+                                this->STEM_6_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 6 SLOPE\n";
+                                this->STEM_6_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 6 SLOPE\n";
+                                this->STEM_6_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem6Volume->get() < 0.8) {
+                                this->STEM_6_S_V_O_B = true;
+
+                                this->crescendo_STEM_6_VOLUME = slopenumerico / 1000;
+                                this->STEM_6_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '7') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 7 SLOPE\n";
+                                this->STEM_7_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 7 SLOPE\n";
+                                this->STEM_7_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem7Volume->get() > 0) {
+                                this->STEM_7_S_V_C_B = true;
+
+                                this->diminuendo_STEM_7_VOLUME = slopenumerico / 1000;
+                                this->STEM_7_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 7 SLOPE\n";
+                                this->STEM_7_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 7 SLOPE\n";
+                                this->STEM_7_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem7Volume->get() < 0.8) {
+                                this->STEM_7_S_V_O_B = true;
+
+                                this->crescendo_STEM_7_VOLUME = slopenumerico / 1000;
+                                this->STEM_7_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '8') {
+		    if (comando[2] == 'V') {
+                        if (comando[3] == 'C') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 8 SLOPE\n";
+                                this->STEM_8_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 8 SLOPE\n";
+                                this->STEM_8_S_V_C_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem8Volume->get() > 0) {
+                                this->STEM_8_S_V_C_B = true;
+
+                                this->diminuendo_STEM_8_VOLUME = slopenumerico / 1000;
+                                this->STEM_8_S_V_C_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+
+                        else if (comando[3] == 'O') {
+                            for (long unsigned int usecamisinha = 4;
+                                    usecamisinha <= comando.length();
+                                    usecamisinha++) {
+                                slope = slope + comando[usecamisinha];
+                            }
+
+                            try {
+                               slopenumerico = std::stod(slope);
+                            }
+
+                            catch (const std::invalid_argument& e) {
+                                this->wuwei = true;
+                                std::cout << "INVALID ARGUMENT FOR STEM 8 SLOPE\n";
+                                this->STEM_8_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            catch (const std::out_of_range& e) {
+                                this->wuwei = true;
+                                std::cout << "OUT OF RANGE ARGUMENT FOR STEM 8 SLOPE\n";
+                                this->STEM_8_S_V_O_B = false;
+                                this->LOCK = false;
+                                goto clean_exit;
+                            }
+
+                            if (m_pStem8Volume->get() < 0.8) {
+                                this->STEM_8_S_V_O_B = true;
+
+                                this->crescendo_STEM_8_VOLUME = slopenumerico / 1000;
+                                this->STEM_8_S_V_O_V = 1000000;
+  
+                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado << std::to_string(this->counter) + "\n";
+                                confirmado.close();
+
+		                this->counter++;
+		                this->LOCK = false;
+                                goto clean_exit;
+			    }
+                        }
+                    }
+                }
+	    }
+	    
             else if (comando[0] == 'C') {
                 if (comando[1] == '1') {
                     m_LoopToggle1->set(1);
@@ -1246,7 +1955,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->CROSSFADER_X_R_B = true;
 
                         this->crescendo_CROSS_X = slopenumerico / 1000;
-                        this->CROSSFADER_X_V = 10000;
+                        this->CROSSFADER_X_V = 1000000;
 
                         confirmado.open("/home/dumbo/confirmixxx.txt");
                         confirmado << std::to_string(this->counter) + "\n";
@@ -1262,7 +1971,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->CROSSFADER_X_L_B = true;
 
                         this->diminuendo_CROSS_X = slopenumerico / 1000;
-                        this->CROSSFADER_X_V = 10000;
+                        this->CROSSFADER_X_V = 1000000;
 
                         confirmado.open("/home/dumbo/confirmixxx.txt");
                         confirmado << std::to_string(this->counter) + "\n";
@@ -1782,7 +2491,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_H_O_B = true;
 
                                 this->crescendo_EQ_1_HIGH = slopenumerico / 1000;
-                                this->DECK_1_Q_H_O_V = 1000;
+                                this->DECK_1_Q_H_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -1824,7 +2533,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_H_C_B = true;
 
                                 this->diminuendo_EQ_1_HIGH = slopenumerico / 1000;
-                                this->DECK_1_Q_H_C_V = 1000;
+                                this->DECK_1_Q_H_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -1868,7 +2577,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_M_O_B = true;
 
                                 this->crescendo_EQ_1_MID = slopenumerico / 1000;
-                                this->DECK_1_Q_M_O_V = 1000;
+                                this->DECK_1_Q_M_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -1910,7 +2619,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_M_C_B = true;
 
                                 this->diminuendo_EQ_1_MID = slopenumerico / 1000;
-                                this->DECK_1_Q_M_C_V = 1000;
+                                this->DECK_1_Q_M_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -1954,7 +2663,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_L_O_B = true;
 
                                 this->crescendo_EQ_1_LOW = slopenumerico / 1000;
-                                this->DECK_1_Q_L_O_V = 1000;
+                                this->DECK_1_Q_L_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -1996,7 +2705,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_1_Q_L_C_B = true;
 
                                 this->diminuendo_EQ_1_LOW = slopenumerico / 1000;
-                                this->DECK_1_Q_L_C_V = 1000;
+                                this->DECK_1_Q_L_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2042,7 +2751,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_H_O_B = true;
 
                                 this->crescendo_EQ_2_HIGH = slopenumerico / 1000;
-                                this->DECK_2_Q_H_O_V = 1000;
+                                this->DECK_2_Q_H_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2084,7 +2793,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_H_C_B = true;
 
                                 this->diminuendo_EQ_2_HIGH = slopenumerico / 1000;
-                                this->DECK_2_Q_H_C_V = 1000;
+                                this->DECK_2_Q_H_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2128,7 +2837,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_M_O_B = true;
 
                                 this->crescendo_EQ_2_MID = slopenumerico / 1000;
-                                this->DECK_2_Q_M_O_V = 1000;
+                                this->DECK_2_Q_M_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2170,7 +2879,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_M_C_B = true;
 
                                 this->diminuendo_EQ_2_MID = slopenumerico / 1000;
-                                this->DECK_2_Q_M_C_V = 1000;
+                                this->DECK_2_Q_M_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2214,7 +2923,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_L_O_B = true;
 
                                 this->crescendo_EQ_2_LOW = slopenumerico / 1000;
-                                this->DECK_2_Q_L_O_V = 1000;
+                                this->DECK_2_Q_L_O_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2256,7 +2965,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->DECK_2_Q_L_C_B = true;
 
                                 this->diminuendo_EQ_2_LOW = slopenumerico / 1000;
-                                this->DECK_2_Q_L_C_V = 1000;
+                                this->DECK_2_Q_L_C_V = 100000;
 
                                 confirmado.open("/home/dumbo/confirmixxx.txt");
                                 confirmado << std::to_string(this->counter) + "\n";
@@ -2332,6 +3041,86 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         this->DECK_2_Q_H_O_V--;
     }
 
+    if (this->STEM_1_S_V_C_B == true && this->STEM_1_S_V_C_V > 0) {
+        m_pStem1Volume->set(m_pStem1Volume->get() - this->diminuendo_STEM_1_VOLUME);
+	this->STEM_1_S_V_C_V--;
+    }
+
+    if (this->STEM_1_S_V_O_B == true && this->STEM_1_S_V_O_V > 0) {
+        m_pStem1Volume->set(m_pStem1Volume->get() + this->crescendo_STEM_1_VOLUME);
+	this->STEM_1_S_V_O_V--;
+    }
+
+    if (this->STEM_2_S_V_C_B == true && this->STEM_2_S_V_C_V > 0) {
+        m_pStem2Volume->set(m_pStem2Volume->get() - this->diminuendo_STEM_2_VOLUME);
+	this->STEM_2_S_V_C_V--;
+    }
+
+    if (this->STEM_2_S_V_O_B == true && this->STEM_2_S_V_O_V > 0) {
+        m_pStem2Volume->set(m_pStem2Volume->get() + this->crescendo_STEM_2_VOLUME);
+	this->STEM_2_S_V_O_V--;
+    }
+
+    if (this->STEM_3_S_V_C_B == true && this->STEM_3_S_V_C_V > 0) {
+        m_pStem3Volume->set(m_pStem3Volume->get() - this->diminuendo_STEM_3_VOLUME);
+	this->STEM_3_S_V_C_V--;
+    }
+
+    if (this->STEM_3_S_V_O_B == true && this->STEM_3_S_V_O_V > 0) {
+        m_pStem3Volume->set(m_pStem3Volume->get() + this->crescendo_STEM_3_VOLUME);
+	this->STEM_3_S_V_O_V--;
+    }
+
+    if (this->STEM_4_S_V_C_B == true && this->STEM_4_S_V_C_V > 0) {
+        m_pStem4Volume->set(m_pStem4Volume->get() - this->diminuendo_STEM_4_VOLUME);
+	this->STEM_4_S_V_C_V--;
+    }
+
+    if (this->STEM_4_S_V_O_B == true && this->STEM_4_S_V_O_V > 0) {
+        m_pStem4Volume->set(m_pStem4Volume->get() + this->crescendo_STEM_4_VOLUME);
+	this->STEM_4_S_V_O_V--;
+    }
+
+    if (this->STEM_5_S_V_C_B == true && this->STEM_5_S_V_C_V > 0) {
+        m_pStem5Volume->set(m_pStem5Volume->get() - this->diminuendo_STEM_5_VOLUME);
+	this->STEM_5_S_V_C_V--;
+    }
+
+    if (this->STEM_5_S_V_O_B == true && this->STEM_5_S_V_O_V > 0) {
+        m_pStem5Volume->set(m_pStem5Volume->get() + this->crescendo_STEM_5_VOLUME);
+	this->STEM_5_S_V_O_V--;
+    }
+
+    if (this->STEM_6_S_V_C_B == true && this->STEM_6_S_V_C_V > 0) {
+        m_pStem6Volume->set(m_pStem6Volume->get() - this->diminuendo_STEM_6_VOLUME);
+	this->STEM_6_S_V_C_V--;
+    }
+
+    if (this->STEM_6_S_V_O_B == true && this->STEM_6_S_V_O_V > 0) {
+        m_pStem6Volume->set(m_pStem6Volume->get() + this->crescendo_STEM_6_VOLUME);
+	this->STEM_6_S_V_O_V--;
+    }
+
+    if (this->STEM_7_S_V_C_B == true && this->STEM_7_S_V_C_V > 0) {
+        m_pStem7Volume->set(m_pStem7Volume->get() - this->diminuendo_STEM_7_VOLUME);
+	this->STEM_7_S_V_C_V--;
+    }
+
+    if (this->STEM_7_S_V_O_B == true && this->STEM_7_S_V_O_V > 0) {
+        m_pStem7Volume->set(m_pStem7Volume->get() + this->crescendo_STEM_7_VOLUME);
+	this->STEM_7_S_V_O_V--;
+    }
+
+    if (this->STEM_8_S_V_C_B == true && this->STEM_8_S_V_C_V > 0) {
+        m_pStem8Volume->set(m_pStem8Volume->get() - this->diminuendo_STEM_8_VOLUME);
+	this->STEM_8_S_V_C_V--;
+    }
+
+    if (this->STEM_8_S_V_O_B == true && this->STEM_8_S_V_O_V > 0) {
+        m_pStem8Volume->set(m_pStem8Volume->get() + this->crescendo_STEM_8_VOLUME);
+	this->STEM_8_S_V_O_V--;
+    }
+
     if (this->CROSSFADER_X_L_B == true && this->CROSSFADER_X_V > 0) {
         if (m_pCOCrossfader->get() >= 1.0) {
             m_photCue21Clear->set(1.0);
@@ -2401,6 +3190,86 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         this->DECK_2_Q_H_O_B = false;
     }
 
+    if (this->STEM_1_S_V_C_B == true && (this->STEM_1_S_V_C_V <= 0 || m_pStem1Volume->get() <= 0)) {
+        this->STEM_1_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 1\n";
+    }
+
+    if (this->STEM_1_S_V_O_B == true && (this->STEM_1_S_V_O_V <= 0 || m_pStem1Volume->get() >= 0.8)) {
+        this->STEM_1_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 1\n";
+    }
+
+    if (this->STEM_2_S_V_C_B == true && (this->STEM_2_S_V_C_V <= 0 || m_pStem2Volume->get() <= 0)) {
+        this->STEM_2_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 2\n";
+    }
+
+    if (this->STEM_2_S_V_O_B == true && (this->STEM_2_S_V_O_V <= 0 || m_pStem2Volume->get() >= 0.8)) {
+        this->STEM_2_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 2\n";
+    }
+
+    if (this->STEM_3_S_V_C_B == true && (this->STEM_3_S_V_C_V <= 0 || m_pStem3Volume->get() <= 0)) {
+        this->STEM_3_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 3\n";
+    }
+
+    if (this->STEM_3_S_V_O_B == true && (this->STEM_3_S_V_O_V <= 0 || m_pStem3Volume->get() >= 0.8)) {
+        this->STEM_3_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 3\n";
+    }
+
+    if (this->STEM_4_S_V_C_B == true && (this->STEM_4_S_V_C_V <= 0 || m_pStem4Volume->get() <= 0)) {
+        this->STEM_4_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 4\n";
+    }
+
+    if (this->STEM_4_S_V_O_B == true && (this->STEM_4_S_V_O_V <= 0 || m_pStem4Volume->get() >= 0.8)) {
+        this->STEM_4_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 4\n";
+    }
+
+    if (this->STEM_5_S_V_C_B == true && (this->STEM_5_S_V_C_V <= 0 || m_pStem5Volume->get() <= 0)) {
+        this->STEM_5_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 5\n";
+    }
+
+    if (this->STEM_5_S_V_O_B == true && (this->STEM_5_S_V_O_V <= 0 || m_pStem5Volume->get() >= 0.8)) {
+        this->STEM_5_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 5\n";
+    }
+
+    if (this->STEM_6_S_V_C_B == true && (this->STEM_6_S_V_C_V <= 0 || m_pStem6Volume->get() <= 0)) {
+        this->STEM_6_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 6\n";
+    }
+
+    if (this->STEM_6_S_V_O_B == true && (this->STEM_6_S_V_O_V <= 0 || m_pStem6Volume->get() >= 0.8)) {
+        this->STEM_6_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 6\n";
+    }
+
+    if (this->STEM_7_S_V_C_B == true && (this->STEM_7_S_V_C_V <= 0 || m_pStem7Volume->get() <= 0)) {
+        this->STEM_7_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 7\n";
+    }
+
+    if (this->STEM_7_S_V_O_B == true && (this->STEM_7_S_V_O_V <= 0 || m_pStem7Volume->get() >= 0.8)) {
+        this->STEM_7_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 7\n";
+    }
+
+    if (this->STEM_8_S_V_C_B == true && (this->STEM_8_S_V_C_V <= 0 || m_pStem8Volume->get() <= 0)) {
+        this->STEM_8_S_V_C_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 8\n";
+    }
+
+    if (this->STEM_8_S_V_O_B == true && (this->STEM_8_S_V_O_V <= 0 || m_pStem8Volume->get() >= 0.8)) {
+        this->STEM_8_S_V_O_B = false;
+        std::cout << "DONE VOLUME SETTING FOR STEM 8\n";
+    }
+
     if (this->CROSSFADER_X_L_B == true &&
             (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() <= -1.0)) {
         this->CROSSFADER_X_L_B = false;
@@ -2417,6 +3286,225 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         m_Playing1->set(0.0);
     }
 
+    if (stemsDeck1Playing == true && m_Playing1->get() == 1.0) {
+        ControlProxy* m_Stem1Position = new ControlProxy(QString("[Stem1]"), "playposition");
+        ControlProxy* m_Stem2Position = new ControlProxy(QString("[Stem2]"), "playposition");
+        ControlProxy* m_Stem3Position = new ControlProxy(QString("[Stem3]"), "playposition");
+        ControlProxy* m_Stem4Position = new ControlProxy(QString("[Stem4]"), "playposition");
+
+        ControlProxy* m_Stem1Playing = new ControlProxy(QString("[Stem1]"), "play");
+        ControlProxy* m_Stem2Playing = new ControlProxy(QString("[Stem2]"), "play");
+        ControlProxy* m_Stem3Playing = new ControlProxy(QString("[Stem3]"), "play");
+        ControlProxy* m_Stem4Playing = new ControlProxy(QString("[Stem4]"), "play");
+
+        ControlProxy* m_Deck1Scratch2Enabled = new ControlProxy(QString("[Channel1]"), "scratch2_enable");
+        ControlProxy* m_Stem1Scratch2Enabled = new ControlProxy(QString("[Stem1]"), "scratch2_enable");
+        ControlProxy* m_Stem2Scratch2Enabled = new ControlProxy(QString("[Stem2]"), "scratch2_enable");
+        ControlProxy* m_Stem3Scratch2Enabled = new ControlProxy(QString("[Stem3]"), "scratch2_enable");
+        ControlProxy* m_Stem4Scratch2Enabled = new ControlProxy(QString("[Stem4]"), "scratch2_enable");
+
+        ControlProxy* m_Deck1Scratch2 = new ControlProxy(QString("[Channel1]"), "scratch2");
+        ControlProxy* m_Stem1Scratch2 = new ControlProxy(QString("[Stem1]"), "scratch2");
+        ControlProxy* m_Stem2Scratch2 = new ControlProxy(QString("[Stem2]"), "scratch2");
+        ControlProxy* m_Stem3Scratch2 = new ControlProxy(QString("[Stem3]"), "scratch2");
+        ControlProxy* m_Stem4Scratch2 = new ControlProxy(QString("[Stem4]"), "scratch2");
+
+        if (stemsDeck1Scratching == false &&
+            m_Deck1Scratch2Enabled->get() == 0.0 &&
+	    m_Playing1->get() == 1.0 &&
+            (m_PlayPosition1->get() != m_Stem1Position->get() ||
+             m_PlayPosition1->get() != m_Stem2Position->get() ||
+             m_PlayPosition1->get() != m_Stem3Position->get() ||
+             m_PlayPosition1->get() != m_Stem4Position->get())) {
+
+            m_Stem1Position->set(m_PlayPosition1->get());
+            m_Stem2Position->set(m_PlayPosition1->get());
+            m_Stem3Position->set(m_PlayPosition1->get());
+            m_Stem4Position->set(m_PlayPosition1->get());
+
+	    goto clean_stem_exit;
+	}
+
+        else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
+            stemsDeck1Scratching == false &&
+	    m_Playing1->get() == 1.0) {
+
+	    stemsDeck1Scratching = true;
+
+            m_Stem1Scratch2Enabled->set(1);
+            m_Stem2Scratch2Enabled->set(1);
+            m_Stem3Scratch2Enabled->set(1);
+            m_Stem4Scratch2Enabled->set(1);
+
+            m_Stem1Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem2Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem3Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem4Scratch2->set(m_Deck1Scratch2->get());
+
+	    goto clean_stem_exit;
+        }
+
+	else if (m_Deck1Scratch2Enabled->get() == 0.0 &&
+                 stemsDeck1Scratching == true &&
+	         m_Playing1->get() == 1.0) {
+
+            stemsDeck1Scratching = false;
+
+            m_Stem1Scratch2Enabled->set(0);
+            m_Stem2Scratch2Enabled->set(0);
+            m_Stem3Scratch2Enabled->set(0);
+            m_Stem4Scratch2Enabled->set(0);
+
+	    goto clean_stem_exit;
+
+        }
+
+        else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
+                 stemsDeck1Scratching == true &&
+	         m_Playing1->get() == 1.0) {
+
+            m_Stem1Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem2Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem3Scratch2->set(m_Deck1Scratch2->get());
+            m_Stem4Scratch2->set(m_Deck1Scratch2->get());
+
+	    goto clean_stem_exit;
+        }
+
+clean_stem_exit:
+        delete m_Deck1Scratch2Enabled;
+	delete m_Stem1Scratch2Enabled;
+	delete m_Stem2Scratch2Enabled;
+	delete m_Stem3Scratch2Enabled;
+	delete m_Stem4Scratch2Enabled;
+
+	delete m_Deck1Scratch2;
+	delete m_Stem1Scratch2;
+	delete m_Stem2Scratch2;
+	delete m_Stem3Scratch2;
+	delete m_Stem4Scratch2;
+
+        delete m_Stem1Position;
+        delete m_Stem2Position;
+        delete m_Stem3Position;
+        delete m_Stem4Position;
+
+        delete m_Stem1Playing;
+	delete m_Stem2Playing;
+	delete m_Stem3Playing;
+	delete m_Stem4Playing;
+    }
+
+    if (stemsDeck2Playing == true && m_Playing2->get() == 1.0) {
+        ControlProxy* m_Stem5Position = new ControlProxy(QString("[Stem5]"), "playposition");
+        ControlProxy* m_Stem6Position = new ControlProxy(QString("[Stem6]"), "playposition");
+        ControlProxy* m_Stem7Position = new ControlProxy(QString("[Stem7]"), "playposition");
+        ControlProxy* m_Stem8Position = new ControlProxy(QString("[Stem8]"), "playposition");
+
+        ControlProxy* m_Stem5Playing = new ControlProxy(QString("[Stem5]"), "play");
+        ControlProxy* m_Stem6Playing = new ControlProxy(QString("[Stem6]"), "play");
+        ControlProxy* m_Stem7Playing = new ControlProxy(QString("[Stem7]"), "play");
+        ControlProxy* m_Stem8Playing = new ControlProxy(QString("[Stem8]"), "play");
+
+        ControlProxy* m_Deck2Scratch2Enabled = new ControlProxy(QString("[Channel2]"), "scratch2_enable");
+        ControlProxy* m_Stem5Scratch2Enabled = new ControlProxy(QString("[Stem5]"), "scratch2_enable");
+        ControlProxy* m_Stem6Scratch2Enabled = new ControlProxy(QString("[Stem6]"), "scratch2_enable");
+        ControlProxy* m_Stem7Scratch2Enabled = new ControlProxy(QString("[Stem7]"), "scratch2_enable");
+        ControlProxy* m_Stem8Scratch2Enabled = new ControlProxy(QString("[Stem8]"), "scratch2_enable");
+
+        ControlProxy* m_Deck2Scratch2 = new ControlProxy(QString("[Channel2]"), "scratch2");
+        ControlProxy* m_Stem5Scratch2 = new ControlProxy(QString("[Stem5]"), "scratch2");
+        ControlProxy* m_Stem6Scratch2 = new ControlProxy(QString("[Stem6]"), "scratch2");
+        ControlProxy* m_Stem7Scratch2 = new ControlProxy(QString("[Stem7]"), "scratch2");
+        ControlProxy* m_Stem8Scratch2 = new ControlProxy(QString("[Stem8]"), "scratch2");
+
+        if (stemsDeck2Scratching == false &&
+            m_Deck2Scratch2Enabled->get() == 0.0 &&
+	    m_Playing2->get() == 1.0 &&
+            (m_PlayPosition2->get() != m_Stem5Position->get() ||
+             m_PlayPosition2->get() != m_Stem6Position->get() ||
+             m_PlayPosition2->get() != m_Stem7Position->get() ||
+             m_PlayPosition2->get() != m_Stem8Position->get())) {
+
+            m_Stem5Position->set(m_PlayPosition2->get());
+            m_Stem6Position->set(m_PlayPosition2->get());
+            m_Stem7Position->set(m_PlayPosition2->get());
+            m_Stem8Position->set(m_PlayPosition2->get());
+
+	    goto clean_stem_deck_2_exit;
+	}
+
+        else if (m_Deck2Scratch2Enabled->get() == 1.0 &&
+            stemsDeck2Scratching == false &&
+	    m_Playing2->get() == 1.0) {
+
+	    stemsDeck2Scratching = true;
+
+            m_Stem5Scratch2Enabled->set(1);
+            m_Stem6Scratch2Enabled->set(1);
+            m_Stem7Scratch2Enabled->set(1);
+            m_Stem8Scratch2Enabled->set(1);
+
+            m_Stem5Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem6Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem7Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem8Scratch2->set(m_Deck2Scratch2->get());
+
+	    goto clean_stem_deck_2_exit;
+        }
+
+	else if (m_Deck2Scratch2Enabled->get() == 0.0 &&
+                 stemsDeck2Scratching == true &&
+	         m_Playing2->get() == 1.0) {
+
+            stemsDeck2Scratching = false;
+
+            m_Stem5Scratch2Enabled->set(0);
+            m_Stem6Scratch2Enabled->set(0);
+            m_Stem7Scratch2Enabled->set(0);
+            m_Stem8Scratch2Enabled->set(0);
+
+	    goto clean_stem_deck_2_exit;
+
+        }
+
+        else if (m_Deck2Scratch2Enabled->get() == 1.0 &&
+                 stemsDeck2Scratching == true &&
+	         m_Playing2->get() == 1.0) {
+
+            m_Stem5Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem6Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem7Scratch2->set(m_Deck2Scratch2->get());
+            m_Stem8Scratch2->set(m_Deck2Scratch2->get());
+
+	    goto clean_stem_deck_2_exit;
+        }
+
+clean_stem_deck_2_exit:
+        delete m_Deck2Scratch2Enabled;
+	delete m_Stem5Scratch2Enabled;
+	delete m_Stem6Scratch2Enabled;
+	delete m_Stem7Scratch2Enabled;
+	delete m_Stem8Scratch2Enabled;
+
+	delete m_Deck2Scratch2;
+	delete m_Stem5Scratch2;
+	delete m_Stem6Scratch2;
+	delete m_Stem7Scratch2;
+	delete m_Stem8Scratch2;
+
+        delete m_Stem5Position;
+        delete m_Stem6Position;
+        delete m_Stem7Position;
+        delete m_Stem8Position;
+
+        delete m_Stem5Playing;
+	delete m_Stem6Playing;
+	delete m_Stem7Playing;
+	delete m_Stem8Playing;
+    }
+
+clean_exit:
     if (m_Playing1->get() == 1.0) {
         double playPosition1 = m_PlayPosition1->get();
 
@@ -2433,7 +3521,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         confirmado.close();
     }
 
-clean_exit:
     delete m_pCue1;
     delete m_pCue2;
     delete m_photCue11Set;
@@ -2465,6 +3552,16 @@ clean_exit:
     delete m_EQ_2_MID;
     delete m_EQ_2_HIGH;
 
+    delete m_pStem1Volume;
+    delete m_pStem2Volume;
+    delete m_pStem3Volume;
+    delete m_pStem4Volume;
+    
+    delete m_pStem5Volume;
+    delete m_pStem6Volume;
+    delete m_pStem7Volume;
+    delete m_pStem8Volume;
+    
     return;
 }
 
@@ -2573,6 +3670,52 @@ void AutoDJProcessor::maybeFillRandomTracks() {
 }
 
 void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) {
+    if (stemsDeck1Playing == true) {
+        ControlProxy* m_Playing1 = new ControlProxy(QString("[Channel1]"), "play");
+        ControlProxy* m_Stem1Stop = new ControlProxy(QString("[Stem1]"), "stop");
+        ControlProxy* m_Stem2Stop = new ControlProxy(QString("[Stem2]"), "stop");
+        ControlProxy* m_Stem3Stop = new ControlProxy(QString("[Stem3]"), "stop");
+        ControlProxy* m_Stem4Stop = new ControlProxy(QString("[Stem4]"), "stop");
+
+        if (m_Playing1->get() == 0.0) {
+            stemsDeck1Playing = false;
+
+            m_Stem1Stop->set(1.0);
+            m_Stem2Stop->set(1.0);
+            m_Stem3Stop->set(1.0);
+            m_Stem4Stop->set(1.0);
+	}
+
+        delete m_Playing1;
+        delete m_Stem1Stop;
+	delete m_Stem2Stop;
+	delete m_Stem3Stop;
+	delete m_Stem4Stop;
+    }
+
+    if (stemsDeck2Playing == true) {
+        ControlProxy* m_Playing2 = new ControlProxy(QString("[Channel2]"), "play");
+        ControlProxy* m_Stem5Stop = new ControlProxy(QString("[Stem5]"), "stop");
+        ControlProxy* m_Stem6Stop = new ControlProxy(QString("[Stem6]"), "stop");
+        ControlProxy* m_Stem7Stop = new ControlProxy(QString("[Stem7]"), "stop");
+        ControlProxy* m_Stem8Stop = new ControlProxy(QString("[Stem8]"), "stop");
+
+        if (m_Playing2->get() == 0.0) {
+            stemsDeck2Playing = false;
+
+            m_Stem5Stop->set(1.0);
+            m_Stem6Stop->set(1.0);
+            m_Stem7Stop->set(1.0);
+            m_Stem8Stop->set(1.0);
+	}
+
+        delete m_Playing2;
+        delete m_Stem5Stop;
+	delete m_Stem6Stop;
+	delete m_Stem7Stop;
+	delete m_Stem8Stop;
+    }
+
     if constexpr (sDebug) {
         qDebug() << this << "playerPlayChanged" << thisDeck->group << playing;
     }

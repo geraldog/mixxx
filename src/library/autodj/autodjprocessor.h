@@ -263,6 +263,24 @@ class AutoDJProcessor : public QObject {
     uint64_t DECK_2_Q_H_C_V = 0;
     uint64_t DECK_2_Q_H_O_V = 0;
 
+    uint64_t STEM_1_S_V_C_V = 0;
+    uint64_t STEM_1_S_V_O_V = 0;
+    uint64_t STEM_2_S_V_C_V = 0;
+    uint64_t STEM_2_S_V_O_V = 0;
+    uint64_t STEM_3_S_V_C_V = 0;
+    uint64_t STEM_3_S_V_O_V = 0;
+    uint64_t STEM_4_S_V_C_V = 0;
+    uint64_t STEM_4_S_V_O_V = 0;
+
+    uint64_t STEM_5_S_V_C_V = 0;
+    uint64_t STEM_5_S_V_O_V = 0;
+    uint64_t STEM_6_S_V_C_V = 0;
+    uint64_t STEM_6_S_V_O_V = 0;
+    uint64_t STEM_7_S_V_C_V = 0;
+    uint64_t STEM_7_S_V_O_V = 0;
+    uint64_t STEM_8_S_V_C_V = 0;
+    uint64_t STEM_8_S_V_O_V = 0;
+
     uint64_t CROSSFADER_X_V = 0;
 
     int Playing1Queue = 0;
@@ -282,6 +300,24 @@ class AutoDJProcessor : public QObject {
     bool DECK_2_Q_H_C_B = false;
     bool DECK_2_Q_H_O_B = false;
 
+    bool STEM_1_S_V_C_B = false;
+    bool STEM_1_S_V_O_B = false;
+    bool STEM_2_S_V_C_B = false;
+    bool STEM_2_S_V_O_B = false;
+    bool STEM_3_S_V_C_B = false;
+    bool STEM_3_S_V_O_B = false;
+    bool STEM_4_S_V_C_B = false;
+    bool STEM_4_S_V_O_B = false;
+
+    bool STEM_5_S_V_C_B = false;
+    bool STEM_5_S_V_O_B = false;
+    bool STEM_6_S_V_C_B = false;
+    bool STEM_6_S_V_O_B = false;
+    bool STEM_7_S_V_C_B = false;
+    bool STEM_7_S_V_O_B = false;
+    bool STEM_8_S_V_C_B = false;
+    bool STEM_8_S_V_O_B = false;
+
     bool CROSSFADER_X_L_B = false;
     bool CROSSFADER_X_R_B = false;
 
@@ -298,6 +334,24 @@ class AutoDJProcessor : public QObject {
     double crescendo_EQ_2_LOW;
     double diminuendo_EQ_2_HIGH;
     double crescendo_EQ_2_HIGH;
+
+    double diminuendo_STEM_1_VOLUME;
+    double crescendo_STEM_1_VOLUME;
+    double diminuendo_STEM_2_VOLUME;
+    double crescendo_STEM_2_VOLUME;
+    double diminuendo_STEM_3_VOLUME;
+    double crescendo_STEM_3_VOLUME;
+    double diminuendo_STEM_4_VOLUME;
+    double crescendo_STEM_4_VOLUME;
+
+    double diminuendo_STEM_5_VOLUME;
+    double crescendo_STEM_5_VOLUME;
+    double diminuendo_STEM_6_VOLUME;
+    double crescendo_STEM_6_VOLUME;
+    double diminuendo_STEM_7_VOLUME;
+    double crescendo_STEM_7_VOLUME;
+    double diminuendo_STEM_8_VOLUME;
+    double crescendo_STEM_8_VOLUME;
 
     double crescendo_CROSS_X;
     double diminuendo_CROSS_X;
@@ -317,6 +371,12 @@ class AutoDJProcessor : public QObject {
 
     TrackPointer track1Loaded;
     TrackPointer track2Loaded;
+
+    bool stemsDeck1Playing = false;
+    bool stemsDeck2Playing = false;
+
+    bool stemsDeck1Scratching = false;
+    bool stemsDeck2Scratching = false;
 
     double m_PlayPositionDesired1 = 0;
     double m_PlayPositionDesired2 = 0;

@@ -583,7 +583,11 @@ void PlayerManager::addStemInner() {
 
     EngineChannel::ChannelOrientation channelOrientation;
 
-    if (m_stem.size() <= 4 || (m_stem.size() >= 9 && m_stem.size() <= 12)) {
+    //if (m_stem.size() <= 4 || (m_stem.size() >= 9 && m_stem.size() <= 12)) {
+    //    channelOrientation = EngineChannel::LEFT;
+    //}
+
+    if (index <= 3 || (index >= 8 && index <= 11)) {
         channelOrientation = EngineChannel::LEFT;
     }
 
