@@ -79,24 +79,11 @@ Deck::~Deck() {
     delete m_pStemControl;
 }
 
-void Deck::Deallocator(void* data, size_t length, void* arg)
-{
-	//free(data);
-	//data = nullptr;
-}
-
 void Deck::slotStemEnabled(double v) {
     bool enable = v > 0.0;
 
     if (enable) {
-        QThread *threadTF = QThread::create(threadedTensorflow, this);
-	connect(threadTF, &QThread::finished, threadTF, &QThread::deleteLater);
-        threadTF->start();
-    }
-}
-
-void Deck::threadedTensorflow(Deck* deck) {
-        const int deckNumber = extractIntFromRegex(kDeckRegex, deck->deckName);
+        const int deckNumber = extractIntFromRegex(kDeckRegex, this->deckName);
 	QString firstStemNumber;
 
 	if (deckNumber == 1) {
@@ -115,7 +102,7 @@ void Deck::threadedTensorflow(Deck* deck) {
 	    firstStemNumber = "13";
 	}
 
-        TrackPointer pTrack = deck->getLoadedTrack();
+        TrackPointer pTrack = this->getLoadedTrack();
         const QString fileName = extractFilenameFromRegex(kFilenameRegex, pTrack->getLocation());
 
         QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
@@ -123,8 +110,9 @@ void Deck::threadedTensorflow(Deck* deck) {
         QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
         QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
-        deck->m_pPlayerManager->slotLoadToStem(firstScratchFile, firstStemNumber.toInt());
-        deck->m_pPlayerManager->slotLoadToStem(secondScratchFile, firstStemNumber.toInt() + 1);
-        deck->m_pPlayerManager->slotLoadToStem(thirdScratchFile, firstStemNumber.toInt() + 2);
-        deck->m_pPlayerManager->slotLoadToStem(fourthScratchFile, firstStemNumber.toInt() + 3);
+        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, firstStemNumber.toInt());
+        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, firstStemNumber.toInt() + 1);
+        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, firstStemNumber.toInt() + 2);
+        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, firstStemNumber.toInt() + 3);
+    }
 }
