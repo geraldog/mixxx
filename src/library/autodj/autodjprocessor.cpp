@@ -704,11 +704,47 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_gotoandplay");
     ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_gotoandplay");
 
-    ControlProxy* m_photCue11Set = new ControlProxy(QString("[Channel1]"), "hotcue_1_set");
-    ControlProxy* m_photCue21Set = new ControlProxy(QString("[Channel2]"), "hotcue_1_set");
+    ControlProxy* m_pHotCue11Set = new ControlProxy(QString("[Channel1]"), "hotcue_1_set");
+    ControlProxy* m_pHotCue21Set = new ControlProxy(QString("[Channel2]"), "hotcue_1_set");
+    ControlProxy* m_pHotCue12Set = new ControlProxy(QString("[Channel1]"), "hotcue_2_set");
+    ControlProxy* m_pHotCue22Set = new ControlProxy(QString("[Channel2]"), "hotcue_2_set");
+    ControlProxy* m_pHotCue13Set = new ControlProxy(QString("[Channel1]"), "hotcue_3_set");
+    ControlProxy* m_pHotCue23Set = new ControlProxy(QString("[Channel2]"), "hotcue_3_set");
+    ControlProxy* m_pHotCue14Set = new ControlProxy(QString("[Channel1]"), "hotcue_4_set");
+    ControlProxy* m_pHotCue24Set = new ControlProxy(QString("[Channel2]"), "hotcue_4_set");
+    ControlProxy* m_pHotCue15Set = new ControlProxy(QString("[Channel1]"), "hotcue_5_set");
+    ControlProxy* m_pHotCue25Set = new ControlProxy(QString("[Channel2]"), "hotcue_5_set");
+    ControlProxy* m_pHotCue16Set = new ControlProxy(QString("[Channel1]"), "hotcue_6_set");
+    ControlProxy* m_pHotCue26Set = new ControlProxy(QString("[Channel2]"), "hotcue_6_set");
+    ControlProxy* m_pHotCue17Set = new ControlProxy(QString("[Channel1]"), "hotcue_7_set");
+    ControlProxy* m_pHotCue27Set = new ControlProxy(QString("[Channel2]"), "hotcue_7_set");
+    ControlProxy* m_pHotCue18Set = new ControlProxy(QString("[Channel1]"), "hotcue_8_set");
+    ControlProxy* m_pHotCue28Set = new ControlProxy(QString("[Channel2]"), "hotcue_8_set");
+    ControlProxy* m_pHotCue19Set = new ControlProxy(QString("[Channel1]"), "hotcue_9_set");
+    ControlProxy* m_pHotCue29Set = new ControlProxy(QString("[Channel2]"), "hotcue_9_set");
+    ControlProxy* m_pHotCue110Set = new ControlProxy(QString("[Channel1]"), "hotcue_10_set");
+    ControlProxy* m_pHotCue210Set = new ControlProxy(QString("[Channel2]"), "hotcue_10_set");
 
-    ControlProxy* m_photCue11Clear = new ControlProxy(QString("[Channel1]"), "hotcue_1_clear");
-    ControlProxy* m_photCue21Clear = new ControlProxy(QString("[Channel2]"), "hotcue_1_clear");
+    ControlProxy* m_pHotCue11Clear = new ControlProxy(QString("[Channel1]"), "hotcue_1_clear");
+    ControlProxy* m_pHotCue21Clear = new ControlProxy(QString("[Channel2]"), "hotcue_1_clear");
+    ControlProxy* m_pHotCue12Clear = new ControlProxy(QString("[Channel1]"), "hotcue_2_clear");
+    ControlProxy* m_pHotCue22Clear = new ControlProxy(QString("[Channel2]"), "hotcue_2_clear");
+    ControlProxy* m_pHotCue13Clear = new ControlProxy(QString("[Channel1]"), "hotcue_3_clear");
+    ControlProxy* m_pHotCue23Clear = new ControlProxy(QString("[Channel2]"), "hotcue_3_clear");
+    ControlProxy* m_pHotCue14Clear = new ControlProxy(QString("[Channel1]"), "hotcue_4_clear");
+    ControlProxy* m_pHotCue24Clear = new ControlProxy(QString("[Channel2]"), "hotcue_4_clear");
+    ControlProxy* m_pHotCue15Clear = new ControlProxy(QString("[Channel1]"), "hotcue_5_clear");
+    ControlProxy* m_pHotCue25Clear = new ControlProxy(QString("[Channel2]"), "hotcue_5_clear");
+    ControlProxy* m_pHotCue16Clear = new ControlProxy(QString("[Channel1]"), "hotcue_6_clear");
+    ControlProxy* m_pHotCue26Clear = new ControlProxy(QString("[Channel2]"), "hotcue_6_clear");
+    ControlProxy* m_pHotCue17Clear = new ControlProxy(QString("[Channel1]"), "hotcue_7_clear");
+    ControlProxy* m_pHotCue27Clear = new ControlProxy(QString("[Channel2]"), "hotcue_7_clear");
+    ControlProxy* m_pHotCue18Clear = new ControlProxy(QString("[Channel1]"), "hotcue_8_clear");
+    ControlProxy* m_pHotCue28Clear = new ControlProxy(QString("[Channel2]"), "hotcue_8_clear");
+    ControlProxy* m_pHotCue19Clear = new ControlProxy(QString("[Channel1]"), "hotcue_9_clear");
+    ControlProxy* m_pHotCue29Clear = new ControlProxy(QString("[Channel2]"), "hotcue_9_clear");
+    ControlProxy* m_pHotCue110Clear = new ControlProxy(QString("[Channel1]"), "hotcue_10_clear");
+    ControlProxy* m_pHotCue210Clear = new ControlProxy(QString("[Channel2]"), "hotcue_10_clear");
 
     ControlProxy* m_trackSamples1 = new ControlProxy(QString("[Channel1]"), "track_samples");
     ControlProxy* m_trackSamples2 = new ControlProxy(QString("[Channel2]"), "track_samples");
@@ -819,6 +855,81 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             goto clean_exit;
         }
 
+        else if (this->WIP1 == 6) {
+            if (m_PlayPosition1->get() >= this->gambi_hotcue1) {
+                QList<ControlProxy*> hotCueSetCOList;
+                hotCueSetCOList.append(m_pHotCue11Set);
+                hotCueSetCOList.append(m_pHotCue12Set);
+                hotCueSetCOList.append(m_pHotCue13Set);
+                hotCueSetCOList.append(m_pHotCue14Set);
+                hotCueSetCOList.append(m_pHotCue15Set);
+                hotCueSetCOList.append(m_pHotCue16Set);
+                hotCueSetCOList.append(m_pHotCue17Set);
+                hotCueSetCOList.append(m_pHotCue18Set);
+                hotCueSetCOList.append(m_pHotCue19Set);
+                hotCueSetCOList.append(m_pHotCue110Set);
+                
+                QList<ControlProxy*> hotCueClearCOList;
+                hotCueClearCOList.append(m_pHotCue11Clear);
+                hotCueClearCOList.append(m_pHotCue12Clear);
+                hotCueClearCOList.append(m_pHotCue13Clear);
+                hotCueClearCOList.append(m_pHotCue14Clear);
+                hotCueClearCOList.append(m_pHotCue15Clear);
+                hotCueClearCOList.append(m_pHotCue16Clear);
+                hotCueClearCOList.append(m_pHotCue17Clear);
+                hotCueClearCOList.append(m_pHotCue18Clear);
+                hotCueClearCOList.append(m_pHotCue19Clear);
+                hotCueClearCOList.append(m_pHotCue110Clear);
+
+                QList<ControlProxy*>::iterator hotCueSetIter;
+                QList<ControlProxy*>::iterator hotCueClearIter;
+
+                unsigned long long count_cue;
+
+                for (hotCueSetIter = hotCueSetCOList.begin(),
+                     hotCueClearIter = hotCueClearCOList.begin(),
+                     count_cue = 1;
+
+                     hotCueSetIter != hotCueSetCOList.end(),
+                     hotCueClearIter != hotCueClearCOList.end();
+
+                     ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                    if (count_cue == this->gambi_hotcueNumber1) {
+                         ControlProxy* hotCueSetter = *hotCueSetIter;
+                         ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                         hotCueClearer->set(1.0);
+                         hotCueSetter->set(1.0);
+                
+                         confirmado.open("/home/dumbo/confirmixxx.txt");
+                         confirmado << std::to_string(this->counter) + "\n";
+                         confirmado.close();
+
+                         this->counter++;
+
+                         this->WIP1 = 0;
+                         this->LOCK = false;
+
+                         goto clean_exit;
+                     }
+                }
+
+            }
+
+            else {
+                goto clean_exit;
+            }
+        }
+
+        else if (this->WIP1 == 7) {
+            m_PlayPosition1->set(this->gambi_hotcue1);
+            this->WIP1 = 6;
+
+            goto clean_exit;
+        }
+
+
         if (this->WIP2 == 1) {
             goto clean_exit;
         }
@@ -868,6 +979,80 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             goto clean_exit;
         }
 
+        else if (this->WIP2 == 6) {
+            if (m_PlayPosition2->get() >= this->gambi_hotcue2) {
+                QList<ControlProxy*> hotCueSetCOList;
+                hotCueSetCOList.append(m_pHotCue21Set);
+                hotCueSetCOList.append(m_pHotCue22Set);
+                hotCueSetCOList.append(m_pHotCue23Set);
+                hotCueSetCOList.append(m_pHotCue24Set);
+                hotCueSetCOList.append(m_pHotCue25Set);
+                hotCueSetCOList.append(m_pHotCue26Set);
+                hotCueSetCOList.append(m_pHotCue27Set);
+                hotCueSetCOList.append(m_pHotCue28Set);
+                hotCueSetCOList.append(m_pHotCue29Set);
+                hotCueSetCOList.append(m_pHotCue210Set);
+                
+                QList<ControlProxy*> hotCueClearCOList;
+                hotCueClearCOList.append(m_pHotCue21Clear);
+                hotCueClearCOList.append(m_pHotCue22Clear);
+                hotCueClearCOList.append(m_pHotCue23Clear);
+                hotCueClearCOList.append(m_pHotCue24Clear);
+                hotCueClearCOList.append(m_pHotCue25Clear);
+                hotCueClearCOList.append(m_pHotCue26Clear);
+                hotCueClearCOList.append(m_pHotCue27Clear);
+                hotCueClearCOList.append(m_pHotCue28Clear);
+                hotCueClearCOList.append(m_pHotCue29Clear);
+                hotCueClearCOList.append(m_pHotCue210Clear);
+
+                QList<ControlProxy*>::iterator hotCueSetIter;
+                QList<ControlProxy*>::iterator hotCueClearIter;
+
+                unsigned long long count_cue;
+
+                for (hotCueSetIter = hotCueSetCOList.begin(),
+                     hotCueClearIter = hotCueClearCOList.begin(),
+                     count_cue = 1;
+
+                     hotCueSetIter != hotCueSetCOList.end(),
+                     hotCueClearIter != hotCueClearCOList.end();
+
+                     ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                    if (count_cue == this->gambi_hotcueNumber2) {
+                         ControlProxy* hotCueSetter = *hotCueSetIter;
+                         ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                         hotCueClearer->set(1.0);
+                         hotCueSetter->set(1.0);
+                
+                         confirmado.open("/home/dumbo/confirmixxx.txt");
+                         confirmado << std::to_string(this->counter) + "\n";
+                         confirmado.close();
+
+                         this->counter++;
+
+                         this->WIP2 = 0;
+                         this->LOCK = false;
+
+                         goto clean_exit;
+                     }
+                }
+
+            }
+
+            else {
+                goto clean_exit;
+            }
+        }
+
+        else if (this->WIP2 == 7) {
+            m_PlayPosition2->set(this->gambi_hotcue2);
+            this->WIP2 = 6;
+
+            goto clean_exit;
+        }
+
         std::cout << this->pathToSong1.toStdString() + "\n";
 
         if (Playing1Queue == 2 && leftDecko.getLoadedTrack()->getLocation() == this->pathToSong1) {
@@ -878,24 +1063,24 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             this->track1Loaded->getDuration() * 2);
 
             bool hasMainCue1 = false;
-	    QList<CuePointer> track1CueList = this->track1Loaded->getCuePoints();
+            QList<CuePointer> track1CueList = this->track1Loaded->getCuePoints();
             QList<CuePointer>::iterator i;
 
             for (i = track1CueList.begin(); i != track1CueList.end(); ++i) {
                 CuePointer mainCue1 = *i;
                 if (mainCue1.get()->getType() == mixxx::CueType::MainCue) {
                     mainCue1.get()->
-		        setStartAndEndPosition(
-			    mixxx::audio::FramePos::fromEngineSamplePos(
-			        this->m_PlayPositionDesired1 * totalSamples1),
-			    mixxx::audio::FramePos::fromEngineSamplePos(
-			        this->m_PlayPositionDesired1 * totalSamples1));
-		    hasMainCue1 = true;
+                        setStartAndEndPosition(
+                            mixxx::audio::FramePos::fromEngineSamplePos(
+                                this->m_PlayPositionDesired1 * totalSamples1),
+                            mixxx::audio::FramePos::fromEngineSamplePos(
+                                this->m_PlayPositionDesired1 * totalSamples1));
+                    hasMainCue1 = true;
                 }
             }
 
-	    if (hasMainCue1 == false) {
-	        this->track1Loaded->createAndAddCue(
+            if (hasMainCue1 == false) {
+                this->track1Loaded->createAndAddCue(
                     mixxx::CueType::MainCue,
                     Cue::kNoHotCue,
                     mixxx::audio::FramePos::fromEngineSamplePos(
@@ -955,23 +1140,23 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             this->track2Loaded->getDuration() * 2);
 
             bool hasMainCue2 = false;
-	    QList<CuePointer> track2CueList = this->track2Loaded->getCuePoints();
+            QList<CuePointer> track2CueList = this->track2Loaded->getCuePoints();
             QList<CuePointer>::iterator i;
 
             for (i = track2CueList.begin(); i != track2CueList.end(); ++i) {
                 CuePointer mainCue2 = *i;
                 if (mainCue2.get()->getType() == mixxx::CueType::MainCue) {
                     mainCue2.get()->setStartAndEndPosition(
-		        mixxx::audio::FramePos::fromEngineSamplePos(
-			    this->m_PlayPositionDesired2 * totalSamples2),
                         mixxx::audio::FramePos::fromEngineSamplePos(
-			    this->m_PlayPositionDesired2 * totalSamples2));
+                            this->m_PlayPositionDesired2 * totalSamples2),
+                        mixxx::audio::FramePos::fromEngineSamplePos(
+                            this->m_PlayPositionDesired2 * totalSamples2));
                 hasMainCue2 = true;
                 }
             }
 
-	    if (hasMainCue2 == false) {
-	        this->track2Loaded->createAndAddCue(
+            if (hasMainCue2 == false) {
+                this->track2Loaded->createAndAddCue(
                     mixxx::CueType::MainCue,
                     Cue::kNoHotCue,
                     mixxx::audio::FramePos::fromEngineSamplePos(
@@ -1059,7 +1244,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             if (comando[0] == 'Z') {
                 if (comando[1] == '1') {
                     ControlProxy* m_pStemEngage = new ControlProxy("[Channel1]", "LoadStems");
-		    m_pStemEngage->set(1.0);
+                    m_pStemEngage->set(1.0);
                     stemsDeck1Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
@@ -1069,14 +1254,14 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-		    delete m_pStemEngage;
+                    delete m_pStemEngage;
                     goto clean_exit;
                 }
 
                 else if (comando[1] == '2') {
                     ControlProxy* m_pStemEngage = new ControlProxy("[Channel2]", "LoadStems");
-		    m_pStemEngage->set(1.0);
-		    stemsDeck2Playing = true;
+                    m_pStemEngage->set(1.0);
+                    stemsDeck2Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1085,14 +1270,14 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-		    delete m_pStemEngage;
+                    delete m_pStemEngage;
                     goto clean_exit;
                 }
             }
 
             else if (comando[0] == 'S') {
                 if (comando[1] == '1') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1130,10 +1315,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1173,16 +1358,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
-		    }
+                    }
                 }
 
                 else if (comando[1] == '2') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1220,10 +1405,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1263,16 +1448,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
 
                 else if (comando[1] == '3') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1310,10 +1495,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1353,16 +1538,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
 
                 else if (comando[1] == '4') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1400,10 +1585,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1443,16 +1628,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
 
                 else if (comando[1] == '5') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1490,10 +1675,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1533,16 +1718,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
-		    }
+                    }
                 }
 
                 else if (comando[1] == '6') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1580,10 +1765,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1623,16 +1808,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
 
                 else if (comando[1] == '7') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1670,10 +1855,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1713,16 +1898,16 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
 
                 else if (comando[1] == '8') {
-		    if (comando[2] == 'V') {
+                    if (comando[2] == 'V') {
                         if (comando[3] == 'C') {
                             for (long unsigned int usecamisinha = 4;
                                     usecamisinha <= comando.length();
@@ -1760,10 +1945,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
 
                         else if (comando[3] == 'O') {
@@ -1803,15 +1988,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
-		                this->counter++;
-		                this->LOCK = false;
+                                this->counter++;
+                                this->LOCK = false;
                                 goto clean_exit;
-			    }
+                            }
                         }
                     }
                 }
-	    }
-	    
+            }
+            
             else if (comando[0] == 'C') {
                 if (comando[1] == '1') {
                     m_LoopToggle1->set(1);
@@ -1987,10 +2172,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             else if (comando[0] == 'T') {
                 if (comando[1] == '1') {
-                    if (m_Playing1->get() != 1) {
+                    /*if (m_Playing1->get() != 1) {
                         this->LOCK = false;
                         goto clean_exit;
-                    }
+                    }*/
 
                     std::string bpmAsked1;
                     double bpm_double1;
@@ -2038,9 +2223,9 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->LOCK = false;
 
                         delete m_Bpm1;
-			delete m_FileBpm1;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_FileBpm1;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         goto clean_exit;
                     }
@@ -2060,9 +2245,9 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                         this->counter++;
                         delete m_Bpm1;
-			delete m_FileBpm1;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_FileBpm1;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
                         this->LOCK = false;
                         goto clean_exit;
                     }
@@ -2081,10 +2266,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_Bpm1;
-			delete m_FileBpm1;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_Bpm1;
+                        delete m_FileBpm1;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2099,8 +2284,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2109,10 +2294,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    if (m_Playing2->get() != 1) {
+                    /*if (m_Playing2->get() != 1) {
                         this->LOCK = false;
                         goto clean_exit;
-                    }
+                    }*/
                     std::string bpmAsked2;
                     double bpm_double2;
 
@@ -2155,10 +2340,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_Bpm2;
-			delete m_FileBpm2;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_Bpm2;
+                        delete m_FileBpm2;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
 
@@ -2179,10 +2364,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_Bpm2;
-			delete m_FileBpm2;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_Bpm2;
+                        delete m_FileBpm2;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2202,10 +2387,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_Bpm2;
-			delete m_FileBpm2;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_Bpm2;
+                        delete m_FileBpm2;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2220,16 +2405,416 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado.close();
 
                         this->counter++;
-			delete m_Bpm2;
-			delete m_FileBpm2;
-			delete m_pRateDir;
-			delete m_pRateRange;
+                        delete m_Bpm2;
+                        delete m_FileBpm2;
+                        delete m_pRateDir;
+                        delete m_pRateRange;
 
                         this->LOCK = false;
                         goto clean_exit;
                     }
                 }
 
+            }
+
+            else if (comando[0] == 'H') {
+                if (comando[1] == '1') {
+                    if (comando[2] == 'M') {
+                        std::string hotCueAsked;
+                        unsigned long long hotCueNumber;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= comando.length();
+                             usecamisinha++) {
+
+                             hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        try {
+                            hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue11Set);
+                        hotCueSetCOList.append(m_pHotCue12Set);
+                        hotCueSetCOList.append(m_pHotCue13Set);
+                        hotCueSetCOList.append(m_pHotCue14Set);
+                        hotCueSetCOList.append(m_pHotCue15Set);
+                        hotCueSetCOList.append(m_pHotCue16Set);
+                        hotCueSetCOList.append(m_pHotCue17Set);
+                        hotCueSetCOList.append(m_pHotCue18Set);
+                        hotCueSetCOList.append(m_pHotCue19Set);
+                        hotCueSetCOList.append(m_pHotCue110Set);
+                
+                        QList<ControlProxy*> hotCueClearCOList;
+                        hotCueClearCOList.append(m_pHotCue11Clear);
+                        hotCueClearCOList.append(m_pHotCue12Clear);
+                        hotCueClearCOList.append(m_pHotCue13Clear);
+                        hotCueClearCOList.append(m_pHotCue14Clear);
+                        hotCueClearCOList.append(m_pHotCue15Clear);
+                        hotCueClearCOList.append(m_pHotCue16Clear);
+                        hotCueClearCOList.append(m_pHotCue17Clear);
+                        hotCueClearCOList.append(m_pHotCue18Clear);
+                        hotCueClearCOList.append(m_pHotCue19Clear);
+                        hotCueClearCOList.append(m_pHotCue110Clear);
+
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+                        QList<ControlProxy*>::iterator hotCueClearIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             hotCueClearIter = hotCueClearCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueClearIter != hotCueClearCOList.end();
+
+                             ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                            if (count_cue == hotCueNumber) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+                                 ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                                 hotCueClearer->set(1.0);
+                                 hotCueSetter->set(1.0);
+
+                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado << std::to_string(this->counter) + "\n";
+                                 confirmado.close();
+
+                                 this->counter++;
+
+                                 this->LOCK = false;
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'X') {
+                        std::string hotCueAsked;
+                        std::string positionRequested;
+                        unsigned long long hotCueNumber;
+                        double positionToGoto;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= 4;
+                             usecamisinha++) {
+
+                            hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        for (long unsigned int usecamisinha = 5;
+                             usecamisinha <= comando.length();
+                             usecamisinha++) {
+
+                            positionRequested = positionRequested + comando[usecamisinha];
+                        }
+
+                        try {
+                            positionToGoto = std::stod(positionRequested);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE POSITION\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE POSITION\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        try {
+                            hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue11Set);
+                        hotCueSetCOList.append(m_pHotCue12Set);
+                        hotCueSetCOList.append(m_pHotCue13Set);
+                        hotCueSetCOList.append(m_pHotCue14Set);
+                        hotCueSetCOList.append(m_pHotCue15Set);
+                        hotCueSetCOList.append(m_pHotCue16Set);
+                        hotCueSetCOList.append(m_pHotCue17Set);
+                        hotCueSetCOList.append(m_pHotCue18Set);
+                        hotCueSetCOList.append(m_pHotCue19Set);
+                        hotCueSetCOList.append(m_pHotCue110Set);
+                
+                        QList<ControlProxy*> hotCueClearCOList;
+                        hotCueClearCOList.append(m_pHotCue11Clear);
+                        hotCueClearCOList.append(m_pHotCue12Clear);
+                        hotCueClearCOList.append(m_pHotCue13Clear);
+                        hotCueClearCOList.append(m_pHotCue14Clear);
+                        hotCueClearCOList.append(m_pHotCue15Clear);
+                        hotCueClearCOList.append(m_pHotCue16Clear);
+                        hotCueClearCOList.append(m_pHotCue17Clear);
+                        hotCueClearCOList.append(m_pHotCue18Clear);
+                        hotCueClearCOList.append(m_pHotCue19Clear);
+                        hotCueClearCOList.append(m_pHotCue110Clear);
+
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+                        QList<ControlProxy*>::iterator hotCueClearIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             hotCueClearIter = hotCueClearCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueClearIter != hotCueClearCOList.end();
+
+                             ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                            if (count_cue == hotCueNumber - 1) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+                                 ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                                 hotCueClearer->set(1.0);
+                                 hotCueSetter->set(1.0);
+
+                                 this->WIP1 = 1;
+                                 this->gambi_hotcue1 = positionToGoto;
+                                 this->gambi_hotcueNumber1 = hotCueNumber;
+                                 this->WIP1 = 7;
+
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+                }
+
+                else if (comando[1] == '2') {
+                    if (comando[2] == 'M') {
+                        std::string hotCueAsked;
+                        unsigned long long hotCueNumber;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= comando.length();
+                             usecamisinha++) {
+
+                             hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        try {
+                        hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 2 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 2 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue21Set);
+                        hotCueSetCOList.append(m_pHotCue22Set);
+                        hotCueSetCOList.append(m_pHotCue23Set);
+                        hotCueSetCOList.append(m_pHotCue24Set);
+                        hotCueSetCOList.append(m_pHotCue25Set);
+                        hotCueSetCOList.append(m_pHotCue26Set);
+                        hotCueSetCOList.append(m_pHotCue27Set);
+                        hotCueSetCOList.append(m_pHotCue28Set);
+                        hotCueSetCOList.append(m_pHotCue29Set);
+                        hotCueSetCOList.append(m_pHotCue210Set);
+                
+                        QList<ControlProxy*> hotCueClearCOList;
+                        hotCueClearCOList.append(m_pHotCue21Clear);
+                        hotCueClearCOList.append(m_pHotCue22Clear);
+                        hotCueClearCOList.append(m_pHotCue23Clear);
+                        hotCueClearCOList.append(m_pHotCue24Clear);
+                        hotCueClearCOList.append(m_pHotCue25Clear);
+                        hotCueClearCOList.append(m_pHotCue26Clear);
+                        hotCueClearCOList.append(m_pHotCue27Clear);
+                        hotCueClearCOList.append(m_pHotCue28Clear);
+                        hotCueClearCOList.append(m_pHotCue29Clear);
+                        hotCueClearCOList.append(m_pHotCue210Clear);
+
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+                        QList<ControlProxy*>::iterator hotCueClearIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             hotCueClearIter = hotCueClearCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueClearIter != hotCueClearCOList.end();
+
+                             ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                             if (count_cue == hotCueNumber) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+                                 ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                                 hotCueClearer->set(1.0);
+                                 hotCueSetter->set(1.0);
+
+                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado << std::to_string(this->counter) + "\n";
+                                 confirmado.close();
+
+                                 this->counter++;
+
+                                 this->LOCK = false;
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+                    
+                    else if (comando[2] == 'X') {
+                        std::string hotCueAsked;
+                        std::string positionRequested;
+                        unsigned long long hotCueNumber;
+                        double positionToGoto;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= 4;
+                             usecamisinha++) {
+
+                            hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        for (long unsigned int usecamisinha = 5;
+                             usecamisinha <= comando.length();
+                             usecamisinha++) {
+
+                            positionRequested = positionRequested + comando[usecamisinha];
+                        }
+
+                        try {
+                            positionToGoto = std::stod(positionRequested);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE POSITION\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE POSITION\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        try {
+                            hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue21Set);
+                        hotCueSetCOList.append(m_pHotCue22Set);
+                        hotCueSetCOList.append(m_pHotCue23Set);
+                        hotCueSetCOList.append(m_pHotCue24Set);
+                        hotCueSetCOList.append(m_pHotCue25Set);
+                        hotCueSetCOList.append(m_pHotCue26Set);
+                        hotCueSetCOList.append(m_pHotCue27Set);
+                        hotCueSetCOList.append(m_pHotCue28Set);
+                        hotCueSetCOList.append(m_pHotCue29Set);
+                        hotCueSetCOList.append(m_pHotCue210Set);
+                
+                        QList<ControlProxy*> hotCueClearCOList;
+                        hotCueClearCOList.append(m_pHotCue21Clear);
+                        hotCueClearCOList.append(m_pHotCue22Clear);
+                        hotCueClearCOList.append(m_pHotCue23Clear);
+                        hotCueClearCOList.append(m_pHotCue24Clear);
+                        hotCueClearCOList.append(m_pHotCue25Clear);
+                        hotCueClearCOList.append(m_pHotCue26Clear);
+                        hotCueClearCOList.append(m_pHotCue27Clear);
+                        hotCueClearCOList.append(m_pHotCue28Clear);
+                        hotCueClearCOList.append(m_pHotCue29Clear);
+                        hotCueClearCOList.append(m_pHotCue210Clear);
+
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+                        QList<ControlProxy*>::iterator hotCueClearIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             hotCueClearIter = hotCueClearCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueClearIter != hotCueClearCOList.end();
+
+                             ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
+
+                            if (count_cue == hotCueNumber - 1) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+                                 ControlProxy* hotCueClearer = *hotCueClearIter;
+
+                                 hotCueClearer->set(1.0);
+                                 hotCueSetter->set(1.0);
+
+                                 this->WIP2 = 1;
+                                 this->gambi_hotcue2 = positionToGoto;
+                                 this->gambi_hotcueNumber2 = hotCueNumber;
+                                 this->WIP2 = 7;
+
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+                }
             }
 
             else if (comando[0] == 'L') {
@@ -3043,88 +3628,88 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
     if (this->STEM_1_S_V_C_B == true && this->STEM_1_S_V_C_V > 0) {
         m_pStem1Volume->set(m_pStem1Volume->get() - this->diminuendo_STEM_1_VOLUME);
-	this->STEM_1_S_V_C_V--;
+        this->STEM_1_S_V_C_V--;
     }
 
     if (this->STEM_1_S_V_O_B == true && this->STEM_1_S_V_O_V > 0) {
         m_pStem1Volume->set(m_pStem1Volume->get() + this->crescendo_STEM_1_VOLUME);
-	this->STEM_1_S_V_O_V--;
+        this->STEM_1_S_V_O_V--;
     }
 
     if (this->STEM_2_S_V_C_B == true && this->STEM_2_S_V_C_V > 0) {
         m_pStem2Volume->set(m_pStem2Volume->get() - this->diminuendo_STEM_2_VOLUME);
-	this->STEM_2_S_V_C_V--;
+        this->STEM_2_S_V_C_V--;
     }
 
     if (this->STEM_2_S_V_O_B == true && this->STEM_2_S_V_O_V > 0) {
         m_pStem2Volume->set(m_pStem2Volume->get() + this->crescendo_STEM_2_VOLUME);
-	this->STEM_2_S_V_O_V--;
+        this->STEM_2_S_V_O_V--;
     }
 
     if (this->STEM_3_S_V_C_B == true && this->STEM_3_S_V_C_V > 0) {
         m_pStem3Volume->set(m_pStem3Volume->get() - this->diminuendo_STEM_3_VOLUME);
-	this->STEM_3_S_V_C_V--;
+        this->STEM_3_S_V_C_V--;
     }
 
     if (this->STEM_3_S_V_O_B == true && this->STEM_3_S_V_O_V > 0) {
         m_pStem3Volume->set(m_pStem3Volume->get() + this->crescendo_STEM_3_VOLUME);
-	this->STEM_3_S_V_O_V--;
+        this->STEM_3_S_V_O_V--;
     }
 
     if (this->STEM_4_S_V_C_B == true && this->STEM_4_S_V_C_V > 0) {
         m_pStem4Volume->set(m_pStem4Volume->get() - this->diminuendo_STEM_4_VOLUME);
-	this->STEM_4_S_V_C_V--;
+        this->STEM_4_S_V_C_V--;
     }
 
     if (this->STEM_4_S_V_O_B == true && this->STEM_4_S_V_O_V > 0) {
         m_pStem4Volume->set(m_pStem4Volume->get() + this->crescendo_STEM_4_VOLUME);
-	this->STEM_4_S_V_O_V--;
+        this->STEM_4_S_V_O_V--;
     }
 
     if (this->STEM_5_S_V_C_B == true && this->STEM_5_S_V_C_V > 0) {
         m_pStem5Volume->set(m_pStem5Volume->get() - this->diminuendo_STEM_5_VOLUME);
-	this->STEM_5_S_V_C_V--;
+        this->STEM_5_S_V_C_V--;
     }
 
     if (this->STEM_5_S_V_O_B == true && this->STEM_5_S_V_O_V > 0) {
         m_pStem5Volume->set(m_pStem5Volume->get() + this->crescendo_STEM_5_VOLUME);
-	this->STEM_5_S_V_O_V--;
+        this->STEM_5_S_V_O_V--;
     }
 
     if (this->STEM_6_S_V_C_B == true && this->STEM_6_S_V_C_V > 0) {
         m_pStem6Volume->set(m_pStem6Volume->get() - this->diminuendo_STEM_6_VOLUME);
-	this->STEM_6_S_V_C_V--;
+        this->STEM_6_S_V_C_V--;
     }
 
     if (this->STEM_6_S_V_O_B == true && this->STEM_6_S_V_O_V > 0) {
         m_pStem6Volume->set(m_pStem6Volume->get() + this->crescendo_STEM_6_VOLUME);
-	this->STEM_6_S_V_O_V--;
+        this->STEM_6_S_V_O_V--;
     }
 
     if (this->STEM_7_S_V_C_B == true && this->STEM_7_S_V_C_V > 0) {
         m_pStem7Volume->set(m_pStem7Volume->get() - this->diminuendo_STEM_7_VOLUME);
-	this->STEM_7_S_V_C_V--;
+        this->STEM_7_S_V_C_V--;
     }
 
     if (this->STEM_7_S_V_O_B == true && this->STEM_7_S_V_O_V > 0) {
         m_pStem7Volume->set(m_pStem7Volume->get() + this->crescendo_STEM_7_VOLUME);
-	this->STEM_7_S_V_O_V--;
+        this->STEM_7_S_V_O_V--;
     }
 
     if (this->STEM_8_S_V_C_B == true && this->STEM_8_S_V_C_V > 0) {
         m_pStem8Volume->set(m_pStem8Volume->get() - this->diminuendo_STEM_8_VOLUME);
-	this->STEM_8_S_V_C_V--;
+        this->STEM_8_S_V_C_V--;
     }
 
     if (this->STEM_8_S_V_O_B == true && this->STEM_8_S_V_O_V > 0) {
         m_pStem8Volume->set(m_pStem8Volume->get() + this->crescendo_STEM_8_VOLUME);
-	this->STEM_8_S_V_O_V--;
+        this->STEM_8_S_V_O_V--;
     }
 
     if (this->CROSSFADER_X_L_B == true && this->CROSSFADER_X_V > 0) {
         if (m_pCOCrossfader->get() >= 1.0) {
-            m_photCue21Clear->set(1.0);
-            m_photCue21Set->set(1.0);
+            m_pHotCue210Clear->set(1.0);
+            m_pHotCue210Set->set(1.0);
         }
 
         m_pCOCrossfader->set(m_pCOCrossfader->get() - diminuendo_CROSS_X);
@@ -3133,8 +3718,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
     if (this->CROSSFADER_X_R_B == true && this->CROSSFADER_X_V > 0) {
         if (m_pCOCrossfader->get() <= -1.0) {
-            m_photCue11Clear->set(1.0);
-            m_photCue11Set->set(1.0);
+            m_pHotCue110Clear->set(1.0);
+            m_pHotCue110Set->set(1.0);
         }
 
         m_pCOCrossfader->set(m_pCOCrossfader->get() + crescendo_CROSS_X);
@@ -3311,7 +3896,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
         if (stemsDeck1Scratching == false &&
             m_Deck1Scratch2Enabled->get() == 0.0 &&
-	    m_Playing1->get() == 1.0 &&
+            m_Playing1->get() == 1.0 &&
             (m_PlayPosition1->get() != m_Stem1Position->get() ||
              m_PlayPosition1->get() != m_Stem2Position->get() ||
              m_PlayPosition1->get() != m_Stem3Position->get() ||
@@ -3322,14 +3907,14 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             m_Stem3Position->set(m_PlayPosition1->get());
             m_Stem4Position->set(m_PlayPosition1->get());
 
-	    goto clean_stem_exit;
-	}
+            goto clean_stem_exit;
+        }
 
         else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
             stemsDeck1Scratching == false &&
-	    m_Playing1->get() == 1.0) {
+            m_Playing1->get() == 1.0) {
 
-	    stemsDeck1Scratching = true;
+            stemsDeck1Scratching = true;
 
             m_Stem1Scratch2Enabled->set(1);
             m_Stem2Scratch2Enabled->set(1);
@@ -3341,12 +3926,12 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             m_Stem3Scratch2->set(m_Deck1Scratch2->get());
             m_Stem4Scratch2->set(m_Deck1Scratch2->get());
 
-	    goto clean_stem_exit;
+            goto clean_stem_exit;
         }
 
-	else if (m_Deck1Scratch2Enabled->get() == 0.0 &&
+        else if (m_Deck1Scratch2Enabled->get() == 0.0 &&
                  stemsDeck1Scratching == true &&
-	         m_Playing1->get() == 1.0) {
+                 m_Playing1->get() == 1.0) {
 
             stemsDeck1Scratching = false;
 
@@ -3355,34 +3940,34 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             m_Stem3Scratch2Enabled->set(0);
             m_Stem4Scratch2Enabled->set(0);
 
-	    goto clean_stem_exit;
+            goto clean_stem_exit;
 
         }
 
         else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
                  stemsDeck1Scratching == true &&
-	         m_Playing1->get() == 1.0) {
+                 m_Playing1->get() == 1.0) {
 
             m_Stem1Scratch2->set(m_Deck1Scratch2->get());
             m_Stem2Scratch2->set(m_Deck1Scratch2->get());
             m_Stem3Scratch2->set(m_Deck1Scratch2->get());
             m_Stem4Scratch2->set(m_Deck1Scratch2->get());
 
-	    goto clean_stem_exit;
+            goto clean_stem_exit;
         }
 
 clean_stem_exit:
         delete m_Deck1Scratch2Enabled;
-	delete m_Stem1Scratch2Enabled;
-	delete m_Stem2Scratch2Enabled;
-	delete m_Stem3Scratch2Enabled;
-	delete m_Stem4Scratch2Enabled;
+        delete m_Stem1Scratch2Enabled;
+        delete m_Stem2Scratch2Enabled;
+        delete m_Stem3Scratch2Enabled;
+        delete m_Stem4Scratch2Enabled;
 
-	delete m_Deck1Scratch2;
-	delete m_Stem1Scratch2;
-	delete m_Stem2Scratch2;
-	delete m_Stem3Scratch2;
-	delete m_Stem4Scratch2;
+        delete m_Deck1Scratch2;
+        delete m_Stem1Scratch2;
+        delete m_Stem2Scratch2;
+        delete m_Stem3Scratch2;
+        delete m_Stem4Scratch2;
 
         delete m_Stem1Position;
         delete m_Stem2Position;
@@ -3390,9 +3975,9 @@ clean_stem_exit:
         delete m_Stem4Position;
 
         delete m_Stem1Playing;
-	delete m_Stem2Playing;
-	delete m_Stem3Playing;
-	delete m_Stem4Playing;
+        delete m_Stem2Playing;
+        delete m_Stem3Playing;
+        delete m_Stem4Playing;
     }
 
     if (stemsDeck2Playing == true && m_Playing2->get() == 1.0) {
@@ -3420,7 +4005,7 @@ clean_stem_exit:
 
         if (stemsDeck2Scratching == false &&
             m_Deck2Scratch2Enabled->get() == 0.0 &&
-	    m_Playing2->get() == 1.0 &&
+            m_Playing2->get() == 1.0 &&
             (m_PlayPosition2->get() != m_Stem5Position->get() ||
              m_PlayPosition2->get() != m_Stem6Position->get() ||
              m_PlayPosition2->get() != m_Stem7Position->get() ||
@@ -3431,14 +4016,14 @@ clean_stem_exit:
             m_Stem7Position->set(m_PlayPosition2->get());
             m_Stem8Position->set(m_PlayPosition2->get());
 
-	    goto clean_stem_deck_2_exit;
-	}
+            goto clean_stem_deck_2_exit;
+        }
 
         else if (m_Deck2Scratch2Enabled->get() == 1.0 &&
             stemsDeck2Scratching == false &&
-	    m_Playing2->get() == 1.0) {
+            m_Playing2->get() == 1.0) {
 
-	    stemsDeck2Scratching = true;
+            stemsDeck2Scratching = true;
 
             m_Stem5Scratch2Enabled->set(1);
             m_Stem6Scratch2Enabled->set(1);
@@ -3450,12 +4035,12 @@ clean_stem_exit:
             m_Stem7Scratch2->set(m_Deck2Scratch2->get());
             m_Stem8Scratch2->set(m_Deck2Scratch2->get());
 
-	    goto clean_stem_deck_2_exit;
+            goto clean_stem_deck_2_exit;
         }
 
-	else if (m_Deck2Scratch2Enabled->get() == 0.0 &&
+        else if (m_Deck2Scratch2Enabled->get() == 0.0 &&
                  stemsDeck2Scratching == true &&
-	         m_Playing2->get() == 1.0) {
+                 m_Playing2->get() == 1.0) {
 
             stemsDeck2Scratching = false;
 
@@ -3464,34 +4049,34 @@ clean_stem_exit:
             m_Stem7Scratch2Enabled->set(0);
             m_Stem8Scratch2Enabled->set(0);
 
-	    goto clean_stem_deck_2_exit;
+            goto clean_stem_deck_2_exit;
 
         }
 
         else if (m_Deck2Scratch2Enabled->get() == 1.0 &&
                  stemsDeck2Scratching == true &&
-	         m_Playing2->get() == 1.0) {
+                 m_Playing2->get() == 1.0) {
 
             m_Stem5Scratch2->set(m_Deck2Scratch2->get());
             m_Stem6Scratch2->set(m_Deck2Scratch2->get());
             m_Stem7Scratch2->set(m_Deck2Scratch2->get());
             m_Stem8Scratch2->set(m_Deck2Scratch2->get());
 
-	    goto clean_stem_deck_2_exit;
+            goto clean_stem_deck_2_exit;
         }
 
 clean_stem_deck_2_exit:
         delete m_Deck2Scratch2Enabled;
-	delete m_Stem5Scratch2Enabled;
-	delete m_Stem6Scratch2Enabled;
-	delete m_Stem7Scratch2Enabled;
-	delete m_Stem8Scratch2Enabled;
+        delete m_Stem5Scratch2Enabled;
+        delete m_Stem6Scratch2Enabled;
+        delete m_Stem7Scratch2Enabled;
+        delete m_Stem8Scratch2Enabled;
 
-	delete m_Deck2Scratch2;
-	delete m_Stem5Scratch2;
-	delete m_Stem6Scratch2;
-	delete m_Stem7Scratch2;
-	delete m_Stem8Scratch2;
+        delete m_Deck2Scratch2;
+        delete m_Stem5Scratch2;
+        delete m_Stem6Scratch2;
+        delete m_Stem7Scratch2;
+        delete m_Stem8Scratch2;
 
         delete m_Stem5Position;
         delete m_Stem6Position;
@@ -3499,9 +4084,9 @@ clean_stem_deck_2_exit:
         delete m_Stem8Position;
 
         delete m_Stem5Playing;
-	delete m_Stem6Playing;
-	delete m_Stem7Playing;
-	delete m_Stem8Playing;
+        delete m_Stem6Playing;
+        delete m_Stem7Playing;
+        delete m_Stem8Playing;
     }
 
 clean_exit:
@@ -3523,10 +4108,49 @@ clean_exit:
 
     delete m_pCue1;
     delete m_pCue2;
-    delete m_photCue11Set;
-    delete m_photCue21Set;
-    delete m_photCue11Clear;
-    delete m_photCue21Clear;
+
+    delete m_pHotCue11Set;
+    delete m_pHotCue21Set;
+    delete m_pHotCue12Set;
+    delete m_pHotCue22Set;
+    delete m_pHotCue13Set;
+    delete m_pHotCue23Set;
+    delete m_pHotCue14Set;
+    delete m_pHotCue24Set;
+    delete m_pHotCue15Set;
+    delete m_pHotCue25Set;
+    delete m_pHotCue16Set;
+    delete m_pHotCue26Set;
+    delete m_pHotCue17Set;
+    delete m_pHotCue27Set;
+    delete m_pHotCue18Set;
+    delete m_pHotCue28Set;
+    delete m_pHotCue19Set;
+    delete m_pHotCue29Set;
+    delete m_pHotCue110Set;
+    delete m_pHotCue210Set;
+
+    delete m_pHotCue11Clear;
+    delete m_pHotCue21Clear;
+    delete m_pHotCue12Clear;
+    delete m_pHotCue22Clear;
+    delete m_pHotCue13Clear;
+    delete m_pHotCue23Clear;
+    delete m_pHotCue14Clear;
+    delete m_pHotCue24Clear;
+    delete m_pHotCue15Clear;
+    delete m_pHotCue25Clear;
+    delete m_pHotCue16Clear;
+    delete m_pHotCue26Clear;
+    delete m_pHotCue17Clear;
+    delete m_pHotCue27Clear;
+    delete m_pHotCue18Clear;
+    delete m_pHotCue28Clear;
+    delete m_pHotCue19Clear;
+    delete m_pHotCue29Clear;
+    delete m_pHotCue110Clear;
+    delete m_pHotCue210Clear;
+
     delete m_trackSamples1;
     delete m_trackSamples2;
 
@@ -3684,13 +4308,13 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem2Stop->set(1.0);
             m_Stem3Stop->set(1.0);
             m_Stem4Stop->set(1.0);
-	}
+        }
 
         delete m_Playing1;
         delete m_Stem1Stop;
-	delete m_Stem2Stop;
-	delete m_Stem3Stop;
-	delete m_Stem4Stop;
+        delete m_Stem2Stop;
+        delete m_Stem3Stop;
+        delete m_Stem4Stop;
     }
 
     if (stemsDeck2Playing == true) {
@@ -3707,13 +4331,13 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem6Stop->set(1.0);
             m_Stem7Stop->set(1.0);
             m_Stem8Stop->set(1.0);
-	}
+        }
 
         delete m_Playing2;
         delete m_Stem5Stop;
-	delete m_Stem6Stop;
-	delete m_Stem7Stop;
-	delete m_Stem8Stop;
+        delete m_Stem6Stop;
+        delete m_Stem7Stop;
+        delete m_Stem8Stop;
     }
 
     if constexpr (sDebug) {

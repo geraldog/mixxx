@@ -361,10 +361,14 @@ class AutoDJProcessor : public QObject {
     int WIP1 = 0;
     double gambi_loopin1;
     double gambi_loopout1;
+    double gambi_hotcue1;
+    double gambi_hotcueNumber1;
 
     int WIP2 = 0;
     double gambi_loopin2;
     double gambi_loopout2;
+    double gambi_hotcue2;
+    double gambi_hotcueNumber2;
 
     QString pathToSong1 = "1";
     QString pathToSong2 = "1";
