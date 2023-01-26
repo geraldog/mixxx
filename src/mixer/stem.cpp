@@ -1,4 +1,5 @@
 #include "mixer/stem.h"
+#include "mixer/deck.h"
 #include "track/track.h"
 #include <QRegularExpression>
 #include "moc_stem.cpp"
@@ -86,6 +87,9 @@ void Stem::slotStemPlay(TrackPointer pTrack) {
 
         pTrack->trySetBpm(m_DeckFileBpm->get());
         m_StemBpm->set(m_DeckBpm->get());
+
+        mixxx::BeatsPointer pBeats = this->m_pPlayerManager->getDeck(deckNumber.toInt())->getLoadedTrack()->getBeats();
+        pTrack->trySetBeats(pBeats);
 
         m_StemKeyLock->set(m_DeckKeyLock->get());
 	m_StemReplayGain->set(m_DeckReplayGain->get());

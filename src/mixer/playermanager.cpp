@@ -92,6 +92,9 @@ QAtomicPointer<ControlProxy> PlayerManager::m_pCOPNumDecks;
 QAtomicPointer<ControlProxy> PlayerManager::m_pCOPNumSamplers;
 //static
 QAtomicPointer<ControlProxy> PlayerManager::m_pCOPNumPreviewDecks;
+//static
+QAtomicPointer<ControlProxy> PlayerManager::m_pCOPNumStems;
+
 
 PlayerManager::PlayerManager(UserSettingsPointer pConfig,
         SoundManager* pSoundManager,
@@ -110,6 +113,8 @@ PlayerManager::PlayerManager(UserSettingsPointer pConfig,
                   ConfigKey("[Master]", "num_samplers"), true, true)),
           m_pCONumPreviewDecks(new ControlObject(
                   ConfigKey("[Master]", "num_preview_decks"), true, true)),
+          m_pCONumStems(new ControlObject(
+                  ConfigKey("[Master]", "num_stems"), true, true)),
           m_pCONumMicrophones(new ControlObject(
                   ConfigKey("[Master]", "num_microphones"), true, true)),
           m_pCONumAuxiliaries(new ControlObject(
@@ -150,6 +155,7 @@ PlayerManager::~PlayerManager() {
 
     delete m_pCOPNumDecks.fetchAndStoreAcquire(nullptr);
     delete m_pCOPNumSamplers.fetchAndStoreAcquire(nullptr);
+    delete m_pCOPNumStems.fetchAndStoreAcquire(nullptr);
     delete m_pCOPNumPreviewDecks.fetchAndStoreAcquire(nullptr);
 
     delete m_pCONumSamplers;
@@ -157,6 +163,7 @@ PlayerManager::~PlayerManager() {
     delete m_pCONumPreviewDecks;
     delete m_pCONumMicrophones;
     delete m_pCONumAuxiliaries;
+    delete m_pCONumStems;
 
     if (m_pTrackAnalysisScheduler) {
         m_pTrackAnalysisScheduler->stop();
@@ -210,9 +217,9 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
 
     // Connect the stems player to the analyzer queue so that loaded tracks are
     // analyzed.
-    foreach(Stem* pStem, m_stem) {
+    /*foreach(Stem* pStem, m_stem) {
         connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotAnalyzeTrack);
-    }
+    }*/
 
 }
 
@@ -385,6 +392,21 @@ void PlayerManager::slotChangeNumAuxiliaries(double v) {
         addAuxiliaryInner();
     }
     m_pCONumAuxiliaries->setAndConfirm(m_auxiliaries.size());
+}
+
+void PlayerManager::slotChangeNumStems(double v) {
+    const auto locker = lockMutex(&m_mutex);
+    int num = (int)v;
+    if (num < m_stem.size()) {
+        // The request was invalid -- don't set the value.
+        kLogger.debug() << "Ignoring request to reduce the number of stems to" << num;
+        return;
+    }
+
+    while (m_stem.size() < num) {
+        addStemInner();
+    }
+    m_pCONumStems->setAndConfirm(m_stem.size());
 }
 
 void PlayerManager::addDeck() {
@@ -571,23 +593,20 @@ void PlayerManager::addAuxiliaryInner() {
 
 void PlayerManager::addStem() {
     const auto locker = lockMutex(&m_mutex);
-    addStemInner();
+    double count = m_pCONumStems->get() + 1;
+    slotChangeNumStems(count);
 }
 
 void PlayerManager::addStemInner() {
     // Do not lock m_mutex here.
     int index = m_stem.count();
     ChannelHandleAndGroup handleGroup =
-            m_pEngine->registerChannelGroup(groupForStem(m_stem.count()));
+            m_pEngine->registerChannelGroup(groupForStem(index));
     VERIFY_OR_DEBUG_ASSERT(!m_players.contains(handleGroup.handle())) {
         return;
     }
 
     EngineChannel::ChannelOrientation channelOrientation;
-
-    //if (m_stem.size() <= 4 || (m_stem.size() >= 9 && m_stem.size() <= 12)) {
-    //    channelOrientation = EngineChannel::LEFT;
-    //}
 
     if (index <= 3 || (index >= 8 && index <= 11)) {
         channelOrientation = EngineChannel::LEFT;
@@ -626,7 +645,7 @@ void PlayerManager::addStemInner() {
     // Register the stem output with SoundManager.
     //m_pSoundManager->registerOutput(
     //        AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
-    //connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotStemPlay);
+    connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
 }
 
 BaseTrackPlayer* PlayerManager::getPlayer(const QString& group) const {
@@ -867,7 +886,7 @@ void PlayerManager::onTrackAnalysisFinished() {
     emit trackAnalyzerIdle();
 }
 
-void PlayerManager::slotStemPlay(TrackPointer pTrack) {
+/*void PlayerManager::slotStemPlay(TrackPointer pTrack) {
         Stem* pStem = qobject_cast<Stem*>(sender());
         int stemNumber;
         extractIntFromRegex(kStemRegex, pStem->stemName, &stemNumber);
@@ -924,4 +943,4 @@ void PlayerManager::slotStemPlay(TrackPointer pTrack) {
         delete m_StemBpm;
 	delete m_StemReplayGain;
 	delete m_StemKeyLock;
-}
+}*/

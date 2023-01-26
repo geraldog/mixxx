@@ -196,6 +196,7 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     static QAtomicPointer<ControlProxy> m_pCOPNumDecks;
     static QAtomicPointer<ControlProxy> m_pCOPNumSamplers;
     static QAtomicPointer<ControlProxy> m_pCOPNumPreviewDecks;
+    static QAtomicPointer<ControlProxy> m_pCOPNumStems;
 
   public slots:
     // Slots for loading tracks into a Player, which is either a Sampler or a Deck
@@ -225,6 +226,7 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     void slotChangeNumPreviewDecks(double v);
     void slotChangeNumMicrophones(double v);
     void slotChangeNumAuxiliaries(double v);
+    void slotChangeNumStems(double v);
 
   protected slots:
     FRIEND_TEST(PlayerManagerTest, UnEjectInvalidTrackIdTest);
@@ -232,7 +234,7 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
 
   private slots:
     void slotAnalyzeTrack(TrackPointer track);
-    void slotStemPlay(TrackPointer pTrack);
+    //void slotStemPlay(TrackPointer pTrack);
 
     void onTrackAnalysisProgress(TrackId trackId, AnalyzerProgress analyzerProgress);
     void onTrackAnalysisFinished();
@@ -298,6 +300,7 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     ControlObject* m_pCONumDecks;
     ControlObject* m_pCONumSamplers;
     ControlObject* m_pCONumPreviewDecks;
+    ControlObject* m_pCONumStems;
     ControlObject* m_pCONumMicrophones;
     ControlObject* m_pCONumAuxiliaries;
     parented_ptr<ControlProxy> m_pAutoDjEnabled;

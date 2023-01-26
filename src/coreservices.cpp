@@ -310,7 +310,8 @@ void CoreServices::initialize(QApplication* pApp) {
     m_pPlayerManager->addSampler();
     m_pPlayerManager->addSampler();
 
-    for (unsigned int i=0; i < m_pPlayerManager->numDecks() * 4; i++) {
+    //for (unsigned int i=0; i < m_pPlayerManager->numDecks() * 4; i++) {
+    for (unsigned int i=0; i < 2 * 4; i++) {
         m_pPlayerManager->addStem();
     }
 

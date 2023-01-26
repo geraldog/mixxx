@@ -1267,7 +1267,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     }
 
     if (this->wuwei == false) {
-        if (contagiros > this->counter) {
+        if (contagiros == this->counter + 1) {
             this->LOCK = true;
 
             if (comando[0] == 'Z') {
@@ -4001,91 +4001,25 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         ControlProxy* m_Stem3Scratch2 = new ControlProxy(QString("[Stem3]"), "scratch2");
         ControlProxy* m_Stem4Scratch2 = new ControlProxy(QString("[Stem4]"), "scratch2");
 
-        ControlProxy* m_Deck1FileBpm = new ControlProxy(QString("[Channel1]"), "file_bpm");
-        ControlProxy* m_Deck1Bpm = new ControlProxy(QString("[Channel1]"), "bpm");
-        ControlProxy* m_Deck1ReplayGain = new ControlProxy(QString("[Channel1]"), "replaygain");
-        ControlProxy* m_Deck1KeyLock = new ControlProxy(QString("[Channel1]"), "keylock");
-
-        ControlProxy* m_Deck1Volume = new ControlProxy("[Channel1]", "volume");
-        ControlProxy* m_Stem1Volume = new ControlProxy("[Stem1]", "volume");
-        ControlProxy* m_Stem2Volume = new ControlProxy("[Stem2]", "volume");
-        ControlProxy* m_Stem3Volume = new ControlProxy("[Stem3]", "volume");
-        ControlProxy* m_Stem4Volume = new ControlProxy("[Stem4]", "volume");
-
-        ControlProxy* m_Stem1Bpm = new ControlProxy("[Stem1]", "bpm");
-        ControlProxy* m_Stem2Bpm = new ControlProxy("[Stem2]", "bpm");
-        ControlProxy* m_Stem3Bpm = new ControlProxy("[Stem3]", "bpm");
-        ControlProxy* m_Stem4Bpm = new ControlProxy("[Stem4]", "bpm");
-        
-        ControlProxy* m_Stem1ReplayGain = new ControlProxy("[Stem1]", "replaygain");
-        ControlProxy* m_Stem2ReplayGain = new ControlProxy("[Stem2]", "replaygain");
-        ControlProxy* m_Stem3ReplayGain = new ControlProxy("[Stem3]", "replaygain");
-        ControlProxy* m_Stem4ReplayGain = new ControlProxy("[Stem4]", "replaygain");
-
-        ControlProxy* m_Stem1KeyLock = new ControlProxy("[Stem1]", "keylock");
-        ControlProxy* m_Stem2KeyLock = new ControlProxy("[Stem2]", "keylock");
-        ControlProxy* m_Stem3KeyLock = new ControlProxy("[Stem3]", "keylock");
-        ControlProxy* m_Stem4KeyLock = new ControlProxy("[Stem4]", "keylock");
-
-
         if (stemsDeck1Scratching == false &&
             m_Deck1Scratch2Enabled->get() == 0.0 &&
             m_Playing1->get() == 1.0 &&
-            (m_Stem1Playing->get() != 1.0 && 
-            m_Stem2Playing->get() != 1.0 &&
-            m_Stem3Playing->get() != 1.0 &&
-            m_Stem4Playing->get() != 1.0)) {
-            
-        this->m_pPlayerManager->getStem(1)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
-        this->m_pPlayerManager->getStem(2)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
-        this->m_pPlayerManager->getStem(3)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
-        this->m_pPlayerManager->getStem(4)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
+            (m_PlayPosition1->get() > m_Stem1Position->get() + 0.001 ||
+             m_PlayPosition1->get() > m_Stem2Position->get() + 0.001 ||
+             m_PlayPosition1->get() > m_Stem3Position->get() + 0.001 ||
+             m_PlayPosition1->get() > m_Stem4Position->get() + 0.001 ||
+             m_PlayPosition1->get() < m_Stem1Position->get() - 0.001 ||
+             m_PlayPosition1->get() < m_Stem2Position->get() - 0.001 ||
+             m_PlayPosition1->get() < m_Stem3Position->get() - 0.001 ||
+             m_PlayPosition1->get() < m_Stem4Position->get() - 0.001 )) {
 
-        mixxx::BeatsPointer pBeats = this->track1Loaded->getBeats();
-        this->m_pPlayerManager->getStem(1)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(2)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(3)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(4)->getLoadedTrack()->trySetBeats(pBeats);
+            std::cout << "DECK 1 PLAY POSITION: " << std::to_string(m_PlayPosition1->get()) << std::endl;
+            std::cout << "STEM 1 PLAY POSITION: " << std::to_string(m_Stem1Position->get()) << std::endl;
+            std::cout << "STEM 2 PLAY POSITION: " << std::to_string(m_Stem2Position->get()) << std::endl;
+            std::cout << "STEM 3 PLAY POSITION: " << std::to_string(m_Stem3Position->get()) << std::endl;
+            std::cout << "STEM 4 PLAY POSITION: " << std::to_string(m_Stem4Position->get()) << std::endl;
 
-        m_Stem1Bpm->set(m_Deck1Bpm->get());
-        m_Stem2Bpm->set(m_Deck1Bpm->get());
-        m_Stem3Bpm->set(m_Deck1Bpm->get());
-        m_Stem4Bpm->set(m_Deck1Bpm->get());
-
-        if (m_Stem1KeyLock->get() != m_Deck1KeyLock->get()) {
-        m_Stem1KeyLock->set(m_Deck1KeyLock->get());
-        m_Stem2KeyLock->set(m_Deck1KeyLock->get());
-        m_Stem3KeyLock->set(m_Deck1KeyLock->get());
-        m_Stem4KeyLock->set(m_Deck1KeyLock->get());
-        }
-	m_Stem1ReplayGain->set(m_Deck1ReplayGain->get());
-	m_Stem2ReplayGain->set(m_Deck1ReplayGain->get());
-	m_Stem3ReplayGain->set(m_Deck1ReplayGain->get());
-	m_Stem4ReplayGain->set(m_Deck1ReplayGain->get());
-
-        m_Stem1Volume->set(0.5);
-        m_Stem2Volume->set(0.5);
-        m_Stem3Volume->set(0.5);
-        m_Stem4Volume->set(0.5);
-
-            m_Stem1Playing->set(1.0);
-            m_Stem2Playing->set(1.0);
-            m_Stem3Playing->set(1.0);
-            m_Stem4Playing->set(1.0);
-
-            m_Deck1Volume->set(0.0);
-
-            goto clean_stem_exit;
-
-        }
-
-        if (stemsDeck1Scratching == false &&
-            m_Deck1Scratch2Enabled->get() == 0.0 &&
-            m_Playing1->get() == 1.0 &&
-            (m_PlayPosition1->get() != m_Stem1Position->get() ||
-             m_PlayPosition1->get() != m_Stem2Position->get() ||
-             m_PlayPosition1->get() != m_Stem3Position->get() ||
-             m_PlayPosition1->get() != m_Stem4Position->get())) {
+            std::cout << "CORRECTING STEMS 1, 2, 3, 4 POSITION!\n";
 
             m_Stem1Position->set(m_PlayPosition1->get());
             m_Stem2Position->set(m_PlayPosition1->get());
@@ -4164,32 +4098,6 @@ clean_stem_exit:
         delete m_Stem2Playing;
         delete m_Stem3Playing;
         delete m_Stem4Playing;
-
-        delete m_Deck1FileBpm;
-        delete m_Deck1Bpm;
-	delete m_Deck1ReplayGain;
-	delete m_Deck1KeyLock;
-
-        delete m_Deck1Volume;
-        delete m_Stem1Volume;
-        delete m_Stem2Volume;
-        delete m_Stem3Volume;
-        delete m_Stem4Volume;
-
-        delete m_Stem1Bpm;
-        delete m_Stem2Bpm;
-        delete m_Stem3Bpm;
-        delete m_Stem4Bpm;
-
-	delete m_Stem1ReplayGain;
-	delete m_Stem2ReplayGain;
-	delete m_Stem3ReplayGain;
-	delete m_Stem4ReplayGain;
-
-	delete m_Stem1KeyLock;
-	delete m_Stem2KeyLock;
-	delete m_Stem3KeyLock;
-	delete m_Stem4KeyLock;
     }
 
     if (stemsDeck2Playing == true && m_Playing2->get() == 1.0) {
@@ -4216,88 +4124,25 @@ clean_stem_exit:
         ControlProxy* m_Stem7Scratch2 = new ControlProxy(QString("[Stem7]"), "scratch2");
         ControlProxy* m_Stem8Scratch2 = new ControlProxy(QString("[Stem8]"), "scratch2");
 
-        ControlProxy* m_Deck2FileBpm = new ControlProxy(QString("[Channel2]"), "file_bpm");
-        ControlProxy* m_Deck2Bpm = new ControlProxy(QString("[Channel2]"), "bpm");
-        ControlProxy* m_Deck2ReplayGain = new ControlProxy(QString("[Channel2]"), "replaygain");
-        ControlProxy* m_Deck2KeyLock = new ControlProxy(QString("[Channel2]"), "keylock");
-
-        ControlProxy* m_Deck2Volume = new ControlProxy("[Channel2]", "volume");
-        ControlProxy* m_Stem5Volume = new ControlProxy("[Stem5]", "volume");
-        ControlProxy* m_Stem6Volume = new ControlProxy("[Stem6]", "volume");
-        ControlProxy* m_Stem7Volume = new ControlProxy("[Stem7]", "volume");
-        ControlProxy* m_Stem8Volume = new ControlProxy("[Stem8]", "volume");
-
-        ControlProxy* m_Stem5Bpm = new ControlProxy("[Stem5]", "bpm");
-        ControlProxy* m_Stem6Bpm = new ControlProxy("[Stem6]", "bpm");
-        ControlProxy* m_Stem7Bpm = new ControlProxy("[Stem7]", "bpm");
-        ControlProxy* m_Stem8Bpm = new ControlProxy("[Stem8]", "bpm");
-        
-        ControlProxy* m_Stem5ReplayGain = new ControlProxy("[Stem5]", "replaygain");
-        ControlProxy* m_Stem6ReplayGain = new ControlProxy("[Stem6]", "replaygain");
-        ControlProxy* m_Stem7ReplayGain = new ControlProxy("[Stem7]", "replaygain");
-        ControlProxy* m_Stem8ReplayGain = new ControlProxy("[Stem8]", "replaygain");
-
-        ControlProxy* m_Stem5KeyLock = new ControlProxy("[Stem5]", "keylock");
-        ControlProxy* m_Stem6KeyLock = new ControlProxy("[Stem6]", "keylock");
-        ControlProxy* m_Stem7KeyLock = new ControlProxy("[Stem7]", "keylock");
-        ControlProxy* m_Stem8KeyLock = new ControlProxy("[Stem8]", "keylock");
-
         if (stemsDeck2Scratching == false &&
             m_Deck2Scratch2Enabled->get() == 0.0 &&
             m_Playing2->get() == 1.0 &&
-            (m_Stem5Playing->get() != 1.0 &&
-            m_Stem6Playing->get() != 1.0 &&
-            m_Stem7Playing->get() != 1.0 &&
-            m_Stem8Playing->get() != 1.0)) {
+            (m_PlayPosition2->get() > m_Stem5Position->get() + 0.001 ||
+             m_PlayPosition2->get() > m_Stem6Position->get() + 0.001 ||
+             m_PlayPosition2->get() > m_Stem7Position->get() + 0.001 ||
+             m_PlayPosition2->get() > m_Stem8Position->get() + 0.001 ||
+             m_PlayPosition2->get() < m_Stem5Position->get() - 0.001 ||
+             m_PlayPosition2->get() < m_Stem6Position->get() - 0.001 ||
+             m_PlayPosition2->get() < m_Stem7Position->get() - 0.001 ||
+             m_PlayPosition2->get() < m_Stem8Position->get() - 0.001 )) {
 
-        this->m_pPlayerManager->getStem(5)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
-        this->m_pPlayerManager->getStem(6)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
-        this->m_pPlayerManager->getStem(7)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
-        this->m_pPlayerManager->getStem(8)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
+            std::cout << "DECK 2 PLAY POSITION: " << std::to_string(m_PlayPosition2->get()) << std::endl;
+            std::cout << "STEM 5 PLAY POSITION: " << std::to_string(m_Stem5Position->get()) << std::endl;
+            std::cout << "STEM 6 PLAY POSITION: " << std::to_string(m_Stem6Position->get()) << std::endl;
+            std::cout << "STEM 7 PLAY POSITION: " << std::to_string(m_Stem7Position->get()) << std::endl;
+            std::cout << "STEM 8 PLAY POSITION: " << std::to_string(m_Stem8Position->get()) << std::endl;
 
-        mixxx::BeatsPointer pBeats = this->track2Loaded->getBeats();
-        this->m_pPlayerManager->getStem(5)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(6)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(7)->getLoadedTrack()->trySetBeats(pBeats);
-        this->m_pPlayerManager->getStem(8)->getLoadedTrack()->trySetBeats(pBeats);
-
-        m_Stem5Bpm->set(m_Deck2Bpm->get());
-        m_Stem6Bpm->set(m_Deck2Bpm->get());
-        m_Stem7Bpm->set(m_Deck2Bpm->get());
-        m_Stem8Bpm->set(m_Deck2Bpm->get());
-
-        if (m_Stem5KeyLock->get() != m_Deck2KeyLock->get()) {
-        m_Stem5KeyLock->set(m_Deck2KeyLock->get());
-        m_Stem6KeyLock->set(m_Deck2KeyLock->get());
-        m_Stem7KeyLock->set(m_Deck2KeyLock->get());
-        m_Stem8KeyLock->set(m_Deck2KeyLock->get());
-}
-	m_Stem5ReplayGain->set(m_Deck2ReplayGain->get());
-	m_Stem6ReplayGain->set(m_Deck2ReplayGain->get());
-	m_Stem7ReplayGain->set(m_Deck2ReplayGain->get());
-	m_Stem8ReplayGain->set(m_Deck2ReplayGain->get());
-
-        m_Stem5Volume->set(0.5);
-        m_Stem6Volume->set(0.5);
-        m_Stem7Volume->set(0.5);
-        m_Stem8Volume->set(0.5);
-
-            m_Stem5Playing->set(1.0);
-            m_Stem6Playing->set(1.0);
-            m_Stem7Playing->set(1.0);
-            m_Stem8Playing->set(1.0);
-            m_Deck2Volume->set(0.0);
-
-            goto clean_stem_deck_2_exit;
-
-        }
-        if (stemsDeck2Scratching == false &&
-            m_Deck2Scratch2Enabled->get() == 0.0 &&
-            m_Playing2->get() == 1.0 &&
-            (m_PlayPosition2->get() != m_Stem5Position->get() ||
-             m_PlayPosition2->get() != m_Stem6Position->get() ||
-             m_PlayPosition2->get() != m_Stem7Position->get() ||
-             m_PlayPosition2->get() != m_Stem8Position->get())) {
+            std::cout << "CORRECTING STEMS 5, 6, 7, 8 POSITION!\n";
 
             m_Stem5Position->set(m_PlayPosition2->get());
             m_Stem6Position->set(m_PlayPosition2->get());
@@ -4376,32 +4221,6 @@ clean_stem_deck_2_exit:
         delete m_Stem6Playing;
         delete m_Stem7Playing;
         delete m_Stem8Playing;
-
-        delete m_Deck2FileBpm;
-        delete m_Deck2Bpm;
-	delete m_Deck2ReplayGain;
-	delete m_Deck2KeyLock;
-
-        delete m_Deck2Volume;
-        delete m_Stem5Volume;
-        delete m_Stem6Volume;
-        delete m_Stem7Volume;
-        delete m_Stem8Volume;
-
-        delete m_Stem5Bpm;
-        delete m_Stem6Bpm;
-        delete m_Stem7Bpm;
-        delete m_Stem8Bpm;
-
-	delete m_Stem5ReplayGain;
-	delete m_Stem6ReplayGain;
-	delete m_Stem7ReplayGain;
-	delete m_Stem8ReplayGain;
-
-	delete m_Stem5KeyLock;
-	delete m_Stem6KeyLock;
-	delete m_Stem7KeyLock;
-	delete m_Stem8KeyLock;
     }
 
 clean_exit:
@@ -4657,6 +4476,11 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         ControlProxy* m_Stem7Stop = new ControlProxy(QString("[Stem7]"), "stop");
         ControlProxy* m_Stem8Stop = new ControlProxy(QString("[Stem8]"), "stop");
 
+        ControlProxy* m_Stem5Eject = new ControlProxy(QString("[Stem5]"), "eject");
+        ControlProxy* m_Stem6Eject = new ControlProxy(QString("[Stem6]"), "eject");
+        ControlProxy* m_Stem7Eject = new ControlProxy(QString("[Stem7]"), "eject");
+        ControlProxy* m_Stem8Eject = new ControlProxy(QString("[Stem8]"), "eject");
+
         if (m_Playing2->get() == 0.0) {
             stemsDeck2Playing = false;
 
@@ -4664,6 +4488,10 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem6Stop->set(1.0);
             m_Stem7Stop->set(1.0);
             m_Stem8Stop->set(1.0);
+            m_Stem5Eject->set(1.0);
+            m_Stem6Eject->set(1.0);
+            m_Stem7Eject->set(1.0);
+            m_Stem8Eject->set(1.0);
         }
 
         delete m_Playing2;
@@ -4671,6 +4499,11 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         delete m_Stem6Stop;
         delete m_Stem7Stop;
         delete m_Stem8Stop;
+
+        delete m_Stem5Eject;
+        delete m_Stem6Eject;
+        delete m_Stem7Eject;
+        delete m_Stem8Eject;
     }
 
     if constexpr (sDebug) {
