@@ -1077,13 +1077,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
         std::cout << this->pathToSong1.toStdString() + "\n";
 
-//        ControlProxy* m_pStem1Engage = new ControlProxy("[Channel1]", "LoadStems");
-  //      ControlProxy* m_pStem2Engage = new ControlProxy("[Channel2]", "LoadStems");
-    //    std::cout << "Channel 1 STEMS: " << std::to_string(m_pStem1Engage->get()) << std::endl;
-      //  std::cout << "Channel 2 STEMS: " << std::to_string(m_pStem2Engage->get()) << std::endl;
-        //delete m_pStem1Engage;
-        //delete m_pStem2Engage;
-
         if (Playing1Queue == 2 && leftDecko.getLoadedTrack()->getLocation() == this->pathToSong1) {
 
             uint64_t totalSamples1 =
@@ -1272,8 +1265,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             if (comando[0] == 'Z') {
                 if (comando[1] == '1') {
-                    //ControlProxy* m_pStemEngage = new ControlProxy("[Channel1]", "LoadStems");
-                    //m_pStemEngage->set(1.0);
                     stemsDeck1Playing = true;
 
                     if (thisDeck->index == 0) {
@@ -1284,17 +1275,17 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->track1Loaded = otherDeck->getLoadedTrack();
                     }
 
-        const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track1Loaded->getLocation());
+                    const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track1Loaded->getLocation());
 
-        QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
-        QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
-        QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
-        QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
+                    QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
+                    QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
+                    QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
+                    QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
-        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 1);
-        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 2);
-        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 3);
-        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 4);
+                    this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 1);
+                    this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 2);
+                    this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 3);
+                    this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 4);
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1303,13 +1294,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-                    //delete m_pStemEngage;
                     goto clean_exit;
                 }
 
                 else if (comando[1] == '2') {
-                    //ControlProxy* m_pStemEngage = new ControlProxy("[Channel2]", "LoadStems");
-                    //m_pStemEngage->set(1.0);
                     stemsDeck2Playing = true;
 
 
@@ -1321,17 +1309,18 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->track2Loaded = otherDeck->getLoadedTrack();
                     }
 
-        const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track2Loaded->getLocation());
+                    const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track2Loaded->getLocation());
 
-        QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
-        QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
-        QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
-        QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
+                    QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
+                    QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
+                    QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
+                    QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
-        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 5);
-        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 6);
-        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 7);
-        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 8);
+                    this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 5);
+                    this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 6);
+                    this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 7);
+                    this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 8);
+
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
@@ -1339,7 +1328,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-                    //delete m_pStemEngage;
                     goto clean_exit;
                 }
             }
@@ -4447,15 +4435,11 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem2Stop->set(1.0);
             m_Stem3Stop->set(1.0);
             m_Stem4Stop->set(1.0);
+
             m_Stem1Eject->set(1.0);
             m_Stem2Eject->set(1.0);
             m_Stem3Eject->set(1.0);
             m_Stem4Eject->set(1.0);
-
-            //this->m_pPlayerManager->getStem(1)->slotEjectTrack(1.0);
-            //this->m_pPlayerManager->getStem(2)->slotEjectTrack(1.0);
-            //this->m_pPlayerManager->getStem(3)->slotEjectTrack(1.0);
-            //this->m_pPlayerManager->getStem(4)->slotEjectTrack(1.0);
         }
 
         delete m_Playing1;
@@ -4488,6 +4472,7 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem6Stop->set(1.0);
             m_Stem7Stop->set(1.0);
             m_Stem8Stop->set(1.0);
+
             m_Stem5Eject->set(1.0);
             m_Stem6Eject->set(1.0);
             m_Stem7Eject->set(1.0);

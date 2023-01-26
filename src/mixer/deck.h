@@ -15,10 +15,9 @@ class Deck : public BaseTrackPlayerImpl {
             EngineChannel::ChannelOrientation defaultOrientation,
             const ChannelHandleAndGroup& handleGroup);
     ~Deck() override;
-  //private slots:
-    //void slotStemEnabled(double v);
-  //private:
-    //ControlObject* m_pStemControl;
-    //QString deckName;
-    //PlayerManager* clonedPlayerManager;
+  private slots:
+    void slotStemEnabled(double v);
+  private:
+    ControlObject* m_pStemControl;
+    QString deckName;
 };

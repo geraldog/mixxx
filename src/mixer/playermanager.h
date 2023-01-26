@@ -234,7 +234,6 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
 
   private slots:
     void slotAnalyzeTrack(TrackPointer track);
-    //void slotStemPlay(TrackPointer pTrack);
 
     void onTrackAnalysisProgress(TrackId trackId, AnalyzerProgress analyzerProgress);
     void onTrackAnalysisFinished();
@@ -314,6 +313,6 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     QList<PreviewDeck*> m_previewDecks;
     QList<Microphone*> m_microphones;
     QList<Auxiliary*> m_auxiliaries;
-    QList<Stem*> m_stem;
+    QList<Stem*> m_stems;
     QMap<ChannelHandle, BaseTrackPlayer*> m_players;
 };

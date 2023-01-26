@@ -11,7 +11,7 @@
 #include "moc_keycontrol.cpp"
 #include "track/keyutils.h"
 
-constexpr bool kEnableDebugOutput = true;
+constexpr bool kEnableDebugOutput = false;
 
 static const double kLockCurrentKey = 1;
 static const double kKeepUnlockedKey = 1;

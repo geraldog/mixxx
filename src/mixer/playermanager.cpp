@@ -151,7 +151,7 @@ PlayerManager::~PlayerManager() {
     m_samplers.clear();
     m_microphones.clear();
     m_auxiliaries.clear();
-    m_stem.clear();
+    m_stems.clear();
 
     delete m_pCOPNumDecks.fetchAndStoreAcquire(nullptr);
     delete m_pCOPNumSamplers.fetchAndStoreAcquire(nullptr);
@@ -217,7 +217,7 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
 
     // Connect the stems player to the analyzer queue so that loaded tracks are
     // analyzed.
-    /*foreach(Stem* pStem, m_stem) {
+    /*foreach(Stem* pStem, m_stems) {
         connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotAnalyzeTrack);
     }*/
 
@@ -397,16 +397,16 @@ void PlayerManager::slotChangeNumAuxiliaries(double v) {
 void PlayerManager::slotChangeNumStems(double v) {
     const auto locker = lockMutex(&m_mutex);
     int num = (int)v;
-    if (num < m_stem.size()) {
+    if (num < m_stems.size()) {
         // The request was invalid -- don't set the value.
         kLogger.debug() << "Ignoring request to reduce the number of stems to" << num;
         return;
     }
 
-    while (m_stem.size() < num) {
+    while (m_stems.size() < num) {
         addStemInner();
     }
-    m_pCONumStems->setAndConfirm(m_stem.size());
+    m_pCONumStems->setAndConfirm(m_stems.size());
 }
 
 void PlayerManager::addDeck() {
@@ -599,7 +599,7 @@ void PlayerManager::addStem() {
 
 void PlayerManager::addStemInner() {
     // Do not lock m_mutex here.
-    int index = m_stem.count();
+    int index = m_stems.count();
     ChannelHandleAndGroup handleGroup =
             m_pEngine->registerChannelGroup(groupForStem(index));
     VERIFY_OR_DEBUG_ASSERT(!m_players.contains(handleGroup.handle())) {
@@ -637,15 +637,14 @@ void PlayerManager::addStemInner() {
 
     // Connect the track loaded signal to the stem player so that loaded tracks are
     // played at once.
-    //connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
+    connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
 
     m_players[handleGroup.handle()] = pStem;
-    m_stem.append(pStem);
+    m_stems.append(pStem);
 
     // Register the stem output with SoundManager.
-    //m_pSoundManager->registerOutput(
-    //        AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
-    connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
+    m_pSoundManager->registerOutput(
+            AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
 }
 
 BaseTrackPlayer* PlayerManager::getPlayer(const QString& group) const {
@@ -719,12 +718,12 @@ Auxiliary* PlayerManager::getAuxiliary(unsigned int auxiliary) const {
 
 Stem* PlayerManager::getStem(unsigned int stem) const {
     const auto locker = lockMutex(&m_mutex);
-    if (stem < 1 || stem > static_cast<unsigned int>(m_stem.size())) {
+    if (stem < 1 || stem > static_cast<unsigned int>(m_stems.size())) {
         kLogger.warning() << "Warning getStem() called with invalid index: "
                    << stem;
         return nullptr;
     }
-    return m_stem[stem - 1];
+    return m_stems[stem - 1];
 }
 
 void PlayerManager::slotCloneDeck(const QString& source_group, const QString& target_group) {
@@ -885,62 +884,3 @@ void PlayerManager::onTrackAnalysisProgress(TrackId trackId, AnalyzerProgress an
 void PlayerManager::onTrackAnalysisFinished() {
     emit trackAnalyzerIdle();
 }
-
-/*void PlayerManager::slotStemPlay(TrackPointer pTrack) {
-        Stem* pStem = qobject_cast<Stem*>(sender());
-        int stemNumber;
-        extractIntFromRegex(kStemRegex, pStem->stemName, &stemNumber);
-        QString deckNumber;
-
-        if (stemNumber <= 4) {
-            deckNumber = "1";
-        }
-
-        else if (stemNumber > 4 && stemNumber <= 9) {
-            deckNumber = "2";
-        }
-
-	else if (stemNumber > 9 && stemNumber <= 12) {
-            deckNumber = "3";
-        }
-
-	else if (stemNumber > 12 && stemNumber <= 16) {
-            deckNumber = "4";
-        }
-
-        ControlProxy* m_DeckPlayPosition = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "playposition");
-        ControlProxy* m_DeckVolume = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "volume");
-        ControlProxy* m_DeckFileBpm = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "file_bpm");
-        ControlProxy* m_DeckBpm = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "bpm");
-        ControlProxy* m_DeckReplayGain = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "replaygain");
-        ControlProxy* m_DeckKeyLock = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "keylock");
-
-        ControlProxy* m_StemPlayPosition = new ControlProxy(pStem->stemName, "playposition");
-        ControlProxy* m_StemVolume = new ControlProxy(pStem->stemName, "volume");
-        ControlProxy* m_StemPlay = new ControlProxy(pStem->stemName, "play");
-        ControlProxy* m_StemBpm = new ControlProxy(pStem->stemName, "bpm");
-        ControlProxy* m_StemReplayGain = new ControlProxy(pStem->stemName, "replaygain");
-        ControlProxy* m_StemKeyLock = new ControlProxy(pStem->stemName, "keylock");
-
-        pTrack->trySetBpm(m_DeckFileBpm->get());
-        m_StemBpm->set(m_DeckBpm->get());
-
-        m_StemKeyLock->set(m_DeckKeyLock->get());
-	m_StemReplayGain->set(m_DeckReplayGain->get());
-        m_StemPlayPosition->set(m_DeckPlayPosition->get());
-        m_StemVolume->set(0.8);
-        m_StemPlay->set(1.0);
-
-        delete m_DeckPlayPosition;
-        delete m_DeckVolume;
-        delete m_DeckFileBpm;
-        delete m_DeckBpm;
-	delete m_DeckReplayGain;
-	delete m_DeckKeyLock;
-        delete m_StemPlayPosition;
-        delete m_StemVolume;
-        delete m_StemPlay;
-        delete m_StemBpm;
-	delete m_StemReplayGain;
-	delete m_StemKeyLock;
-}*/
