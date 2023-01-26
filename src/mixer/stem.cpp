@@ -46,7 +46,7 @@ Stem::Stem(PlayerManager* pParent,
                   handleGroup,
                   /*defaultMaster*/ true,
                   /*defaultHeadphones*/ false,
-                  /*primaryDeck*/ false) {
+                  /*primaryDeck*/ true) {
     stemName = handleGroup.name();
 }
 

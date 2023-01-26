@@ -32,6 +32,7 @@ const int kNumberOfAnalyzerThreads = math_max(1, QThread::idealThreadCount() / 2
 const QRegularExpression kDeckRegex(QStringLiteral("^\\[Channel(\\d+)\\]$"));
 const QRegularExpression kSamplerRegex(QStringLiteral("^\\[Sampler(\\d+)\\]$"));
 const QRegularExpression kPreviewDeckRegex(QStringLiteral("^\\[PreviewDeck(\\d+)\\]$"));
+const QRegularExpression kStemRegex(QStringLiteral("^\\[Stem(\\d+)\\]$"));
 
 bool extractIntFromRegex(const QRegularExpression& regex, const QString& group, int* number) {
     const QRegularExpressionMatch match = regex.match(group);
@@ -145,6 +146,7 @@ PlayerManager::~PlayerManager() {
     m_samplers.clear();
     m_microphones.clear();
     m_auxiliaries.clear();
+    m_stem.clear();
 
     delete m_pCOPNumDecks.fetchAndStoreAcquire(nullptr);
     delete m_pCOPNumSamplers.fetchAndStoreAcquire(nullptr);
@@ -208,9 +210,9 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
 
     // Connect the stems player to the analyzer queue so that loaded tracks are
     // analyzed.
-    /*foreach(Stem* pStem, m_stem) {
+    foreach(Stem* pStem, m_stem) {
         connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotAnalyzeTrack);
-    }*/
+    }
 
 }
 
@@ -616,16 +618,15 @@ void PlayerManager::addStemInner() {
 
     // Connect the track loaded signal to the stem player so that loaded tracks are
     // played at once.
-    connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
+    //connect(pStem, &BaseTrackPlayer::newTrackLoaded, pStem, &Stem::slotStemPlay);
 
     m_players[handleGroup.handle()] = pStem;
     m_stem.append(pStem);
 
     // Register the stem output with SoundManager.
-    m_pSoundManager->registerOutput(
-            AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
-
-
+    //m_pSoundManager->registerOutput(
+    //        AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
+    //connect(pStem, &BaseTrackPlayer::newTrackLoaded, this, &PlayerManager::slotStemPlay);
 }
 
 BaseTrackPlayer* PlayerManager::getPlayer(const QString& group) const {
@@ -758,12 +759,11 @@ void PlayerManager::slotLoadTrackToPlayer(TrackPointer pTrack, const QString& gr
     m_lastLoadedPlayer = group;
 }
 
-TrackPointer PlayerManager::slotLoadLocationToPlayer(
+void PlayerManager::slotLoadLocationToPlayer(
         const QString& location, const QString& group, bool play) {
     // The library will get the track and then signal back to us to load the
     // track via slotLoadTrackToPlayer.
-    TrackPointer trackLoaded = emit loadLocationToPlayer(location, group, play);
-    return trackLoaded;
+    emit loadLocationToPlayer(location, group, play);
 }
 
 void PlayerManager::slotLoadLocationToPlayerMaybePlay(
@@ -787,9 +787,8 @@ void PlayerManager::slotLoadLocationToPlayerMaybePlay(
     slotLoadLocationToPlayer(location, group, play);
 }
 
-TrackPointer PlayerManager::slotLoadToDeck(const QString& location, int deck) {
-    TrackPointer trackLoaded = slotLoadLocationToPlayer(location, groupForDeck(deck - 1), false);
-    return trackLoaded;
+void PlayerManager::slotLoadToDeck(const QString& location, int deck) {
+    slotLoadLocationToPlayer(location, groupForDeck(deck - 1), false);
 }
 
 void PlayerManager::slotLoadToPreviewDeck(const QString& location, int previewDeck) {
@@ -866,4 +865,63 @@ void PlayerManager::onTrackAnalysisProgress(TrackId trackId, AnalyzerProgress an
 
 void PlayerManager::onTrackAnalysisFinished() {
     emit trackAnalyzerIdle();
+}
+
+void PlayerManager::slotStemPlay(TrackPointer pTrack) {
+        Stem* pStem = qobject_cast<Stem*>(sender());
+        int stemNumber;
+        extractIntFromRegex(kStemRegex, pStem->stemName, &stemNumber);
+        QString deckNumber;
+
+        if (stemNumber <= 4) {
+            deckNumber = "1";
+        }
+
+        else if (stemNumber > 4 && stemNumber <= 9) {
+            deckNumber = "2";
+        }
+
+	else if (stemNumber > 9 && stemNumber <= 12) {
+            deckNumber = "3";
+        }
+
+	else if (stemNumber > 12 && stemNumber <= 16) {
+            deckNumber = "4";
+        }
+
+        ControlProxy* m_DeckPlayPosition = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "playposition");
+        ControlProxy* m_DeckVolume = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "volume");
+        ControlProxy* m_DeckFileBpm = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "file_bpm");
+        ControlProxy* m_DeckBpm = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "bpm");
+        ControlProxy* m_DeckReplayGain = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "replaygain");
+        ControlProxy* m_DeckKeyLock = new ControlProxy(QString("[Channel") + deckNumber + QString("]"), "keylock");
+
+        ControlProxy* m_StemPlayPosition = new ControlProxy(pStem->stemName, "playposition");
+        ControlProxy* m_StemVolume = new ControlProxy(pStem->stemName, "volume");
+        ControlProxy* m_StemPlay = new ControlProxy(pStem->stemName, "play");
+        ControlProxy* m_StemBpm = new ControlProxy(pStem->stemName, "bpm");
+        ControlProxy* m_StemReplayGain = new ControlProxy(pStem->stemName, "replaygain");
+        ControlProxy* m_StemKeyLock = new ControlProxy(pStem->stemName, "keylock");
+
+        pTrack->trySetBpm(m_DeckFileBpm->get());
+        m_StemBpm->set(m_DeckBpm->get());
+
+        m_StemKeyLock->set(m_DeckKeyLock->get());
+	m_StemReplayGain->set(m_DeckReplayGain->get());
+        m_StemPlayPosition->set(m_DeckPlayPosition->get());
+        m_StemVolume->set(0.8);
+        m_StemPlay->set(1.0);
+
+        delete m_DeckPlayPosition;
+        delete m_DeckVolume;
+        delete m_DeckFileBpm;
+        delete m_DeckBpm;
+	delete m_DeckReplayGain;
+	delete m_DeckKeyLock;
+        delete m_StemPlayPosition;
+        delete m_StemVolume;
+        delete m_StemPlay;
+        delete m_StemBpm;
+	delete m_StemReplayGain;
+	delete m_StemKeyLock;
 }

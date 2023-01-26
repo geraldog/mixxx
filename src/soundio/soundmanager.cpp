@@ -423,7 +423,8 @@ SoundDeviceStatus SoundManager::setupDevices() {
                 if (out.getType() == AudioOutput::MASTER) {
                     pNewMasterClockRef = pDevice;
                 } else if ((out.getType() == AudioOutput::DECK ||
-                            out.getType() == AudioOutput::BUS)
+                            out.getType() == AudioOutput::BUS ||
+                            out.getType() == AudioOutput::STEM)
                         && !pNewMasterClockRef) {
                     pNewMasterClockRef = pDevice;
                 }

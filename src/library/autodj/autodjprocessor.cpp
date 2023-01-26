@@ -21,6 +21,8 @@
 #include "effects/effectknobparameterslot.h"
 #include "effects/chains/equalizereffectchain.h"
 
+#include <QRegularExpression>
+
 #define kConfigKey "[Auto DJ]"
 namespace {
 const char* kTransitionPreferenceName = "Transition";
@@ -32,6 +34,26 @@ constexpr double kKeepPosition = -1.0;
 constexpr double kMinimumTrackDurationSec = 0.2;
 
 constexpr bool sDebug = false;
+
+const QRegularExpression kFilenameRegex(QStringLiteral("([^\\/]+)\\.[^.\\/:*?\"<>|]+$"));
+
+QString extractFilenameFromRegex(const QRegularExpression& regex, const QString& group) {
+    const QRegularExpressionMatch match = regex.match(group);
+    DEBUG_ASSERT(match.isValid());
+    if (!match.hasMatch()) {
+        return "ERR_NO_FILE";
+    }
+    // The regex is expected to contain a single capture group with the number
+    constexpr int capturedNumberIndex = 1;
+    DEBUG_ASSERT(match.lastCapturedIndex() <= capturedNumberIndex);
+    if (match.lastCapturedIndex() < capturedNumberIndex) {
+        qWarning() << "No filename found in group" << group;
+        return "ERR_NO_FILE";
+    }
+    const QString capturedFilename = match.captured(capturedNumberIndex);
+    DEBUG_ASSERT(!capturedFilename.isNull());
+    return capturedFilename;
+}
 } // anonymous namespace
 
 DeckAttributes::DeckAttributes(int index,
@@ -1055,6 +1077,13 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
         std::cout << this->pathToSong1.toStdString() + "\n";
 
+//        ControlProxy* m_pStem1Engage = new ControlProxy("[Channel1]", "LoadStems");
+  //      ControlProxy* m_pStem2Engage = new ControlProxy("[Channel2]", "LoadStems");
+    //    std::cout << "Channel 1 STEMS: " << std::to_string(m_pStem1Engage->get()) << std::endl;
+      //  std::cout << "Channel 2 STEMS: " << std::to_string(m_pStem2Engage->get()) << std::endl;
+        //delete m_pStem1Engage;
+        //delete m_pStem2Engage;
+
         if (Playing1Queue == 2 && leftDecko.getLoadedTrack()->getLocation() == this->pathToSong1) {
 
             uint64_t totalSamples1 =
@@ -1243,9 +1272,29 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             if (comando[0] == 'Z') {
                 if (comando[1] == '1') {
-                    ControlProxy* m_pStemEngage = new ControlProxy("[Channel1]", "LoadStems");
-                    m_pStemEngage->set(1.0);
+                    //ControlProxy* m_pStemEngage = new ControlProxy("[Channel1]", "LoadStems");
+                    //m_pStemEngage->set(1.0);
                     stemsDeck1Playing = true;
+
+                    if (thisDeck->index == 0) {
+                        this->track1Loaded = thisDeck->getLoadedTrack();
+                    }
+
+                    else {
+                        this->track1Loaded = otherDeck->getLoadedTrack();
+                    }
+
+        const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track1Loaded->getLocation());
+
+        QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
+        QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
+        QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
+        QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
+
+        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 1);
+        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 2);
+        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 3);
+        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 4);
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1254,15 +1303,35 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-                    delete m_pStemEngage;
+                    //delete m_pStemEngage;
                     goto clean_exit;
                 }
 
                 else if (comando[1] == '2') {
-                    ControlProxy* m_pStemEngage = new ControlProxy("[Channel2]", "LoadStems");
-                    m_pStemEngage->set(1.0);
+                    //ControlProxy* m_pStemEngage = new ControlProxy("[Channel2]", "LoadStems");
+                    //m_pStemEngage->set(1.0);
                     stemsDeck2Playing = true;
 
+
+                    if (thisDeck->index == 1) {
+                        this->track2Loaded = thisDeck->getLoadedTrack();
+                    }
+
+                    else {
+                        this->track2Loaded = otherDeck->getLoadedTrack();
+                    }
+
+        const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track2Loaded->getLocation());
+
+        QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
+        QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
+        QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
+        QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
+
+        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 5);
+        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 6);
+        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 7);
+        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 8);
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
@@ -1270,7 +1339,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->counter++;
 
                     this->LOCK = false;
-                    delete m_pStemEngage;
+                    //delete m_pStemEngage;
                     goto clean_exit;
                 }
             }
@@ -2172,10 +2241,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             else if (comando[0] == 'T') {
                 if (comando[1] == '1') {
-                    /*if (m_Playing1->get() != 1) {
+                    if (m_Playing1->get() != 1) {
                         this->LOCK = false;
                         goto clean_exit;
-                    }*/
+                    }
 
                     std::string bpmAsked1;
                     double bpm_double1;
@@ -2239,15 +2308,22 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                         std::to_string(bpm_double1) + "\n";
                         m_Bpm1->set(dRateSlider);
 
+                        ControlProxy* deck1PhaseSync = new ControlProxy("[Channel1]", "beatsync_phase");
+                        deck1PhaseSync->set(1.0);
+                        deck1PhaseSync->set(0.0);
+
                         confirmado.open("/home/dumbo/confirmixxx.txt");
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
                         this->counter++;
+
                         delete m_Bpm1;
                         delete m_FileBpm1;
                         delete m_pRateDir;
                         delete m_pRateRange;
+                        delete deck1PhaseSync;
+
                         this->LOCK = false;
                         goto clean_exit;
                     }
@@ -2261,15 +2337,21 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                         std::to_string(bpm_double1) + "\n";
                         m_Bpm1->set(dRateSlider);
 
+                        ControlProxy* deck1PhaseSync = new ControlProxy("[Channel1]", "beatsync_phase");
+                        deck1PhaseSync->set(1.0);
+                        deck1PhaseSync->set(0.0);
+
                         confirmado.open("/home/dumbo/confirmixxx.txt");
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
                         this->counter++;
+
                         delete m_Bpm1;
                         delete m_FileBpm1;
                         delete m_pRateDir;
                         delete m_pRateRange;
+                        delete deck1PhaseSync;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2294,10 +2376,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    /*if (m_Playing2->get() != 1) {
+                    if (m_Playing2->get() != 1) {
                         this->LOCK = false;
                         goto clean_exit;
-                    }*/
+                    }
                     std::string bpmAsked2;
                     double bpm_double2;
 
@@ -2363,11 +2445,17 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
+                        ControlProxy* deck2PhaseSync = new ControlProxy("[Channel2]", "beatsync_phase");
+                        deck2PhaseSync->set(1.0);
+                        deck2PhaseSync->set(0.0);
+
                         this->counter++;
+
                         delete m_Bpm2;
                         delete m_FileBpm2;
                         delete m_pRateDir;
                         delete m_pRateRange;
+                        delete deck2PhaseSync;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2382,15 +2470,21 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                         std::to_string(bpm_double2) + "\n";
                         m_Bpm2->set(dRateSlider);
 
+                        ControlProxy* deck2PhaseSync = new ControlProxy("[Channel2]", "beatsync_phase");
+                        deck2PhaseSync->set(1.0);
+                        deck2PhaseSync->set(0.0);
+
                         confirmado.open("/home/dumbo/confirmixxx.txt");
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
                         this->counter++;
+
                         delete m_Bpm2;
                         delete m_FileBpm2;
                         delete m_pRateDir;
                         delete m_pRateRange;
+                        delete deck2PhaseSync;
 
                         this->LOCK = false;
                         goto clean_exit;
@@ -2835,9 +2929,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     m_PlayPosition1->set(0);
 
-                    this->track1Loaded =
-                            m_pPlayerManager->slotLoadToDeck(
-                                    pathToSong1, 1);
+                    m_pPlayerManager->slotLoadToDeck(pathToSong1, 1);
+
+                    if (thisDeck->index == 0) {
+                        this->track1Loaded = thisDeck->getLoadedTrack();
+                    }
+
+                    else {
+                        this->track1Loaded = otherDeck->getLoadedTrack();
+                    }
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -2862,9 +2962,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     m_PlayPosition2->set(0);
 
-                    this->track2Loaded =
-                            m_pPlayerManager->slotLoadToDeck(
-                                    pathToSong2, 2);
+                    m_pPlayerManager->slotLoadToDeck(pathToSong2, 2);
+
+                    if (thisDeck->index == 1) {
+                        this->track2Loaded = thisDeck->getLoadedTrack();
+                    }
+
+                    else {
+                        this->track2Loaded = otherDeck->getLoadedTrack();
+                    }
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -3872,6 +3978,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     }
 
     if (stemsDeck1Playing == true && m_Playing1->get() == 1.0) {
+        ControlProxy* m_Deck1PlayPosition = new ControlProxy(QString("[Channel1]"), "playposition");
         ControlProxy* m_Stem1Position = new ControlProxy(QString("[Stem1]"), "playposition");
         ControlProxy* m_Stem2Position = new ControlProxy(QString("[Stem2]"), "playposition");
         ControlProxy* m_Stem3Position = new ControlProxy(QString("[Stem3]"), "playposition");
@@ -3893,6 +4000,84 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         ControlProxy* m_Stem2Scratch2 = new ControlProxy(QString("[Stem2]"), "scratch2");
         ControlProxy* m_Stem3Scratch2 = new ControlProxy(QString("[Stem3]"), "scratch2");
         ControlProxy* m_Stem4Scratch2 = new ControlProxy(QString("[Stem4]"), "scratch2");
+
+        ControlProxy* m_Deck1FileBpm = new ControlProxy(QString("[Channel1]"), "file_bpm");
+        ControlProxy* m_Deck1Bpm = new ControlProxy(QString("[Channel1]"), "bpm");
+        ControlProxy* m_Deck1ReplayGain = new ControlProxy(QString("[Channel1]"), "replaygain");
+        ControlProxy* m_Deck1KeyLock = new ControlProxy(QString("[Channel1]"), "keylock");
+
+        ControlProxy* m_Deck1Volume = new ControlProxy("[Channel1]", "volume");
+        ControlProxy* m_Stem1Volume = new ControlProxy("[Stem1]", "volume");
+        ControlProxy* m_Stem2Volume = new ControlProxy("[Stem2]", "volume");
+        ControlProxy* m_Stem3Volume = new ControlProxy("[Stem3]", "volume");
+        ControlProxy* m_Stem4Volume = new ControlProxy("[Stem4]", "volume");
+
+        ControlProxy* m_Stem1Bpm = new ControlProxy("[Stem1]", "bpm");
+        ControlProxy* m_Stem2Bpm = new ControlProxy("[Stem2]", "bpm");
+        ControlProxy* m_Stem3Bpm = new ControlProxy("[Stem3]", "bpm");
+        ControlProxy* m_Stem4Bpm = new ControlProxy("[Stem4]", "bpm");
+        
+        ControlProxy* m_Stem1ReplayGain = new ControlProxy("[Stem1]", "replaygain");
+        ControlProxy* m_Stem2ReplayGain = new ControlProxy("[Stem2]", "replaygain");
+        ControlProxy* m_Stem3ReplayGain = new ControlProxy("[Stem3]", "replaygain");
+        ControlProxy* m_Stem4ReplayGain = new ControlProxy("[Stem4]", "replaygain");
+
+        ControlProxy* m_Stem1KeyLock = new ControlProxy("[Stem1]", "keylock");
+        ControlProxy* m_Stem2KeyLock = new ControlProxy("[Stem2]", "keylock");
+        ControlProxy* m_Stem3KeyLock = new ControlProxy("[Stem3]", "keylock");
+        ControlProxy* m_Stem4KeyLock = new ControlProxy("[Stem4]", "keylock");
+
+
+        if (stemsDeck1Scratching == false &&
+            m_Deck1Scratch2Enabled->get() == 0.0 &&
+            m_Playing1->get() == 1.0 &&
+            (m_Stem1Playing->get() != 1.0 && 
+            m_Stem2Playing->get() != 1.0 &&
+            m_Stem3Playing->get() != 1.0 &&
+            m_Stem4Playing->get() != 1.0)) {
+            
+        this->m_pPlayerManager->getStem(1)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
+        this->m_pPlayerManager->getStem(2)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
+        this->m_pPlayerManager->getStem(3)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
+        this->m_pPlayerManager->getStem(4)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck1FileBpm->get()));
+
+        mixxx::BeatsPointer pBeats = this->track1Loaded->getBeats();
+        this->m_pPlayerManager->getStem(1)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(2)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(3)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(4)->getLoadedTrack()->trySetBeats(pBeats);
+
+        m_Stem1Bpm->set(m_Deck1Bpm->get());
+        m_Stem2Bpm->set(m_Deck1Bpm->get());
+        m_Stem3Bpm->set(m_Deck1Bpm->get());
+        m_Stem4Bpm->set(m_Deck1Bpm->get());
+
+        if (m_Stem1KeyLock->get() != m_Deck1KeyLock->get()) {
+        m_Stem1KeyLock->set(m_Deck1KeyLock->get());
+        m_Stem2KeyLock->set(m_Deck1KeyLock->get());
+        m_Stem3KeyLock->set(m_Deck1KeyLock->get());
+        m_Stem4KeyLock->set(m_Deck1KeyLock->get());
+        }
+	m_Stem1ReplayGain->set(m_Deck1ReplayGain->get());
+	m_Stem2ReplayGain->set(m_Deck1ReplayGain->get());
+	m_Stem3ReplayGain->set(m_Deck1ReplayGain->get());
+	m_Stem4ReplayGain->set(m_Deck1ReplayGain->get());
+
+        m_Stem1Volume->set(0.5);
+        m_Stem2Volume->set(0.5);
+        m_Stem3Volume->set(0.5);
+        m_Stem4Volume->set(0.5);
+
+            m_Stem1Playing->set(1.0);
+            m_Stem2Playing->set(1.0);
+            m_Stem3Playing->set(1.0);
+            m_Stem4Playing->set(1.0);
+
+            m_Deck1Volume->set(0.0);
+
+            goto clean_stem_exit;
+
+        }
 
         if (stemsDeck1Scratching == false &&
             m_Deck1Scratch2Enabled->get() == 0.0 &&
@@ -3969,6 +4154,7 @@ clean_stem_exit:
         delete m_Stem3Scratch2;
         delete m_Stem4Scratch2;
 
+        delete m_Deck1PlayPosition;
         delete m_Stem1Position;
         delete m_Stem2Position;
         delete m_Stem3Position;
@@ -3978,9 +4164,36 @@ clean_stem_exit:
         delete m_Stem2Playing;
         delete m_Stem3Playing;
         delete m_Stem4Playing;
+
+        delete m_Deck1FileBpm;
+        delete m_Deck1Bpm;
+	delete m_Deck1ReplayGain;
+	delete m_Deck1KeyLock;
+
+        delete m_Deck1Volume;
+        delete m_Stem1Volume;
+        delete m_Stem2Volume;
+        delete m_Stem3Volume;
+        delete m_Stem4Volume;
+
+        delete m_Stem1Bpm;
+        delete m_Stem2Bpm;
+        delete m_Stem3Bpm;
+        delete m_Stem4Bpm;
+
+	delete m_Stem1ReplayGain;
+	delete m_Stem2ReplayGain;
+	delete m_Stem3ReplayGain;
+	delete m_Stem4ReplayGain;
+
+	delete m_Stem1KeyLock;
+	delete m_Stem2KeyLock;
+	delete m_Stem3KeyLock;
+	delete m_Stem4KeyLock;
     }
 
     if (stemsDeck2Playing == true && m_Playing2->get() == 1.0) {
+        ControlProxy* m_Deck2PlayPosition = new ControlProxy(QString("[Channel2]"), "playposition");
         ControlProxy* m_Stem5Position = new ControlProxy(QString("[Stem5]"), "playposition");
         ControlProxy* m_Stem6Position = new ControlProxy(QString("[Stem6]"), "playposition");
         ControlProxy* m_Stem7Position = new ControlProxy(QString("[Stem7]"), "playposition");
@@ -4003,6 +4216,81 @@ clean_stem_exit:
         ControlProxy* m_Stem7Scratch2 = new ControlProxy(QString("[Stem7]"), "scratch2");
         ControlProxy* m_Stem8Scratch2 = new ControlProxy(QString("[Stem8]"), "scratch2");
 
+        ControlProxy* m_Deck2FileBpm = new ControlProxy(QString("[Channel2]"), "file_bpm");
+        ControlProxy* m_Deck2Bpm = new ControlProxy(QString("[Channel2]"), "bpm");
+        ControlProxy* m_Deck2ReplayGain = new ControlProxy(QString("[Channel2]"), "replaygain");
+        ControlProxy* m_Deck2KeyLock = new ControlProxy(QString("[Channel2]"), "keylock");
+
+        ControlProxy* m_Deck2Volume = new ControlProxy("[Channel2]", "volume");
+        ControlProxy* m_Stem5Volume = new ControlProxy("[Stem5]", "volume");
+        ControlProxy* m_Stem6Volume = new ControlProxy("[Stem6]", "volume");
+        ControlProxy* m_Stem7Volume = new ControlProxy("[Stem7]", "volume");
+        ControlProxy* m_Stem8Volume = new ControlProxy("[Stem8]", "volume");
+
+        ControlProxy* m_Stem5Bpm = new ControlProxy("[Stem5]", "bpm");
+        ControlProxy* m_Stem6Bpm = new ControlProxy("[Stem6]", "bpm");
+        ControlProxy* m_Stem7Bpm = new ControlProxy("[Stem7]", "bpm");
+        ControlProxy* m_Stem8Bpm = new ControlProxy("[Stem8]", "bpm");
+        
+        ControlProxy* m_Stem5ReplayGain = new ControlProxy("[Stem5]", "replaygain");
+        ControlProxy* m_Stem6ReplayGain = new ControlProxy("[Stem6]", "replaygain");
+        ControlProxy* m_Stem7ReplayGain = new ControlProxy("[Stem7]", "replaygain");
+        ControlProxy* m_Stem8ReplayGain = new ControlProxy("[Stem8]", "replaygain");
+
+        ControlProxy* m_Stem5KeyLock = new ControlProxy("[Stem5]", "keylock");
+        ControlProxy* m_Stem6KeyLock = new ControlProxy("[Stem6]", "keylock");
+        ControlProxy* m_Stem7KeyLock = new ControlProxy("[Stem7]", "keylock");
+        ControlProxy* m_Stem8KeyLock = new ControlProxy("[Stem8]", "keylock");
+
+        if (stemsDeck2Scratching == false &&
+            m_Deck2Scratch2Enabled->get() == 0.0 &&
+            m_Playing2->get() == 1.0 &&
+            (m_Stem5Playing->get() != 1.0 &&
+            m_Stem6Playing->get() != 1.0 &&
+            m_Stem7Playing->get() != 1.0 &&
+            m_Stem8Playing->get() != 1.0)) {
+
+        this->m_pPlayerManager->getStem(5)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
+        this->m_pPlayerManager->getStem(6)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
+        this->m_pPlayerManager->getStem(7)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
+        this->m_pPlayerManager->getStem(8)->getLoadedTrack()->trySetBpm(mixxx::Bpm(m_Deck2FileBpm->get()));
+
+        mixxx::BeatsPointer pBeats = this->track2Loaded->getBeats();
+        this->m_pPlayerManager->getStem(5)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(6)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(7)->getLoadedTrack()->trySetBeats(pBeats);
+        this->m_pPlayerManager->getStem(8)->getLoadedTrack()->trySetBeats(pBeats);
+
+        m_Stem5Bpm->set(m_Deck2Bpm->get());
+        m_Stem6Bpm->set(m_Deck2Bpm->get());
+        m_Stem7Bpm->set(m_Deck2Bpm->get());
+        m_Stem8Bpm->set(m_Deck2Bpm->get());
+
+        if (m_Stem5KeyLock->get() != m_Deck2KeyLock->get()) {
+        m_Stem5KeyLock->set(m_Deck2KeyLock->get());
+        m_Stem6KeyLock->set(m_Deck2KeyLock->get());
+        m_Stem7KeyLock->set(m_Deck2KeyLock->get());
+        m_Stem8KeyLock->set(m_Deck2KeyLock->get());
+}
+	m_Stem5ReplayGain->set(m_Deck2ReplayGain->get());
+	m_Stem6ReplayGain->set(m_Deck2ReplayGain->get());
+	m_Stem7ReplayGain->set(m_Deck2ReplayGain->get());
+	m_Stem8ReplayGain->set(m_Deck2ReplayGain->get());
+
+        m_Stem5Volume->set(0.5);
+        m_Stem6Volume->set(0.5);
+        m_Stem7Volume->set(0.5);
+        m_Stem8Volume->set(0.5);
+
+            m_Stem5Playing->set(1.0);
+            m_Stem6Playing->set(1.0);
+            m_Stem7Playing->set(1.0);
+            m_Stem8Playing->set(1.0);
+            m_Deck2Volume->set(0.0);
+
+            goto clean_stem_deck_2_exit;
+
+        }
         if (stemsDeck2Scratching == false &&
             m_Deck2Scratch2Enabled->get() == 0.0 &&
             m_Playing2->get() == 1.0 &&
@@ -4078,6 +4366,7 @@ clean_stem_deck_2_exit:
         delete m_Stem7Scratch2;
         delete m_Stem8Scratch2;
 
+        delete m_Deck2PlayPosition;
         delete m_Stem5Position;
         delete m_Stem6Position;
         delete m_Stem7Position;
@@ -4087,6 +4376,32 @@ clean_stem_deck_2_exit:
         delete m_Stem6Playing;
         delete m_Stem7Playing;
         delete m_Stem8Playing;
+
+        delete m_Deck2FileBpm;
+        delete m_Deck2Bpm;
+	delete m_Deck2ReplayGain;
+	delete m_Deck2KeyLock;
+
+        delete m_Deck2Volume;
+        delete m_Stem5Volume;
+        delete m_Stem6Volume;
+        delete m_Stem7Volume;
+        delete m_Stem8Volume;
+
+        delete m_Stem5Bpm;
+        delete m_Stem6Bpm;
+        delete m_Stem7Bpm;
+        delete m_Stem8Bpm;
+
+	delete m_Stem5ReplayGain;
+	delete m_Stem6ReplayGain;
+	delete m_Stem7ReplayGain;
+	delete m_Stem8ReplayGain;
+
+	delete m_Stem5KeyLock;
+	delete m_Stem6KeyLock;
+	delete m_Stem7KeyLock;
+	delete m_Stem8KeyLock;
     }
 
 clean_exit:
@@ -4301,6 +4616,11 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         ControlProxy* m_Stem3Stop = new ControlProxy(QString("[Stem3]"), "stop");
         ControlProxy* m_Stem4Stop = new ControlProxy(QString("[Stem4]"), "stop");
 
+        ControlProxy* m_Stem1Eject = new ControlProxy(QString("[Stem1]"), "eject");
+        ControlProxy* m_Stem2Eject = new ControlProxy(QString("[Stem2]"), "eject");
+        ControlProxy* m_Stem3Eject = new ControlProxy(QString("[Stem3]"), "eject");
+        ControlProxy* m_Stem4Eject = new ControlProxy(QString("[Stem4]"), "eject");
+
         if (m_Playing1->get() == 0.0) {
             stemsDeck1Playing = false;
 
@@ -4308,6 +4628,15 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
             m_Stem2Stop->set(1.0);
             m_Stem3Stop->set(1.0);
             m_Stem4Stop->set(1.0);
+            m_Stem1Eject->set(1.0);
+            m_Stem2Eject->set(1.0);
+            m_Stem3Eject->set(1.0);
+            m_Stem4Eject->set(1.0);
+
+            //this->m_pPlayerManager->getStem(1)->slotEjectTrack(1.0);
+            //this->m_pPlayerManager->getStem(2)->slotEjectTrack(1.0);
+            //this->m_pPlayerManager->getStem(3)->slotEjectTrack(1.0);
+            //this->m_pPlayerManager->getStem(4)->slotEjectTrack(1.0);
         }
 
         delete m_Playing1;
@@ -4315,6 +4644,10 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         delete m_Stem2Stop;
         delete m_Stem3Stop;
         delete m_Stem4Stop;
+        delete m_Stem1Eject;
+        delete m_Stem2Eject;
+        delete m_Stem3Eject;
+        delete m_Stem4Eject;
     }
 
     if (stemsDeck2Playing == true) {

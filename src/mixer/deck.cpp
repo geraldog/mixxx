@@ -3,9 +3,9 @@
 #include "track/track.h"
 #include "control/controlobject.h"
 #include "moc_deck.cpp"
-#include <QRegularExpression>
+//#include <QRegularExpression>
 
-namespace {
+/*namespace {
 
 const QRegularExpression kDeckRegex(QStringLiteral("^\\[Channel(\\d+)\\]$"));
 const QRegularExpression kFilenameRegex(QStringLiteral("([^\\/]+)\\.[^.\\/:*?\"<>|]+$"));
@@ -52,6 +52,7 @@ QString extractFilenameFromRegex(const QRegularExpression& regex, const QString&
 }
 
 } //anonymous namespace
+*/
 
 Deck::Deck(PlayerManager* pParent,
         UserSettingsPointer pConfig,
@@ -68,18 +69,19 @@ Deck::Deck(PlayerManager* pParent,
                   /*defaultMaster*/ true,
                   /*defaultHeadphones*/ false,
                   /*primaryDeck*/ true) {
-    deckName = handleGroup.name();
+    //deckName = handleGroup.name();
 
-    m_pStemControl = new ControlObject(ConfigKey(handleGroup.name(), "LoadStems"));
-    m_pStemControl->connectValueChangeRequest(this,
-            &Deck::slotStemEnabled, Qt::DirectConnection);
+    //m_pStemControl = new ControlObject(ConfigKey(handleGroup.name(), "LoadStems"));
+    //m_pStemControl->connectValueChangeRequest(this,
+    //        &Deck::slotStemEnabled, Qt::DirectConnection);
+    //clonedPlayerManager = pParent;
 }
 
 Deck::~Deck() {
-    delete m_pStemControl;
+    //delete m_pStemControl;
 }
 
-void Deck::slotStemEnabled(double v) {
+/*void Deck::slotStemEnabled(double v) {
     bool enable = v > 0.0;
 
     if (enable) {
@@ -110,9 +112,9 @@ void Deck::slotStemEnabled(double v) {
         QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
         QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
-        this->m_pPlayerManager->slotLoadToStem(firstScratchFile, firstStemNumber.toInt());
-        this->m_pPlayerManager->slotLoadToStem(secondScratchFile, firstStemNumber.toInt() + 1);
-        this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, firstStemNumber.toInt() + 2);
-        this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, firstStemNumber.toInt() + 3);
+        this->clonedPlayerManager->slotLoadToStem(firstScratchFile, firstStemNumber.toInt());
+        this->clonedPlayerManager->slotLoadToStem(secondScratchFile, firstStemNumber.toInt() + 1);
+        this->clonedPlayerManager->slotLoadToStem(thirdScratchFile, firstStemNumber.toInt() + 2);
+        this->clonedPlayerManager->slotLoadToStem(fourthScratchFile, firstStemNumber.toInt() + 3);
     }
-}
+}*/

@@ -13,6 +13,7 @@
 #include "util/class.h"
 
 #include "mixer/playermanager.h"
+#include "mixer/stem.h"
 
 class ControlPushButton;
 class TrackCollectionManager;
