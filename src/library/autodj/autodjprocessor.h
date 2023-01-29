@@ -383,6 +383,12 @@ class AutoDJProcessor : public QObject {
     bool stemsDeck1Scratching = false;
     bool stemsDeck2Scratching = false;
 
+    unsigned long long looping1BeatCounter = 0;
+    unsigned long long looping2BeatCounter = 0;
+
+    double loopingBeatDistance1;
+    double loopingBeatDistance2;
+
     double m_PlayPositionDesired1 = 0;
     double m_PlayPositionDesired2 = 0;
     // Following functions return seconds computed from samples or -1 if

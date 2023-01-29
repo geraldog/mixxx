@@ -726,26 +726,26 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_pCue1 = new ControlProxy(QString("[Channel1]"), "cue_gotoandplay");
     ControlProxy* m_pCue2 = new ControlProxy(QString("[Channel2]"), "cue_gotoandplay");
 
-    ControlProxy* m_pHotCue11Set = new ControlProxy(QString("[Channel1]"), "hotcue_1_set");
-    ControlProxy* m_pHotCue21Set = new ControlProxy(QString("[Channel2]"), "hotcue_1_set");
-    ControlProxy* m_pHotCue12Set = new ControlProxy(QString("[Channel1]"), "hotcue_2_set");
-    ControlProxy* m_pHotCue22Set = new ControlProxy(QString("[Channel2]"), "hotcue_2_set");
-    ControlProxy* m_pHotCue13Set = new ControlProxy(QString("[Channel1]"), "hotcue_3_set");
-    ControlProxy* m_pHotCue23Set = new ControlProxy(QString("[Channel2]"), "hotcue_3_set");
-    ControlProxy* m_pHotCue14Set = new ControlProxy(QString("[Channel1]"), "hotcue_4_set");
-    ControlProxy* m_pHotCue24Set = new ControlProxy(QString("[Channel2]"), "hotcue_4_set");
-    ControlProxy* m_pHotCue15Set = new ControlProxy(QString("[Channel1]"), "hotcue_5_set");
-    ControlProxy* m_pHotCue25Set = new ControlProxy(QString("[Channel2]"), "hotcue_5_set");
-    ControlProxy* m_pHotCue16Set = new ControlProxy(QString("[Channel1]"), "hotcue_6_set");
-    ControlProxy* m_pHotCue26Set = new ControlProxy(QString("[Channel2]"), "hotcue_6_set");
-    ControlProxy* m_pHotCue17Set = new ControlProxy(QString("[Channel1]"), "hotcue_7_set");
-    ControlProxy* m_pHotCue27Set = new ControlProxy(QString("[Channel2]"), "hotcue_7_set");
-    ControlProxy* m_pHotCue18Set = new ControlProxy(QString("[Channel1]"), "hotcue_8_set");
-    ControlProxy* m_pHotCue28Set = new ControlProxy(QString("[Channel2]"), "hotcue_8_set");
-    ControlProxy* m_pHotCue19Set = new ControlProxy(QString("[Channel1]"), "hotcue_9_set");
-    ControlProxy* m_pHotCue29Set = new ControlProxy(QString("[Channel2]"), "hotcue_9_set");
-    ControlProxy* m_pHotCue110Set = new ControlProxy(QString("[Channel1]"), "hotcue_10_set");
-    ControlProxy* m_pHotCue210Set = new ControlProxy(QString("[Channel2]"), "hotcue_10_set");
+    ControlProxy* m_pHotCue11Set = new ControlProxy(QString("[Channel1]"), "hotcue_1_activate");
+    ControlProxy* m_pHotCue21Set = new ControlProxy(QString("[Channel2]"), "hotcue_1_activate");
+    ControlProxy* m_pHotCue12Set = new ControlProxy(QString("[Channel1]"), "hotcue_2_activate");
+    ControlProxy* m_pHotCue22Set = new ControlProxy(QString("[Channel2]"), "hotcue_2_activate");
+    ControlProxy* m_pHotCue13Set = new ControlProxy(QString("[Channel1]"), "hotcue_3_activate");
+    ControlProxy* m_pHotCue23Set = new ControlProxy(QString("[Channel2]"), "hotcue_3_activate");
+    ControlProxy* m_pHotCue14Set = new ControlProxy(QString("[Channel1]"), "hotcue_4_activate");
+    ControlProxy* m_pHotCue24Set = new ControlProxy(QString("[Channel2]"), "hotcue_4_activate");
+    ControlProxy* m_pHotCue15Set = new ControlProxy(QString("[Channel1]"), "hotcue_5_activate");
+    ControlProxy* m_pHotCue25Set = new ControlProxy(QString("[Channel2]"), "hotcue_5_activate");
+    ControlProxy* m_pHotCue16Set = new ControlProxy(QString("[Channel1]"), "hotcue_6_activate");
+    ControlProxy* m_pHotCue26Set = new ControlProxy(QString("[Channel2]"), "hotcue_6_activate");
+    ControlProxy* m_pHotCue17Set = new ControlProxy(QString("[Channel1]"), "hotcue_7_activate");
+    ControlProxy* m_pHotCue27Set = new ControlProxy(QString("[Channel2]"), "hotcue_7_activate");
+    ControlProxy* m_pHotCue18Set = new ControlProxy(QString("[Channel1]"), "hotcue_8_activate");
+    ControlProxy* m_pHotCue28Set = new ControlProxy(QString("[Channel2]"), "hotcue_8_activate");
+    ControlProxy* m_pHotCue19Set = new ControlProxy(QString("[Channel1]"), "hotcue_9_activate");
+    ControlProxy* m_pHotCue29Set = new ControlProxy(QString("[Channel2]"), "hotcue_9_activate");
+    ControlProxy* m_pHotCue110Set = new ControlProxy(QString("[Channel1]"), "hotcue_10_activate");
+    ControlProxy* m_pHotCue210Set = new ControlProxy(QString("[Channel2]"), "hotcue_10_activate");
 
     ControlProxy* m_pHotCue11Clear = new ControlProxy(QString("[Channel1]"), "hotcue_1_clear");
     ControlProxy* m_pHotCue21Clear = new ControlProxy(QString("[Channel2]"), "hotcue_1_clear");
@@ -795,6 +795,9 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_pStem7Volume = new ControlProxy("[Stem7]", "volume");
     ControlProxy* m_pStem8Volume = new ControlProxy("[Stem8]", "volume");
 
+    ControlProxy* m_loopEnabled1 = new ControlProxy("[Channel1]", "loop_enabled");
+    ControlProxy* m_loopEnabled2 = new ControlProxy("[Channel2]", "loop_enabled");
+
     std::ifstream controlbaby;
 
     std::string comando;
@@ -817,6 +820,12 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     double loopin_double2;
     double loopout_double2;
 
+    std::string loopBeatSize1;
+    std::string loopBeatSize2;
+
+    double loopBeatSize_double1;
+    double loopBeatSize_double2;
+
 
     if (this->wuwei == true) {
         std::cout << "OH NO I'VE ENTERED WUWEI MODE. NOW ALL I DO IS STARE AT "
@@ -827,58 +836,40 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     }
 
 
-    if (this->LOCK == true) {
+    else if (this->LOCK == true) {
         if (this->WIP1 == 1) {
             goto clean_exit;
         }
 
-        else if (this->WIP1 == 2) {
-            m_LoopIn1->set(1);
-            m_LoopIn1->set(0);
-            this->WIP1 = 3;
-
-            goto clean_exit;
-        }
-
-        else if (this->WIP1 == 3) {
-            m_PlayPosition1->set(this->gambi_loopout1);
-            this->WIP1 = 4;
-
-            goto clean_exit;
-        }
-
-        else if (this->WIP1 == 4) {
-            if (m_PlayPosition1->get() >= this->gambi_loopout1) {
-                m_LoopOut1->set(1);
-                m_LoopOut1->set(0);
-
-                confirmado.open("/home/dumbo/confirmixxx.txt");
-                confirmado << std::to_string(this->counter) + "\n";
-                confirmado.close();
-
-                this->counter++;
-
-                this->WIP1 = 0;
-                this->LOCK = false;
-
-                goto clean_exit;
-
-            }
-
-            else {
-                goto clean_exit;
-            }
-        }
-
         else if (this->WIP1 == 5) {
-            m_PlayPosition1->set(this->gambi_loopin1);
-            this->WIP1 = 2;
+            ControlProxy* m_loopRemove1 = new ControlProxy("[Channel1]", "loop_remove");
+
+            m_loopRemove1->set(1.0);
+            m_loopEnabled1->set(0.0);
+
+            ControlProxy* m_loopEndPosition1 = new ControlProxy("[Channel1]", "loop_end_position");
+            ControlProxy* m_loopStartPosition1 = new ControlProxy("[Channel1]", "loop_start_position");
+
+            m_loopStartPosition1->set(-1);
+            m_loopEndPosition1->set(-1);
+
+            delete m_loopStartPosition1;
+            delete m_loopEndPosition1;
+
+            delete m_loopRemove1;
+
+            this->WIP1 = 9;
 
             goto clean_exit;
         }
+
 
         else if (this->WIP1 == 6) {
-            if (m_PlayPosition1->get() >= this->gambi_hotcue1) {
+            // We use a greater than comparison without equality checking
+            // because the Position ControlProxy changes before the Position
+            // actually changes. If instead check for equality here we will
+            // get wrong premature positions being set as Hotcues.
+            if (m_PlayPosition1->get() > this->gambi_hotcue1) {
                 QList<ControlProxy*> hotCueSetCOList;
                 hotCueSetCOList.append(m_pHotCue11Set);
                 hotCueSetCOList.append(m_pHotCue12Set);
@@ -912,7 +903,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                      hotCueClearIter = hotCueClearCOList.begin(),
                      count_cue = 1;
 
-                     hotCueSetIter != hotCueSetCOList.end(),
+                     hotCueSetIter != hotCueSetCOList.end() &&
                      hotCueClearIter != hotCueClearCOList.end();
 
                      ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -923,6 +914,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                          hotCueClearer->set(1.0);
                          hotCueSetter->set(1.0);
+                         hotCueSetter->set(0.0);
                 
                          confirmado.open("/home/dumbo/confirmixxx.txt");
                          confirmado << std::to_string(this->counter) + "\n";
@@ -940,6 +932,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             }
 
             else {
+                m_PlayPosition1->set(this->gambi_hotcue1);
                 goto clean_exit;
             }
         }
@@ -951,30 +944,12 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             goto clean_exit;
         }
 
+        else if (this->WIP1 == 8) {
+            if (m_PlayPosition1->get() == this->gambi_loopin1) {
 
-        if (this->WIP2 == 1) {
-            goto clean_exit;
-        }
-
-        else if (this->WIP2 == 2) {
-            m_LoopIn2->set(1);
-            m_LoopIn2->set(0);
-            this->WIP2 = 3;
-
-            goto clean_exit;
-        }
-
-        else if (this->WIP2 == 3) {
-            m_PlayPosition2->set(this->gambi_loopout2);
-            this->WIP2 = 4;
-
-            goto clean_exit;
-        }
-
-        else if (this->WIP2 == 4) {
-            if (m_PlayPosition2->get() >= this->gambi_loopout2) {
-                m_LoopOut2->set(1);
-                m_LoopOut2->set(0);
+                if (m_loopEnabled1->get() == 0.0) {
+                    m_loopEnabled1->set(1.0);
+                }
 
                 confirmado.open("/home/dumbo/confirmixxx.txt");
                 confirmado << std::to_string(this->counter) + "\n";
@@ -982,27 +957,78 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                 this->counter++;
 
-                this->WIP2 = 0;
+                this->WIP1 = 0;
                 this->LOCK = false;
 
                 goto clean_exit;
-
             }
 
             else {
+                m_PlayPosition1->set(gambi_loopin1);
                 goto clean_exit;
             }
         }
 
+        else if (this->WIP1 == 9) {
+
+            if (m_loopEnabled1->get() == 0.0) {
+                ControlProxy* m_track1Samples = new ControlProxy("[Channel1]", "track_samples");
+                ControlProxy* m_loopEndPosition1 = new ControlProxy("[Channel1]", "loop_end_position");
+                ControlProxy* m_loopStartPosition1 = new ControlProxy("[Channel1]", "loop_start_position");
+                m_loopStartPosition1->set(this->gambi_loopin1 * m_track1Samples->get());
+                m_loopEndPosition1->set(this->gambi_loopout1 * m_track1Samples->get());
+                delete m_loopStartPosition1;
+                delete m_loopEndPosition1;
+                delete m_track1Samples;
+                m_PlayPosition1->set(this->gambi_loopin1);
+            }
+
+            else {
+                m_loopEnabled1->set(0.0);
+                goto clean_exit;
+            }
+
+            delete m_loopEnabled1;
+
+            this->WIP1 = 8;
+
+            goto clean_exit;
+        }
+
+
+        if (this->WIP2 == 1) {
+            goto clean_exit;
+        }
+
         else if (this->WIP2 == 5) {
-            m_PlayPosition2->set(this->gambi_loopin2);
-            this->WIP2 = 2;
+            ControlProxy* m_loopRemove2 = new ControlProxy("[Channel2]", "loop_remove");
+            ControlProxy* m_loopEnabled2 = new ControlProxy("[Channel2]", "loop_enabled");
+
+            m_loopRemove2->set(1.0);
+            m_loopEnabled2->set(0.0);
+
+            ControlProxy* m_loopEndPosition2 = new ControlProxy("[Channel2]", "loop_end_position");
+            ControlProxy* m_loopStartPosition2 = new ControlProxy("[Channel2]", "loop_start_position");
+
+            m_loopStartPosition2->set(-1);
+            m_loopEndPosition2->set(-1);
+
+            delete m_loopStartPosition2;
+            delete m_loopEndPosition2;
+
+            delete m_loopRemove2;
+
+            this->WIP2 = 9;
 
             goto clean_exit;
         }
 
         else if (this->WIP2 == 6) {
-            if (m_PlayPosition2->get() >= this->gambi_hotcue2) {
+            // We use a greater than comparison without equality checking
+            // because the Position ControlProxy changes before the Position
+            // actually changes. If instead check for equality here we will
+            // get wrong premature positions being set as Hotcues.
+            if (m_PlayPosition2->get() > this->gambi_hotcue2) {
                 QList<ControlProxy*> hotCueSetCOList;
                 hotCueSetCOList.append(m_pHotCue21Set);
                 hotCueSetCOList.append(m_pHotCue22Set);
@@ -1036,7 +1062,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                      hotCueClearIter = hotCueClearCOList.begin(),
                      count_cue = 1;
 
-                     hotCueSetIter != hotCueSetCOList.end(),
+                     hotCueSetIter != hotCueSetCOList.end() &&
                      hotCueClearIter != hotCueClearCOList.end();
 
                      ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -1044,10 +1070,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     if (count_cue == this->gambi_hotcueNumber2) {
                          ControlProxy* hotCueSetter = *hotCueSetIter;
                          ControlProxy* hotCueClearer = *hotCueClearIter;
+                         ControlProxy* hotCue22Status = new ControlProxy("[Channel2]", "hotcue_2_status");
 
+                         std::cout << "HOT CUE 2 2 STATUS: " << std::to_string(hotCue22Status->get()) << "\n";
                          hotCueClearer->set(1.0);
+                         std::cout << "HOT CUE 2 2 STATUS: " << std::to_string(hotCue22Status->get()) << "\n";
+                         std::cout << std::to_string(m_PlayPosition2->get()) << " AT DECK 2, SET CUE\n";
                          hotCueSetter->set(1.0);
-                
+                         hotCueSetter->set(0.0);
+                         delete hotCue22Status; 
                          confirmado.open("/home/dumbo/confirmixxx.txt");
                          confirmado << std::to_string(this->counter) + "\n";
                          confirmado.close();
@@ -1060,10 +1091,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                          goto clean_exit;
                      }
                 }
-
             }
 
             else {
+                m_PlayPosition2->set(this->gambi_hotcue2);
                 goto clean_exit;
             }
         }
@@ -1074,6 +1105,55 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             goto clean_exit;
         }
+
+        else if (this->WIP2 == 8) {
+            if (m_PlayPosition2->get() == this->gambi_loopin2) {
+
+                if (m_loopEnabled2->get() == 0.0) {
+                    m_loopEnabled2->set(1.0);
+                }
+
+                confirmado.open("/home/dumbo/confirmixxx.txt");
+                confirmado << std::to_string(this->counter) + "\n";
+                confirmado.close();
+
+                this->counter++;
+
+                this->WIP2 = 0;
+                this->LOCK = false;
+
+                goto clean_exit;
+            }
+
+            else {
+                m_PlayPosition2->set(gambi_loopin2);
+                goto clean_exit;
+            }
+        }
+
+        else if (this->WIP2 == 9) {
+            if (m_loopEnabled2->get() == 0.0) {
+                ControlProxy* m_track2Samples = new ControlProxy("[Channel2]", "track_samples");
+                ControlProxy* m_loopEndPosition2 = new ControlProxy("[Channel2]", "loop_end_position");
+                ControlProxy* m_loopStartPosition2 = new ControlProxy("[Channel2]", "loop_start_position");
+                m_loopStartPosition2->set(this->gambi_loopin2 * m_track2Samples->get());
+                m_loopEndPosition2->set(this->gambi_loopout2 * m_track2Samples->get());
+                delete m_loopStartPosition2;
+                delete m_loopEndPosition2;
+                delete m_track2Samples;
+                m_PlayPosition2->set(this->gambi_loopin2);
+            }
+
+            else {
+                m_loopEnabled2->set(0.0);
+                goto clean_exit;
+            }
+
+            this->WIP2 = 8;
+
+            goto clean_exit;
+        }
+            
 
         std::cout << this->pathToSong1.toStdString() + "\n";
 
@@ -1233,40 +1313,39 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         goto clean_exit;
     }
 
-    if (FILE* file = fopen("/home/dumbo/controlmixxx.txt.lock", "r")) {
-        fclose(file);
-        goto clean_exit;
-    }
+    else if (this->LOCK == false) {
 
-    controlbaby.open("/home/dumbo/controlmixxx.txt");
-    std::getline(controlbaby, comando);
-    std::getline(controlbaby, contador);
-    controlbaby.close();
+        if (FILE* file = fopen("/home/dumbo/controlmixxx.txt.lock", "r")) {
+            fclose(file);
+            goto clean_exit;
+        }
 
-    try {
-        contagiros = std::stoull(contador);
-    }
+        controlbaby.open("/home/dumbo/controlmixxx.txt");
+        std::getline(controlbaby, comando);
+        std::getline(controlbaby, contador);
+        controlbaby.close();
 
-    catch (const std::invalid_argument& e) {
-        this->wuwei = true;
-        std::cout << "INVALID ARGUMENT AT CONTAGIROS WAS \n" + contador;
-        goto clean_exit;
-    }
+        try {
+            contagiros = std::stoull(contador);
+        }
 
-    catch (const std::out_of_range& e) {
-        this->wuwei = true;
-        std::cout << "OUT OF RANGE ARGUMENT FOR CONTAGIROS\n";
-        goto clean_exit;
-    }
+        catch (const std::invalid_argument& e) {
+            this->wuwei = true;
+            std::cout << "INVALID ARGUMENT AT CONTAGIROS WAS \n" + contador;
+            goto clean_exit;
+        }
 
-    if (this->wuwei == false) {
+        catch (const std::out_of_range& e) {
+            this->wuwei = true;
+            std::cout << "OUT OF RANGE ARGUMENT FOR CONTAGIROS\n";
+            goto clean_exit;
+        }
+
         if (contagiros == this->counter + 1) {
             this->LOCK = true;
 
             if (comando[0] == 'Z') {
                 if (comando[1] == '1') {
-                    stemsDeck1Playing = true;
-
                     if (thisDeck->index == 0) {
                         this->track1Loaded = thisDeck->getLoadedTrack();
                     }
@@ -1286,6 +1365,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 2);
                     this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 3);
                     this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 4);
+                    stemsDeck1Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -1298,9 +1378,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    stemsDeck2Playing = true;
-
-
                     if (thisDeck->index == 1) {
                         this->track2Loaded = thisDeck->getLoadedTrack();
                     }
@@ -1320,6 +1397,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 6);
                     this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 7);
                     this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 8);
+                    stemsDeck2Playing = true;
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -2057,6 +2135,11 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             else if (comando[0] == 'C') {
                 if (comando[1] == '1') {
                     m_LoopToggle1->set(1);
+                    this->looping1BeatCounter = 0;
+
+                    confirmado.open("/home/dumbo/mixxxlooping1beatcounter.txt");
+                    confirmado << std::to_string(this->looping1BeatCounter) + "\n";
+                    confirmado.close();
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -2070,6 +2153,11 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                 if (comando[1] == '2') {
                     m_LoopToggle2->set(1);
+                    this->looping2BeatCounter = 0;
+
+                    confirmado.open("/home/dumbo/mixxxlooping2beatcounter.txt");
+                    confirmado << std::to_string(this->looping2BeatCounter) + "\n";
+                    confirmado.close();
 
                     confirmado.open("/home/dumbo/confirmixxx.txt");
                     confirmado << std::to_string(this->counter) + "\n";
@@ -2563,7 +2651,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                              hotCueClearIter = hotCueClearCOList.begin(),
                              count_cue = 1;
 
-                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueSetIter != hotCueSetCOList.end() &&
                              hotCueClearIter != hotCueClearCOList.end();
 
                              ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -2574,6 +2662,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                                  hotCueClearer->set(1.0);
                                  hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
 
                                  confirmado.open("/home/dumbo/confirmixxx.txt");
                                  confirmado << std::to_string(this->counter) + "\n";
@@ -2676,7 +2765,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                              hotCueClearIter = hotCueClearCOList.begin(),
                              count_cue = 1;
 
-                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueSetIter != hotCueSetCOList.end() &&
                              hotCueClearIter != hotCueClearCOList.end();
 
                              ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -2687,12 +2776,83 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                                  hotCueClearer->set(1.0);
                                  hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
 
                                  this->WIP1 = 1;
                                  this->gambi_hotcue1 = positionToGoto;
                                  this->gambi_hotcueNumber1 = hotCueNumber;
                                  this->WIP1 = 7;
 
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'G') {
+                        std::string hotCueAsked;
+                        unsigned long long hotCueNumber;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= 4;
+                             usecamisinha++) {
+
+                             hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        try {
+                            hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue11Set);
+                        hotCueSetCOList.append(m_pHotCue12Set);
+                        hotCueSetCOList.append(m_pHotCue13Set);
+                        hotCueSetCOList.append(m_pHotCue14Set);
+                        hotCueSetCOList.append(m_pHotCue15Set);
+                        hotCueSetCOList.append(m_pHotCue16Set);
+                        hotCueSetCOList.append(m_pHotCue17Set);
+                        hotCueSetCOList.append(m_pHotCue18Set);
+                        hotCueSetCOList.append(m_pHotCue19Set);
+                        hotCueSetCOList.append(m_pHotCue110Set);
+                
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end();
+
+                             ++hotCueSetIter, ++count_cue) {
+
+                            if (count_cue == hotCueNumber) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+
+                                 hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
+
+                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado << std::to_string(this->counter) + "\n";
+                                 confirmado.close();
+
+                                 this->counter++;
+
+                                 this->LOCK = false;
                                  goto clean_exit;
                             }
                         }
@@ -2762,7 +2922,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                              hotCueClearIter = hotCueClearCOList.begin(),
                              count_cue = 1;
 
-                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueSetIter != hotCueSetCOList.end() &&
                              hotCueClearIter != hotCueClearCOList.end();
 
                              ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -2773,6 +2933,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                                  hotCueClearer->set(1.0);
                                  hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
 
                                  confirmado.open("/home/dumbo/confirmixxx.txt");
                                  confirmado << std::to_string(this->counter) + "\n";
@@ -2875,7 +3036,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                              hotCueClearIter = hotCueClearCOList.begin(),
                              count_cue = 1;
 
-                             hotCueSetIter != hotCueSetCOList.end(),
+                             hotCueSetIter != hotCueSetCOList.end() &&
                              hotCueClearIter != hotCueClearCOList.end();
 
                              ++hotCueSetIter, ++hotCueClearIter, ++count_cue) {
@@ -2886,12 +3047,83 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                                  hotCueClearer->set(1.0);
                                  hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
 
                                  this->WIP2 = 1;
                                  this->gambi_hotcue2 = positionToGoto;
                                  this->gambi_hotcueNumber2 = hotCueNumber;
                                  this->WIP2 = 7;
 
+                                 goto clean_exit;
+                            }
+                        }
+                    }
+
+                    else if (comando[2] == 'G') {
+                        std::string hotCueAsked;
+                        unsigned long long hotCueNumber;
+
+                        for (long unsigned int usecamisinha = 3;
+                             usecamisinha <= 4;
+                             usecamisinha++) {
+
+                             hotCueAsked = hotCueAsked + comando[usecamisinha];
+                        }
+
+                        try {
+                            hotCueNumber = std::stoull(hotCueAsked);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        QList<ControlProxy*> hotCueSetCOList;
+                        hotCueSetCOList.append(m_pHotCue21Set);
+                        hotCueSetCOList.append(m_pHotCue22Set);
+                        hotCueSetCOList.append(m_pHotCue23Set);
+                        hotCueSetCOList.append(m_pHotCue24Set);
+                        hotCueSetCOList.append(m_pHotCue25Set);
+                        hotCueSetCOList.append(m_pHotCue26Set);
+                        hotCueSetCOList.append(m_pHotCue27Set);
+                        hotCueSetCOList.append(m_pHotCue28Set);
+                        hotCueSetCOList.append(m_pHotCue29Set);
+                        hotCueSetCOList.append(m_pHotCue210Set);
+                
+                        QList<ControlProxy*>::iterator hotCueSetIter;
+
+                        unsigned long long count_cue;
+
+                        for (hotCueSetIter = hotCueSetCOList.begin(),
+                             count_cue = 1;
+
+                             hotCueSetIter != hotCueSetCOList.end();
+
+                             ++hotCueSetIter, ++count_cue) {
+
+                            if (count_cue == hotCueNumber) {
+                                 ControlProxy* hotCueSetter = *hotCueSetIter;
+
+                                 hotCueSetter->set(1.0);
+                                 hotCueSetter->set(0.0);
+
+                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado << std::to_string(this->counter) + "\n";
+                                 confirmado.close();
+
+                                 this->counter++;
+
+                                 this->LOCK = false;
                                  goto clean_exit;
                             }
                         }
@@ -3060,79 +3292,174 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             else if (comando[0] == 'O') {
                 if (comando[1] == '2') {
-                    for (long unsigned int usecamisinha = 2; usecamisinha <= 7; usecamisinha++) {
-                        loopin2 = loopin2 + comando[usecamisinha];
-                    }
+                    if (comando[2] == 'P') {
+                        for (long unsigned int usecamisinha = 3; usecamisinha <= 8; usecamisinha++) {
+                            loopin2 = loopin2 + comando[usecamisinha];
+                        }
 
-                    for (long unsigned int usecamisinha = 8; usecamisinha <= 13; usecamisinha++) {
-                        loopout2 = loopout2 + comando[usecamisinha];
-                    }
+                        for (long unsigned int usecamisinha = 9; usecamisinha <= 14; usecamisinha++) {
+                            loopout2 = loopout2 + comando[usecamisinha];
+                        }
 
-                    try {
-                        loopin_double2 = std::stod("0." + loopin2);
-                        loopout_double2 = std::stod("0." + loopout2);
-                    }
+                        try {
+                            loopin_double2 = std::stod("0." + loopin2);
+                            loopout_double2 = std::stod("0." + loopout2);
+                        }
 
-                    catch (const std::invalid_argument& e) {
-                        this->wuwei = true;
-                        std::cout << "INVALID LOOPING POSITIONS FOR DECK 2\n";
-                        this->LOCK = false;
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID LOOPING POSITIONS FOR DECK 2\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+    
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 2\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        this->WIP2 = 1;
+
+                        this->gambi_loopin2 = loopin_double2;
+                        this->gambi_loopout2 = loopout_double2;
+
+                        this->WIP2 = 5;
+
                         goto clean_exit;
                     }
 
-                    catch (const std::out_of_range& e) {
-                        this->wuwei = true;
-                        std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 2\n";
+                    else if (comando[2] == 'B') {
+                        for (long unsigned int usecamisinha = 3; usecamisinha <= comando.length(); usecamisinha++) {
+                            loopBeatSize2 = loopBeatSize2 + comando[usecamisinha];
+                        }
+
+                        try {
+                            loopBeatSize_double2 = std::stod(loopBeatSize2);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID LOOPING BEATSIZE FOR DECK 2\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE LOOPING BEATSIZE FOR DECK 2\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        ControlProxy* beatLoopSize2 = new ControlProxy("[Channel2]", "beatloop_size");
+                        ControlProxy* beatLoopActivate2 = new ControlProxy("[Channel2]", "beatloop_activate");
+                        ControlProxy* m_loopRemove2 = new ControlProxy("[Channel2]", "loop_remove");
+
+                        m_loopRemove2->set(1.0);
+                        beatLoopSize2->set(loopBeatSize_double2);
+                        beatLoopActivate2->set(1.0);
+
+                        delete beatLoopSize2;
+                        delete beatLoopActivate2;
+                        delete m_loopRemove2;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
                         this->LOCK = false;
+
                         goto clean_exit;
                     }
-
-                    this->WIP2 = 1;
-
-                    this->gambi_loopin2 = loopin_double2;
-                    this->gambi_loopout2 = loopout_double2;
-
-                    this->WIP2 = 5;
-
-                    goto clean_exit;
                 }
 
-                if (comando[1] == '1') {
-                    for (long unsigned int usecamisinha = 2; usecamisinha <= 7; usecamisinha++) {
-                        loopin1 = loopin1 + comando[usecamisinha];
-                    }
+                else if (comando[1] == '1') {
+                    if (comando[2] == 'P') {
+                        for (long unsigned int usecamisinha = 3; usecamisinha <= 8; usecamisinha++) {
+                            loopin1 = loopin1 + comando[usecamisinha];
+                        }
 
-                    for (long unsigned int usecamisinha = 8; usecamisinha <= 13; usecamisinha++) {
-                        loopout1 = loopout1 + comando[usecamisinha];
-                    }
+                        for (long unsigned int usecamisinha = 9; usecamisinha <= 14; usecamisinha++) {
+                            loopout1 = loopout1 + comando[usecamisinha];
+                        }
 
-                    try {
-                        loopin_double1 = std::stod("0." + loopin1);
-                        loopout_double1 = std::stod("0." + loopout1);
-                    }
+                        try {
+                            loopin_double1 = std::stod("0." + loopin1);
+                            loopout_double1 = std::stod("0." + loopout1);
+                        }
 
-                    catch (const std::invalid_argument& e) {
-                        this->wuwei = true;
-                        std::cout << "INVALID LOOPING POSITIONS FOR DECK 1\n";
-                        this->LOCK = false;
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID LOOPING POSITIONS FOR DECK 1\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 1\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        this->WIP1 = 1;
+
+                        this->gambi_loopin1 = loopin_double1;
+                        this->gambi_loopout1 = loopout_double1;
+
+                        this->WIP1 = 5;
+
                         goto clean_exit;
                     }
 
-                    catch (const std::out_of_range& e) {
-                        this->wuwei = true;
-                        std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 1\n";
+                    else if (comando[2] == 'B') {
+                        for (long unsigned int usecamisinha = 3; usecamisinha <= comando.length(); usecamisinha++) {
+                            loopBeatSize1 = loopBeatSize1 + comando[usecamisinha];
+                        }
+
+                        try {
+                            loopBeatSize_double1 = std::stod(loopBeatSize1);
+                        }
+
+                        catch (const std::invalid_argument& e) {
+                            this->wuwei = true;
+                            std::cout << "INVALID LOOPING BEATSIZE FOR DECK 1\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        catch (const std::out_of_range& e) {
+                            this->wuwei = true;
+                            std::cout << "OUT OF RANGE LOOPING BEATSIZE FOR DECK 1\n";
+                            this->LOCK = false;
+                            goto clean_exit;
+                        }
+
+                        ControlProxy* beatLoopSize1 = new ControlProxy("[Channel1]", "beatloop_size");
+                        ControlProxy* beatLoopActivate1 = new ControlProxy("[Channel1]", "beatloop_activate");
+                        ControlProxy* m_loopRemove1 = new ControlProxy("[Channel1]", "loop_remove");
+
+                        m_loopRemove1->set(1.0);
+
+                        beatLoopSize1->set(loopBeatSize_double1);
+                        beatLoopActivate1->set(1.0);
+
+                        delete beatLoopSize1;
+                        delete beatLoopActivate1;
+                        delete m_loopRemove1;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
                         this->LOCK = false;
+
                         goto clean_exit;
                     }
-
-                    this->WIP1 = 1;
-
-                    this->gambi_loopin1 = loopin_double1;
-                    this->gambi_loopout1 = loopout_double1;
-
-                    this->WIP1 = 5;
-
-                    goto clean_exit;
                 }
             }
 
@@ -4218,6 +4545,32 @@ clean_exit:
         confirmado.open("/home/dumbo/mixxxposition1.txt");
         confirmado << std::to_string(playPosition1) + "\n";
         confirmado.close();
+
+        if (m_loopEnabled1->get() == 1.0) {
+            ControlProxy* beatDistance1 = new ControlProxy("[Channel1]", "beat_distance");
+            if (beatDistance1->get() > 0.9) {
+                if (this->loopingBeatDistance1 > 0.8 && this->loopingBeatDistance1 != 1.0) {
+                    std::cout << "PASSED A BEAT! " << std::to_string(beatDistance1->get()) << "\n";
+                    this->loopingBeatDistance1 = 1.0;
+                    this->looping1BeatCounter++;
+                    confirmado.open("/home/dumbo/mixxxlooping1beatcounter.txt");
+                    confirmado << std::to_string(this->looping1BeatCounter) + "\n";
+                    confirmado.close();
+                }
+            }
+
+            if (this->loopingBeatDistance1 <= 0.99) {
+                this->loopingBeatDistance1 = beatDistance1->get();
+            }
+
+            if (this->loopingBeatDistance1 == 1.0) {
+                if (beatDistance1->get() < 0.2) {
+                    this->loopingBeatDistance1 = beatDistance1->get();
+                }
+            }
+
+            delete beatDistance1;
+        }
     }
 
     if (m_Playing2->get() == 1.0) {
@@ -4226,6 +4579,32 @@ clean_exit:
         confirmado.open("/home/dumbo/mixxxposition2.txt");
         confirmado << std::to_string(playPosition2) + "\n";
         confirmado.close();
+
+        if (m_loopEnabled2->get() == 1.0) {
+            ControlProxy* beatDistance2 = new ControlProxy("[Channel2]", "beat_distance");
+            if (beatDistance2->get() > 0.9) {
+                if (this->loopingBeatDistance2 > 0.8 && this->loopingBeatDistance2 != 1.0) {
+                    std::cout << "PASSED A BEAT! " << std::to_string(beatDistance2->get()) << "\n";
+                    this->loopingBeatDistance2 = 1.0;
+                    this->looping2BeatCounter++;
+                    confirmado.open("/home/dumbo/mixxxlooping2beatcounter.txt");
+                    confirmado << std::to_string(this->looping2BeatCounter) + "\n";
+                    confirmado.close();
+                }
+            }
+
+            if (this->loopingBeatDistance2 <= 0.99) {
+                this->loopingBeatDistance2 = beatDistance2->get();
+            }
+
+            if (this->loopingBeatDistance2 == 1.0) {
+                if (beatDistance2->get() < 0.2) {
+                    this->loopingBeatDistance2 = beatDistance2->get();
+                }
+            }
+
+            delete beatDistance2;
+        }
     }
 
     delete m_pCue1;
@@ -4307,7 +4686,9 @@ clean_exit:
     delete m_pStem6Volume;
     delete m_pStem7Volume;
     delete m_pStem8Volume;
-    
+
+    delete m_loopEnabled1;
+    delete m_loopEnabled2;
     return;
 }
 
