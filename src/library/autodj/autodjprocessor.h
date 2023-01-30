@@ -228,6 +228,8 @@ class AutoDJProcessor : public QObject {
     void controlSkipNext(double value);
     void controlAddRandomTrack(double value);
 
+    void slotStemPlaying(int stemNumber);
+
   protected:
     // The following virtual signal wrappers are used for testing
     virtual void emitLoadTrackToPlayer(TrackPointer pTrack, const QString& group, bool play) {
@@ -377,8 +379,23 @@ class AutoDJProcessor : public QObject {
     TrackPointer track1Loaded;
     TrackPointer track2Loaded;
 
+    bool deck1Loading = false;
+    bool deck2Loading = false;
+
     bool stemsDeck1Playing = false;
     bool stemsDeck2Playing = false;
+
+    bool stem1Playing = false;
+    bool stem2Playing = false;
+    bool stem3Playing = false;
+    bool stem4Playing = false;
+    bool stem5Playing = false;
+    bool stem6Playing = false;
+    bool stem7Playing = false;
+    bool stem8Playing = false;
+
+    bool stemsDeck1Requested = false;
+    bool stemsDeck2Requested = false;
 
     bool stemsDeck1Scratching = false;
     bool stemsDeck2Scratching = false;

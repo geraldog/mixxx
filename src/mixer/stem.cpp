@@ -3,6 +3,7 @@
 #include "track/track.h"
 #include <QRegularExpression>
 #include "moc_stem.cpp"
+#include <iostream>
 
 namespace {
 
@@ -59,11 +60,11 @@ void Stem::slotStemPlay(TrackPointer pTrack) {
             deckNumber = "1";
         }
 
-        else if (stemNumber > 4 && stemNumber <= 9) {
+        else if (stemNumber > 4 && stemNumber <= 8) {
             deckNumber = "2";
         }
 
-	else if (stemNumber > 9 && stemNumber <= 12) {
+	else if (stemNumber > 8 && stemNumber <= 12) {
             deckNumber = "3";
         }
 
@@ -85,9 +86,10 @@ void Stem::slotStemPlay(TrackPointer pTrack) {
         ControlProxy* m_StemReplayGain = new ControlProxy(stemName, "replaygain");
         ControlProxy* m_StemKeyLock = new ControlProxy(stemName, "keylock");
 
-        pTrack->trySetBpm(m_DeckFileBpm->get());
+        std::cout << "SETTING STEM " << std::to_string(stemNumber) << "BPM\n";
+        pTrack->trySetBpm(mixxx::Bpm(m_DeckFileBpm->get()));
         m_StemBpm->set(m_DeckBpm->get());
-
+        std::cout << "SETTING STEM " << std::to_string(stemNumber) << "BEATGRID\n";
         mixxx::BeatsPointer pBeats = this->m_pPlayerManager->getDeck(deckNumber.toInt())->getLoadedTrack()->getBeats();
         pTrack->trySetBeats(pBeats);
 
@@ -111,6 +113,8 @@ void Stem::slotStemPlay(TrackPointer pTrack) {
 	        QTimer::singleShot(100, this, &Stem::slotMuteDeck4);
 	    }
 	}
+
+	emit stemPlaying(stemNumber);
 
         delete m_DeckPlayPosition;
         delete m_DeckVolume;

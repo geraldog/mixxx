@@ -15,6 +15,8 @@ class Stem : public BaseTrackPlayerImpl {
             const ChannelHandleAndGroup& handleGroup);
     ~Stem() override = default;
     QString stemName;
+  signals:
+    void stemPlaying(int stemNumber);
   public slots:
     void slotStemPlay(TrackPointer pTrack);
     void slotMuteDeck1();

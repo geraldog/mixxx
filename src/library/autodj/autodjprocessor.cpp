@@ -567,7 +567,38 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
                 &DeckAttributes::rateChanged,
                 this,
                 &AutoDJProcessor::playerRateChanged);
-
+        connect(m_pPlayerManager->getStem(1),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(2),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(3),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(4),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(5),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(6),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(7),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
+        connect(m_pPlayerManager->getStem(8),
+                &Stem::stemPlaying,
+                this,
+                &AutoDJProcessor::slotStemPlaying);
         if (!leftDeckPlaying && !rightDeckPlaying) {
             // Both decks are stopped. Load a track into deck 1 and start it
             // playing. Instruct playerPositionChanged to wait for a
@@ -1346,45 +1377,42 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             if (comando[0] == 'Z') {
                 if (comando[1] == '1') {
-                    if (thisDeck->index == 0) {
+                    /*if (thisDeck->index == 0) {
                         this->track1Loaded = thisDeck->getLoadedTrack();
                     }
 
                     else {
                         this->track1Loaded = otherDeck->getLoadedTrack();
-                    }
+                    }*/
 
                     const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track1Loaded->getLocation());
+
+		    std::cout << fileName.toStdString() << std::endl;
 
                     QString firstScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/vocals.wav");
                     QString secondScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/drums.wav");
                     QString thirdScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/bass.wav");
                     QString fourthScratchFile = QDir::homePath() + QString("/separated/mdx_extra_q/") + fileName + QString("/other.wav");
 
+		    std::cout << firstScratchFile.toStdString() << std::endl;
                     this->m_pPlayerManager->slotLoadToStem(firstScratchFile, 1);
                     this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 2);
                     this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 3);
                     this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 4);
-                    stemsDeck1Playing = true;
+                    //stemsDeck1Playing = true;
+		    stemsDeck1Requested = true;
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
-                    confirmado << std::to_string(this->counter) + "\n";
-                    confirmado.close();
-
-                    this->counter++;
-
-                    this->LOCK = false;
                     goto clean_exit;
                 }
 
                 else if (comando[1] == '2') {
-                    if (thisDeck->index == 1) {
+                    /*if (thisDeck->index == 1) {
                         this->track2Loaded = thisDeck->getLoadedTrack();
                     }
 
                     else {
                         this->track2Loaded = otherDeck->getLoadedTrack();
-                    }
+                    }*/
 
                     const QString fileName = extractFilenameFromRegex(kFilenameRegex, this->track2Loaded->getLocation());
 
@@ -1397,15 +1425,9 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     this->m_pPlayerManager->slotLoadToStem(secondScratchFile, 6);
                     this->m_pPlayerManager->slotLoadToStem(thirdScratchFile, 7);
                     this->m_pPlayerManager->slotLoadToStem(fourthScratchFile, 8);
-                    stemsDeck2Playing = true;
+                    //stemsDeck2Playing = true;
+		    stemsDeck2Requested = true;
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
-                    confirmado << std::to_string(this->counter) + "\n";
-                    confirmado.close();
-
-                    this->counter++;
-
-                    this->LOCK = false;
                     goto clean_exit;
                 }
             }
@@ -3151,21 +3173,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     m_pPlayerManager->slotLoadToDeck(pathToSong1, 1);
 
-                    if (thisDeck->index == 0) {
-                        this->track1Loaded = thisDeck->getLoadedTrack();
-                    }
+                    this->deck1Loading = true;
 
-                    else {
-                        this->track1Loaded = otherDeck->getLoadedTrack();
-                    }
-
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
-                    confirmado << std::to_string(this->counter) + "\n";
-                    confirmado.close();
-
-                    this->counter++;
-
-                    this->LOCK = false;
                     goto clean_exit;
                 }
 
@@ -3184,21 +3193,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     m_pPlayerManager->slotLoadToDeck(pathToSong2, 2);
 
-                    if (thisDeck->index == 1) {
-                        this->track2Loaded = thisDeck->getLoadedTrack();
-                    }
+                    this->deck2Loading = true;
 
-                    else {
-                        this->track2Loaded = otherDeck->getLoadedTrack();
-                    }
-
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
-                    confirmado << std::to_string(this->counter) + "\n";
-                    confirmado.close();
-
-                    this->counter++;
-
-                    this->LOCK = false;
                     goto clean_exit;
                 }
 
@@ -4292,7 +4288,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         m_Playing1->set(0.0);
     }
 
-    if (stemsDeck1Playing == true && m_Playing1->get() == 1.0) {
+    if (this->stemsDeck1Playing == true && m_Playing1->get() == 1.0) {
         ControlProxy* m_Deck1PlayPosition = new ControlProxy(QString("[Channel1]"), "playposition");
         ControlProxy* m_Stem1Position = new ControlProxy(QString("[Stem1]"), "playposition");
         ControlProxy* m_Stem2Position = new ControlProxy(QString("[Stem2]"), "playposition");
@@ -4316,7 +4312,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         ControlProxy* m_Stem3Scratch2 = new ControlProxy(QString("[Stem3]"), "scratch2");
         ControlProxy* m_Stem4Scratch2 = new ControlProxy(QString("[Stem4]"), "scratch2");
 
-        if (stemsDeck1Scratching == false &&
+        if (this->stemsDeck1Scratching == false &&
             m_Deck1Scratch2Enabled->get() == 0.0 &&
             m_Playing1->get() == 1.0 &&
             (m_PlayPosition1->get() > m_Stem1Position->get() + 0.001 ||
@@ -4345,10 +4341,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         }
 
         else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
-            stemsDeck1Scratching == false &&
+            this->stemsDeck1Scratching == false &&
             m_Playing1->get() == 1.0) {
 
-            stemsDeck1Scratching = true;
+            this->stemsDeck1Scratching = true;
 
             m_Stem1Scratch2Enabled->set(1);
             m_Stem2Scratch2Enabled->set(1);
@@ -4364,10 +4360,10 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         }
 
         else if (m_Deck1Scratch2Enabled->get() == 0.0 &&
-                 stemsDeck1Scratching == true &&
+                 this->stemsDeck1Scratching == true &&
                  m_Playing1->get() == 1.0) {
 
-            stemsDeck1Scratching = false;
+            this->stemsDeck1Scratching = false;
 
             m_Stem1Scratch2Enabled->set(0);
             m_Stem2Scratch2Enabled->set(0);
@@ -4379,7 +4375,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         }
 
         else if (m_Deck1Scratch2Enabled->get() == 1.0 &&
-                 stemsDeck1Scratching == true &&
+                 this->stemsDeck1Scratching == true &&
                  m_Playing1->get() == 1.0) {
 
             m_Stem1Scratch2->set(m_Deck1Scratch2->get());
@@ -4797,7 +4793,7 @@ void AutoDJProcessor::maybeFillRandomTracks() {
 }
 
 void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) {
-    if (stemsDeck1Playing == true) {
+    if (this->stemsDeck1Playing == true) {
         ControlProxy* m_Playing1 = new ControlProxy(QString("[Channel1]"), "play");
         ControlProxy* m_Stem1Stop = new ControlProxy(QString("[Stem1]"), "stop");
         ControlProxy* m_Stem2Stop = new ControlProxy(QString("[Stem2]"), "stop");
@@ -4810,17 +4806,22 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         ControlProxy* m_Stem4Eject = new ControlProxy(QString("[Stem4]"), "eject");
 
         if (m_Playing1->get() == 0.0) {
-            stemsDeck1Playing = false;
+            this->stemsDeck1Playing = false;
 
             m_Stem1Stop->set(1.0);
             m_Stem2Stop->set(1.0);
             m_Stem3Stop->set(1.0);
             m_Stem4Stop->set(1.0);
 
-            m_Stem1Eject->set(1.0);
-            m_Stem2Eject->set(1.0);
-            m_Stem3Eject->set(1.0);
-            m_Stem4Eject->set(1.0);
+            m_Stem1Stop->set(0.0);
+            m_Stem2Stop->set(0.0);
+            m_Stem3Stop->set(0.0);
+            m_Stem4Stop->set(0.0);
+
+            //m_Stem1Eject->set(1.0);
+            //m_Stem2Eject->set(1.0);
+            //m_Stem3Eject->set(1.0);
+            //m_Stem4Eject->set(1.0);
         }
 
         delete m_Playing1;
@@ -4834,7 +4835,7 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         delete m_Stem4Eject;
     }
 
-    if (stemsDeck2Playing == true) {
+    if (this->stemsDeck2Playing == true) {
         ControlProxy* m_Playing2 = new ControlProxy(QString("[Channel2]"), "play");
         ControlProxy* m_Stem5Stop = new ControlProxy(QString("[Stem5]"), "stop");
         ControlProxy* m_Stem6Stop = new ControlProxy(QString("[Stem6]"), "stop");
@@ -4847,17 +4848,22 @@ void AutoDJProcessor::playerPlayChanged(DeckAttributes* thisDeck, bool playing) 
         ControlProxy* m_Stem8Eject = new ControlProxy(QString("[Stem8]"), "eject");
 
         if (m_Playing2->get() == 0.0) {
-            stemsDeck2Playing = false;
+            this->stemsDeck2Playing = false;
 
             m_Stem5Stop->set(1.0);
             m_Stem6Stop->set(1.0);
             m_Stem7Stop->set(1.0);
             m_Stem8Stop->set(1.0);
 
-            m_Stem5Eject->set(1.0);
-            m_Stem6Eject->set(1.0);
-            m_Stem7Eject->set(1.0);
-            m_Stem8Eject->set(1.0);
+            m_Stem5Stop->set(0.0);
+            m_Stem6Stop->set(0.0);
+            m_Stem7Stop->set(0.0);
+            m_Stem8Stop->set(0.0);
+
+            //m_Stem5Eject->set(1.0);
+            //m_Stem6Eject->set(1.0);
+            //m_Stem7Eject->set(1.0);
+            //m_Stem8Eject->set(1.0);
         }
 
         delete m_Playing2;
@@ -5393,52 +5399,46 @@ void AutoDJProcessor::playerTrackLoaded(DeckAttributes* pDeck, TrackPointer pTra
 
     pDeck->loading = false;
 
-    // Since the end position is measured in seconds from 0:00 it is also
-    // the track duration.
-    double duration = getEndSecond(pDeck);
-    if (duration < kMinimumTrackDurationSec) {
-        qWarning() << "Skip track with" << duration << "Duration"
-                   << pTrack->getLocation();
-        // Remove Tack with duration smaller than two callbacks
-        removeTrackFromTopOfQueue(pTrack);
+    DeckAttributes* pLeftDeck = getLeftDeck();
+    DeckAttributes* pRightDeck = getRightDeck();
 
-        // Load the next track. If we are the first AutoDJ track
-        // (ADJ_ENABLE_P1LOADED state) then play the track.
-        loadNextTrackFromQueue(*pDeck, m_eState == ADJ_ENABLE_P1LOADED);
-    } else if (m_eState == ADJ_IDLE) {
-        // this deck has just changed the track so it becomes the toDeck
-        DeckAttributes* fromDeck = getOtherDeck(pDeck);
-        // check if this deck has suitable alignment
-        if (fromDeck && getOtherDeck(fromDeck) != pDeck) {
-            if constexpr (sDebug) {
-                qDebug() << this << "playerTrackLoaded()" << pDeck->group << "but not a toDeck";
-            }
-            // User has changed the orientation, disable Auto DJ
-            toggleAutoDJ(false);
-            return;
-        }
-        pDeck->startPos = kKeepPosition;
-        calculateTransition(fromDeck, pDeck, true);
-        if (pDeck->startPos != kKeepPosition) {
-            // Note: this seek will trigger the playerPositionChanged slot
-            // which may calls the calculateTransition() again without seek = true;
-            pDeck->setPlayPosition(pDeck->startPos);
-        }
-        // we are her in the relative domain 0..1
-        if (!fromDeck->isPlaying() && fromDeck->playPosition() >= 1.0) {
-            // repeat a probably missed update
-            playerPositionChanged(fromDeck, 1.0);
-        }
-    } else if (m_eState == ADJ_LEFT_FADING) {
-        if (pDeck == getRightDeck()) {
-            // restore the play state lost during loading
-            pDeck->play();
-        }
-    } else if (m_eState == ADJ_RIGHT_FADING) {
-        if (pDeck == getLeftDeck()) {
-            // restore the play state lost during loading
-            pDeck->play();
-        }
+    bool leftDeckPlaying = pLeftDeck->isPlaying();
+    bool rightDeckPlaying = pRightDeck->isPlaying();
+
+    if (deck2Loading == true) {
+        this->track2Loaded = pRightDeck->getLoadedTrack();
+        std::ofstream confirmado;
+        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado << std::to_string(this->counter) + "\n";
+        confirmado.close();
+
+        this->counter++;
+        this->LOCK = false;
+	this->deck2Loading = false;
+
+	if (leftDeckPlaying == false && rightDeckPlaying == false) {
+           ControlProxy* m_Playing2 = new ControlProxy(QString("[Channel2]"), "play");
+	   m_Playing2->set(1.0);
+	   delete m_Playing2;
+	}
+    }
+
+    if (deck1Loading == true) {
+        this->track1Loaded = pLeftDeck->getLoadedTrack();
+        std::ofstream confirmado;
+        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado << std::to_string(this->counter) + "\n";
+        confirmado.close();
+
+        this->counter++;
+        this->LOCK = false;
+	this->deck1Loading = false;
+
+	if (leftDeckPlaying == false && rightDeckPlaying == false) {
+           ControlProxy* m_Playing1 = new ControlProxy(QString("[Channel1]"), "play");
+	   m_Playing1->set(1.0);
+	   delete m_Playing1;
+	}
     }
 }
 
@@ -5620,26 +5620,85 @@ bool AutoDJProcessor::nextTrackLoaded() {
         return false;
     }
 
-    DeckAttributes* pLeftDeck = getLeftDeck();
-    DeckAttributes* pRightDeck = getRightDeck();
-    if (!pLeftDeck || !pRightDeck) {
-        return false;
+    return false;
+}
+
+void AutoDJProcessor::slotStemPlaying(int stemNumber) {
+    if (stemNumber == 1) {
+        this->stem1Playing = true;
     }
 
-    bool leftDeckPlaying = pLeftDeck->isPlaying();
-    bool rightDeckPlaying = pRightDeck->isPlaying();
-
-    // Calculate idle deck
-    TrackPointer loadedTrack;
-    if (leftDeckPlaying && !rightDeckPlaying) {
-        loadedTrack = pRightDeck->getLoadedTrack();
-    } else if (!leftDeckPlaying && rightDeckPlaying) {
-        loadedTrack = pLeftDeck->getLoadedTrack();
-    } else if (getCrossfader() < 0.0) {
-        loadedTrack = pRightDeck->getLoadedTrack();
-    } else {
-        loadedTrack = pLeftDeck->getLoadedTrack();
+    else if (stemNumber == 2) {
+        this->stem2Playing = true;
     }
 
-    return loadedTrack == getNextTrackFromQueue();
+    else if (stemNumber == 3) {
+        this->stem3Playing = true;
+    }
+
+    else if (stemNumber == 4) {
+        this->stem4Playing = true;
+    }
+
+    else if (stemNumber == 5) {
+        this->stem5Playing = true;
+    }
+
+    else if (stemNumber == 6) {
+        this->stem6Playing = true;
+    }
+
+    else if (stemNumber == 7) {
+        this->stem7Playing = true;
+    }
+
+    else if (stemNumber == 8) {
+        this->stem8Playing = true;
+    }
+
+    if (this->stem1Playing == true &&
+        this->stem2Playing == true &&
+	this->stem3Playing == true &&
+	this->stem4Playing == true &&
+	this->stemsDeck1Requested == true) {
+
+        std::ofstream confirmado;
+        this->stemsDeck1Playing = true;
+	this->stemsDeck1Requested = false;
+        this->stem1Playing = false;
+        this->stem2Playing = false;
+        this->stem3Playing = false;
+        this->stem4Playing = false;
+
+        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado << std::to_string(this->counter) + "\n";
+        confirmado.close();
+
+        this->counter++;
+
+        this->LOCK = false;
+    }
+
+    if (this->stem5Playing == true &&
+        this->stem6Playing == true &&
+	this->stem7Playing == true &&
+	this->stem8Playing == true &&
+	this->stemsDeck2Requested == true) {
+
+        std::ofstream confirmado;
+        this->stemsDeck2Playing = true;
+	this->stemsDeck2Requested = false;
+        this->stem5Playing = false;
+        this->stem6Playing = false;
+        this->stem7Playing = false;
+        this->stem8Playing = false;
+
+        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado << std::to_string(this->counter) + "\n";
+        confirmado.close();
+
+        this->counter++;
+
+        this->LOCK = false;
+    }
 }
