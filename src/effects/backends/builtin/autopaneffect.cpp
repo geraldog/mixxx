@@ -50,7 +50,7 @@ EffectManifestPointer AutoPanEffect::getManifest() {
     smoothing->setDefaultLinkType(EffectManifestParameter::LinkType::Linked);
     smoothing->setRange(0.25, 0.50, 0.50); // There are two steps per period so max is half
 
-    // TODO(Ferran Pujol): when KnobComposedMaskedRing branch is merged to master,
+    // TODO(Ferran Pujol): when KnobComposedMaskedRing branch is merged to main,
     //                     make the scaleStartParameter for this be 1.
 
     // Width : applied on the channel with gain reducing.
@@ -73,9 +73,6 @@ void AutoPanEffect::loadEngineEffectParameters(
     m_pSmoothingParameter = parameters.value("smoothing");
     m_pPeriodParameter = parameters.value("period");
     m_pWidthParameter = parameters.value("width");
-}
-
-AutoPanEffect::~AutoPanEffect() {
 }
 
 void AutoPanEffect::processChannel(
@@ -168,7 +165,8 @@ void AutoPanEffect::processChannel(
         pGroupState->frac.setWithRampingApplied(static_cast<float>((sinusoid + 1.0f) / 2.0f));
 
         // apply the delay
-        pGroupState->delay->process(&pInput[i],
+        pGroupState->pDelay->process(
+                &pInput[i],
                 &pOutput[i],
                 -0.005 *
                         math_clamp(

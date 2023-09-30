@@ -29,10 +29,11 @@ static constexpr int kDelayBufferSize =
 /// After delaying the non-delayed signal, both signals (delayed
 /// and non-delayed) can be mixed and used together.
 class EngineEffectsDelay final : public EngineObject {
+    Q_OBJECT
   public:
     EngineEffectsDelay();
 
-    virtual ~EngineEffectsDelay(){};
+    ~EngineEffectsDelay() override;
 
     /// Called from the audio thread
 

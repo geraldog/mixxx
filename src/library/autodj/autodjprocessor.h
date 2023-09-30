@@ -206,6 +206,7 @@ class AutoDJProcessor : public QObject {
   signals:
     void loadTrackToPlayer(TrackPointer pTrack, const QString& group, bool play);
     void autoDJStateChanged(AutoDJProcessor::AutoDJState state);
+    void autoDJError(AutoDJProcessor::AutoDJError error);
     void transitionTimeChanged(int time);
     void randomTrackRequested(int tracksToAdd);
 
@@ -222,7 +223,7 @@ class AutoDJProcessor : public QObject {
     void playerEmpty(DeckAttributes* pDeck);
     void playerRateChanged(DeckAttributes* pDeck);
 
-    void controlEnable(double value);
+    void controlEnableChangeRequest(double value);
     void controlFadeNow(double value);
     void controlShuffle(double value);
     void controlSkipNext(double value);

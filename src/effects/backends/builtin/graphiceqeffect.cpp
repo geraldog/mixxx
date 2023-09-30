@@ -20,7 +20,7 @@ EffectManifestPointer GraphicEQEffect::getManifest() {
     pManifest->setDescription(QObject::tr(
             "An 8-band graphic equalizer based on biquad filters"));
     pManifest->setEffectRampsFromDry(true);
-    pManifest->setIsMasterEQ(true);
+    pManifest->setIsMainEQ(true);
 
     // Display rounded center frequencies for each filter
     float centerFrequencies[8] = {45, 100, 220, 500, 1100, 2500, 5500, 12000};
@@ -129,9 +129,6 @@ void GraphicEQEffect::loadEngineEffectParameters(
         m_pPotMid.append(parameters.value(QString("mid%1").arg(i)));
     }
     m_pPotHigh = parameters.value("high");
-}
-
-GraphicEQEffect::~GraphicEQEffect() {
 }
 
 void GraphicEQEffect::processChannel(

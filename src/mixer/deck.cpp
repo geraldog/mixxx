@@ -56,7 +56,7 @@ QString extractFilenameFromRegex(const QRegularExpression& regex, const QString&
 
 Deck::Deck(PlayerManager* pParent,
         UserSettingsPointer pConfig,
-        EngineMaster* pMixingEngine,
+        EngineMixer* pMixingEngine,
         EffectsManager* pEffectsManager,
         EngineChannel::ChannelOrientation defaultOrientation,
         const ChannelHandleAndGroup& handleGroup)
@@ -66,7 +66,7 @@ Deck::Deck(PlayerManager* pParent,
                   pEffectsManager,
                   defaultOrientation,
                   handleGroup,
-                  /*defaultMaster*/ true,
+                  /*defaultMainMix*/ true,
                   /*defaultHeadphones*/ false,
                   /*primaryDeck*/ true) {
     deckName = handleGroup.name();

@@ -155,7 +155,7 @@ AutoDJProcessor::AutoDJProcessor(
           m_transitionTime(kTransitionPreferenceDefault) {
     m_pAutoDJTableModel = new PlaylistTableModel(this, pTrackCollectionManager,
                                                  "mixxx.db.model.autodj");
-    m_pAutoDJTableModel->setTableModel(iAutoDJPlaylistId);
+    m_pAutoDJTableModel->selectPlaylist(iAutoDJPlaylistId);
     m_pAutoDJTableModel->select();
 
     m_pShufflePlaylist = new ControlPushButton(
@@ -183,8 +183,8 @@ AutoDJProcessor::AutoDJProcessor(
     m_pEnabledAutoDJ = new ControlPushButton(
             ConfigKey("[AutoDJ]", "enabled"));
     m_pEnabledAutoDJ->setButtonMode(ControlPushButton::TOGGLE);
-    connect(m_pEnabledAutoDJ, &ControlObject::valueChanged,
-            this, &AutoDJProcessor::controlEnable);
+    m_pEnabledAutoDJ->connectValueChangeRequest(this,
+            &AutoDJProcessor::controlEnableChangeRequest);
 
     // TODO(rryan) listen to signals from PlayerManager and add/remove as decks
     // are created.
@@ -270,6 +270,7 @@ void AutoDJProcessor::fadeNow() {
     if (!pLeftDeck || !pRightDeck) {
         // User has changed the orientation, disable Auto DJ
         toggleAutoDJ(false);
+        emit autoDJError(ADJ_NOT_TWO_DECKS);
         return;
     }
 
@@ -302,6 +303,7 @@ void AutoDJProcessor::fadeNow() {
         // Deck is empty or track too short, disable AutoDJ
         // This happens only if the user has changed deck orientation to such deck.
         toggleAutoDJ(false);
+        emit autoDJError(ADJ_NOT_TWO_DECKS);
         return;
     }
 
@@ -376,6 +378,7 @@ void AutoDJProcessor::fadeNow() {
 
 AutoDJProcessor::AutoDJError AutoDJProcessor::skipNext() {
     if (m_eState == ADJ_DISABLED) {
+        emit autoDJError(ADJ_IS_INACTIVE);
         return ADJ_IS_INACTIVE;
     }
     // Load the next song from the queue.
@@ -384,6 +387,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::skipNext() {
     if (!pLeftDeck || !pRightDeck) {
         // User has changed the orientation, disable Auto DJ
         toggleAutoDJ(false);
+        emit autoDJError(ADJ_NOT_TWO_DECKS);
         return ADJ_NOT_TWO_DECKS;
     }
 
@@ -416,6 +420,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
         if (!pLeftDeck || !pRightDeck) {
             // Keep the current state.
             emitAutoDJStateChanged(m_eState);
+            emit autoDJError(ADJ_NOT_TWO_DECKS);
             return ADJ_NOT_TWO_DECKS;
         }
 
@@ -426,6 +431,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
             qDebug() << "One deck must be stopped before enabling Auto DJ mode";
             // Keep the current state.
             emitAutoDJStateChanged(m_eState);
+            emit autoDJError(ADJ_BOTH_DECKS_PLAYING);
             return ADJ_BOTH_DECKS_PLAYING;
         }
 
@@ -434,6 +440,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
         for (int i = 2; i < m_decks.length(); ++i) {
             if (m_decks[i] && m_decks[i]->isPlaying()) {
                 // Keep the current state.
+                emit autoDJError(ADJ_DECKS_3_4_PLAYING);
                 return ADJ_DECKS_3_4_PLAYING;
             }
         }
@@ -462,18 +469,15 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
 
         TrackPointer nextTrack = getNextTrackFromQueue();
         if (!nextTrack) {
-            qDebug() << "Queue is empty now";
-            if (m_pEnabledAutoDJ->get() != 0.0) {
-                m_pEnabledAutoDJ->set(0.0);
-            }
+            qDebug() << "Queue is empty now, disable Auto DJ";
+            m_pEnabledAutoDJ->setAndConfirm(0.0);
             emitAutoDJStateChanged(m_eState);
+            emit autoDJError(ADJ_QUEUE_EMPTY);
             return ADJ_QUEUE_EMPTY;
         }
 
         // Track is available so GO
-        if (m_pEnabledAutoDJ->get() != 1.0) {
-            m_pEnabledAutoDJ->set(1.0);
-        }
+        m_pEnabledAutoDJ->setAndConfirm(1.0);
         qDebug() << "Auto DJ enabled";
 
         m_pCOCrossfader->connectValueChanged(this, &AutoDJProcessor::crossfaderChanged);
@@ -633,7 +637,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
         }
         emitAutoDJStateChanged(m_eState);
     } else { // Disable Auto DJ
-        m_pEnabledAutoDJ->set(0.0);
+        m_pEnabledAutoDJ->setAndConfirm(0.0);
         qDebug() << "Auto DJ disabled";
         m_eState = ADJ_DISABLED;
         disconnect(m_pCOCrossfader,
@@ -648,7 +652,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
     return ADJ_OK;
 }
 
-void AutoDJProcessor::controlEnable(double value) {
+void AutoDJProcessor::controlEnableChangeRequest(double value) {
     toggleAutoDJ(value > 0.0);
 }
 
@@ -705,6 +709,7 @@ void AutoDJProcessor::crossfaderChanged(double value) {
                     }
                     pToDeck->play();
                 } else {
+                    // Track in toDeck was ejected manually, stop.
                     toggleAutoDJ(false);
                     return;
                 }
@@ -4989,16 +4994,18 @@ void AutoDJProcessor::playerOutroEndChanged(DeckAttributes* pAttributes, double 
 }
 
 double AutoDJProcessor::getIntroStartSecond(DeckAttributes* pDeck) {
+    const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
     const mixxx::audio::FramePos introStartPosition = pDeck->introStartPosition();
-    if (!introStartPosition.isValid()) {
+    if (!introStartPosition.isValid() || introStartPosition > trackEndPosition) {
         return getFirstSoundSecond(pDeck);
     }
     return framePositionToSeconds(introStartPosition, pDeck);
 }
 
 double AutoDJProcessor::getIntroEndSecond(DeckAttributes* pDeck) {
+    const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
     const mixxx::audio::FramePos introEndPosition = pDeck->introEndPosition();
-    if (!introEndPosition.isValid()) {
+    if (!introEndPosition.isValid() || introEndPosition > trackEndPosition) {
         // Assume a zero length intro if introEnd is not set.
         // The introStart is automatically placed by AnalyzerSilence, so use
         // that as a fallback if the user has not placed outroStart. If it has
@@ -5009,8 +5016,9 @@ double AutoDJProcessor::getIntroEndSecond(DeckAttributes* pDeck) {
 }
 
 double AutoDJProcessor::getOutroStartSecond(DeckAttributes* pDeck) {
+    const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
     const mixxx::audio::FramePos outroStartPosition = pDeck->outroStartPosition();
-    if (!outroStartPosition.isValid()) {
+    if (!outroStartPosition.isValid() || outroStartPosition > trackEndPosition) {
         // Assume a zero length outro if outroStart is not set.
         // The outroEnd is automatically placed by AnalyzerSilence, so use
         // that as a fallback if the user has not placed outroStart. If it has
@@ -5021,8 +5029,9 @@ double AutoDJProcessor::getOutroStartSecond(DeckAttributes* pDeck) {
 }
 
 double AutoDJProcessor::getOutroEndSecond(DeckAttributes* pDeck) {
+    const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
     const mixxx::audio::FramePos outroEndPosition = pDeck->outroEndPosition();
-    if (!outroEndPosition.isValid()) {
+    if (!outroEndPosition.isValid() || outroEndPosition > trackEndPosition) {
         return getLastSoundSecond(pDeck);
     }
     return framePositionToSeconds(outroEndPosition, pDeck);
@@ -5039,7 +5048,14 @@ double AutoDJProcessor::getFirstSoundSecond(DeckAttributes* pDeck) {
     if (pFromTrackN60dBSound) {
         const mixxx::audio::FramePos firstSound = pFromTrackN60dBSound->getPosition();
         if (firstSound.isValid()) {
-            return framePositionToSeconds(firstSound, pDeck);
+            const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
+            if (firstSound <= trackEndPosition) {
+                return framePositionToSeconds(firstSound, pDeck);
+            } else {
+                qWarning() << "-60 dB Sound Cue starts after track end in:"
+                           << pTrack->getLocation()
+                           << "Using the first sample instead.";
+            }
         }
     }
     return 0.0;
@@ -5051,15 +5067,21 @@ double AutoDJProcessor::getLastSoundSecond(DeckAttributes* pDeck) {
         return 0.0;
     }
 
+    const mixxx::audio::FramePos trackEndPosition = pDeck->trackEndPosition();
     CuePointer pFromTrackN60dBSound = pTrack->findCueByType(mixxx::CueType::N60dBSound);
-    if (pFromTrackN60dBSound) {
-        Cue::StartAndEndPositions pos = pFromTrackN60dBSound->getStartAndEndPosition();
-        if (pos.endPosition > mixxx::audio::kStartFramePos &&
-                (pos.endPosition - pos.startPosition) > 0) {
-            return framePositionToSeconds(pos.endPosition, pDeck);
+    if (pFromTrackN60dBSound && pFromTrackN60dBSound->getLengthFrames() > 0.0) {
+        const mixxx::audio::FramePos lastSound = pFromTrackN60dBSound->getEndPosition();
+        if (lastSound > mixxx::audio::FramePos(0.0)) {
+            if (lastSound <= trackEndPosition) {
+                return framePositionToSeconds(lastSound, pDeck);
+            } else {
+                qWarning() << "-60 dB Sound Cue ends after track end in:"
+                           << pTrack->getLocation()
+                           << "Using the last sample instead.";
+            }
         }
     }
-    return getEndSecond(pDeck);
+    return framePositionToSeconds(trackEndPosition, pDeck);
 }
 
 double AutoDJProcessor::getEndSecond(DeckAttributes* pDeck) {
@@ -5161,23 +5183,28 @@ void AutoDJProcessor::calculateTransition(DeckAttributes* pFromDeck,
     }
     pToDeck->fadeBeginPos = toDeckOutroStartSecond;
 
-    double introStart;
+    double toDeckStartSeconds = toDeckPositionSeconds;
+    const double introStart = getIntroStartSecond(pToDeck);
+    const double introEnd = getIntroEndSecond(pToDeck);
     if (seekToStartPoint || toDeckPositionSeconds >= pToDeck->fadeBeginPos) {
         // toDeckPosition >= pToDeck->fadeBeginPos happens when the
         // user has seeked or played the to track behind fadeBeginPos of
         // the fade after the next.
         // In this case we recue the track just before the transition.
-        introStart = getIntroStartSecond(pToDeck);
-    } else {
-        introStart = toDeckPositionSeconds;
+        toDeckStartSeconds = introStart;
     }
 
     double introLength = 0;
-    const mixxx::audio::FramePos introEndPosition = pToDeck->introEndPosition();
-    if (introEndPosition.isValid()) {
-        const double introEnd = framePositionToSeconds(introEndPosition, pToDeck);
-        if (introStart < introEnd) {
-            introLength = introEnd - introStart;
+
+    // introEnd is equal introStart in case it has not yet been set
+    if (toDeckStartSeconds < introEnd && introStart < introEnd) {
+        // Limit the intro length that results from a revers seek
+        // to a reasonable values. If the seek was too big, ignore it.
+        introLength = introEnd - toDeckStartSeconds;
+        if (introLength > (introEnd - introStart) * 2 &&
+                introLength > (introEnd - introStart) + m_transitionTime &&
+                introLength > outroLength) {
+            introLength = 0;
         }
     }
 
@@ -5219,10 +5246,10 @@ void AutoDJProcessor::calculateTransition(DeckAttributes* pFromDeck,
             }
         }
         if (transitionLength > 0) {
-            const double transitionEnd = introStart + transitionLength;
+            const double transitionEnd = toDeckStartSeconds + transitionLength;
             if (transitionEnd > pToDeck->fadeBeginPos) {
                 // End intro before next outro starts
-                transitionLength = pToDeck->fadeBeginPos - introStart;
+                transitionLength = pToDeck->fadeBeginPos - toDeckStartSeconds;
                 VERIFY_OR_DEBUG_ASSERT(transitionLength > 0) {
                     // We seek to intro start above in this case so this never happens
                     transitionLength = 1;
@@ -5230,9 +5257,9 @@ void AutoDJProcessor::calculateTransition(DeckAttributes* pFromDeck,
             }
             pFromDeck->fadeBeginPos = outroEnd - transitionLength;
             pFromDeck->fadeEndPos = outroEnd;
-            pToDeck->startPos = introStart;
+            pToDeck->startPos = toDeckStartSeconds;
         } else {
-            useFixedFadeTime(pFromDeck, pToDeck, fromDeckPosition, outroEnd, introStart);
+            useFixedFadeTime(pFromDeck, pToDeck, fromDeckPosition, outroEnd, toDeckStartSeconds);
         }
     } break;
     case TransitionMode::FadeAtOutroStart: {
@@ -5265,10 +5292,10 @@ void AutoDJProcessor::calculateTransition(DeckAttributes* pFromDeck,
                     transitionLength = introLength;
                 }
             }
-            const double transitionEnd = introStart + transitionLength;
+            const double transitionEnd = toDeckStartSeconds + transitionLength;
             if (transitionEnd > pToDeck->fadeBeginPos) {
                 // End intro before next outro starts
-                transitionLength = pToDeck->fadeBeginPos - introStart;
+                transitionLength = pToDeck->fadeBeginPos - toDeckStartSeconds;
                 VERIFY_OR_DEBUG_ASSERT(transitionLength > 0) {
                     // We seek to intro start above in this case so this never happens
                     transitionLength = 1;
@@ -5276,14 +5303,14 @@ void AutoDJProcessor::calculateTransition(DeckAttributes* pFromDeck,
             }
             pFromDeck->fadeBeginPos = outroStart;
             pFromDeck->fadeEndPos = outroStart + transitionLength;
-            pToDeck->startPos = introStart;
+            pToDeck->startPos = toDeckStartSeconds;
         } else if (introLength > 0) {
             transitionLength = introLength;
             pFromDeck->fadeBeginPos = outroEnd - transitionLength;
             pFromDeck->fadeEndPos = outroEnd;
-            pToDeck->startPos = introStart;
+            pToDeck->startPos = toDeckStartSeconds;
         } else {
-            useFixedFadeTime(pFromDeck, pToDeck, fromDeckPosition, outroEnd, introStart);
+            useFixedFadeTime(pFromDeck, pToDeck, fromDeckPosition, outroEnd, toDeckStartSeconds);
         }
     } break;
     case TransitionMode::FixedSkipSilence: {
@@ -5523,6 +5550,7 @@ void AutoDJProcessor::setTransitionTime(int time) {
         if (!pLeftDeck || !pRightDeck) {
             // User has changed the orientation, disable Auto DJ
             toggleAutoDJ(false);
+            emit autoDJError(ADJ_NOT_TWO_DECKS);
             return;
         }
         if (pLeftDeck->isPlaying()) {
@@ -5551,6 +5579,7 @@ void AutoDJProcessor::setTransitionMode(TransitionMode newMode) {
     if (!pLeftDeck || !pRightDeck) {
         // User has changed the orientation, disable Auto DJ
         toggleAutoDJ(false);
+        emit autoDJError(ADJ_NOT_TWO_DECKS);
         return;
     }
 

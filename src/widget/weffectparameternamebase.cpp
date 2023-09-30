@@ -6,6 +6,7 @@
 
 #include "effects/effectslot.h"
 #include "effects/effectsmanager.h"
+#include "moc_weffectparameternamebase.cpp"
 
 namespace {
 const QString kMimeTextDelimiter = QStringLiteral("\n");
@@ -14,7 +15,8 @@ const QString kMimeTextDelimiter = QStringLiteral("\n");
 WEffectParameterNameBase::WEffectParameterNameBase(
         QWidget* pParent, EffectsManager* pEffectsManager)
         : WLabel(pParent),
-          m_pEffectsManager(pEffectsManager) {
+          m_pEffectsManager(pEffectsManager),
+          m_widthHint(0) {
     setAcceptDrops(true);
     setCursor(Qt::OpenHandCursor);
     parameterUpdated();
@@ -46,6 +48,8 @@ void WEffectParameterNameBase::setEffectParameterSlot(
 }
 
 void WEffectParameterNameBase::parameterUpdated() {
+    int valueWidth = 0;
+    QFontMetrics metrics(font());
     if (m_pParameterSlot) {
         if (!m_pParameterSlot->shortName().isEmpty()) {
             m_text = m_pParameterSlot->shortName();
@@ -58,6 +62,16 @@ void WEffectParameterNameBase::parameterUpdated() {
         EffectManifestParameterPointer pManifest = m_pParameterSlot->getManifest();
         if (!pManifest.isNull()) {
             m_unitString = m_pParameterSlot->getManifest()->unitString();
+            if (!m_unitString.isEmpty()) {
+                m_unitString.prepend(QChar(' '));
+            }
+            double maxValue = m_pParameterSlot->getManifest()->getMaximum();
+            double minValue = m_pParameterSlot->getManifest()->getMaximum();
+            QString maxValueString = QString::number(maxValue - 0.01) + m_unitString;
+            QString minValueString = QString::number(minValue + 0.01) + m_unitString;
+            valueWidth = math_max(
+                    metrics.size(0, maxValueString).width(),
+                    metrics.size(0, minValueString).width());
         } else {
             m_unitString = QString();
         }
@@ -66,6 +80,12 @@ void WEffectParameterNameBase::parameterUpdated() {
         m_text = kNoEffectString;
         setBaseTooltip(tr("No effect loaded."));
     }
+    // frameWidth() is the maximum of the sum of margin, border and padding
+    // width of the left and the right side.
+    m_widthHint = math_max(
+                          valueWidth,
+                          metrics.size(0, m_text).width()) +
+            2 * frameWidth();
     setText(m_text);
     m_parameterUpdated = true;
 }
@@ -86,11 +106,7 @@ void WEffectParameterNameBase::showNewValue(double newValue) {
     }
     double dispVal = round(newValue * tenPowDecimals) / tenPowDecimals;
 
-    if (m_unitString.isEmpty()) {
-        setText(QString::number(dispVal));
-    } else {
-        setText(QString::number(dispVal) + QChar(' ') + m_unitString);
-    }
+    setText(QString::number(dispVal) + m_unitString);
     m_displayNameResetTimer.start();
 }
 
@@ -147,4 +163,11 @@ const QString WEffectParameterNameBase::mimeTextIdentifier() const {
     return QStringLiteral("Mixxx effect parameter ") +
             QString::number(
                     static_cast<int>(m_pParameterSlot->parameterType()));
+}
+
+QSize WEffectParameterNameBase::sizeHint() const {
+    // make sure the sizeHint is not changing because of the label or value string
+    QSize size = WLabel::sizeHint();
+    size.setWidth(m_widthHint);
+    return size;
 }
