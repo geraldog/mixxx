@@ -203,7 +203,7 @@ AudioPathType AudioPath::getTypeFromString(QString string) {
     } else if (string == AudioPath::getStringFromType(AudioPathType::RecordBroadcast).toLower()) {
         return AudioPathType::RecordBroadcast;
     } else if (string == AudioPath::getStringFromType(AudioPathType::Stem).toLower()) {
-        return AudioPath::STEM;
+        return AudioPathType::Stem;
     } else {
         return AudioPathType::Invalid;
     }

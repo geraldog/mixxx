@@ -651,7 +651,7 @@ void PlayerManager::addStemInner() {
 
     // Register the stem output with SoundManager.
     m_pSoundManager->registerOutput(
-            AudioOutput(AudioOutput::STEM, 0, 2, index), m_pEngine);
+            AudioOutput(AudioPathType::Deck, 0, 2, index), m_pEngine);
 }
 
 BaseTrackPlayer* PlayerManager::getPlayer(const QString& group) const {
