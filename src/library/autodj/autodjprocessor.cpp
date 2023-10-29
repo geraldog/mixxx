@@ -1368,12 +1368,14 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         }
 
         catch (const std::invalid_argument& e) {
+            std::cout << e.what() << std::endl;
             this->wuwei = true;
             std::cout << "INVALID ARGUMENT AT CONTAGIROS WAS \n" + contador;
             goto clean_exit;
         }
 
         catch (const std::out_of_range& e) {
+            std::cout << e.what() << std::endl;
             this->wuwei = true;
             std::cout << "OUT OF RANGE ARGUMENT FOR CONTAGIROS\n";
             goto clean_exit;
@@ -1454,6 +1456,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 1 SLOPE\n";
                                 this->STEM_1_S_V_C_B = false;
@@ -1462,6 +1465,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 1 SLOPE\n";
                                 this->STEM_1_S_V_C_B = false;
@@ -1497,6 +1501,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 1 SLOPE\n";
                                 this->STEM_1_S_V_O_B = false;
@@ -1505,6 +1510,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 1 SLOPE\n";
                                 this->STEM_1_S_V_O_B = false;
@@ -1544,6 +1550,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 2 SLOPE\n";
                                 this->STEM_2_S_V_C_B = false;
@@ -1552,6 +1559,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 2 SLOPE\n";
                                 this->STEM_2_S_V_C_B = false;
@@ -1587,6 +1595,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 2 SLOPE\n";
                                 this->STEM_2_S_V_O_B = false;
@@ -1595,6 +1604,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 2 SLOPE\n";
                                 this->STEM_2_S_V_O_B = false;
@@ -1634,6 +1644,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 3 SLOPE\n";
                                 this->STEM_3_S_V_C_B = false;
@@ -1642,6 +1653,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 3 SLOPE\n";
                                 this->STEM_3_S_V_C_B = false;
@@ -1677,6 +1689,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 3 SLOPE\n";
                                 this->STEM_3_S_V_O_B = false;
@@ -1685,6 +1698,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 3 SLOPE\n";
                                 this->STEM_3_S_V_O_B = false;
@@ -1724,6 +1738,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 4 SLOPE\n";
                                 this->STEM_4_S_V_C_B = false;
@@ -1732,6 +1747,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 4 SLOPE\n";
                                 this->STEM_4_S_V_C_B = false;
@@ -1767,6 +1783,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 4 SLOPE\n";
                                 this->STEM_4_S_V_O_B = false;
@@ -1775,6 +1792,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 4 SLOPE\n";
                                 this->STEM_4_S_V_O_B = false;
@@ -1814,6 +1832,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 5 SLOPE\n";
                                 this->STEM_5_S_V_C_B = false;
@@ -1822,6 +1841,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 5 SLOPE\n";
                                 this->STEM_5_S_V_C_B = false;
@@ -1857,6 +1877,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 5 SLOPE\n";
                                 this->STEM_5_S_V_O_B = false;
@@ -1865,6 +1886,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 5 SLOPE\n";
                                 this->STEM_5_S_V_O_B = false;
@@ -1904,6 +1926,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 6 SLOPE\n";
                                 this->STEM_6_S_V_C_B = false;
@@ -1912,6 +1935,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 6 SLOPE\n";
                                 this->STEM_6_S_V_C_B = false;
@@ -1947,6 +1971,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 6 SLOPE\n";
                                 this->STEM_6_S_V_O_B = false;
@@ -1955,6 +1980,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 6 SLOPE\n";
                                 this->STEM_6_S_V_O_B = false;
@@ -1994,6 +2020,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 7 SLOPE\n";
                                 this->STEM_7_S_V_C_B = false;
@@ -2002,6 +2029,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 7 SLOPE\n";
                                 this->STEM_7_S_V_C_B = false;
@@ -2037,6 +2065,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 7 SLOPE\n";
                                 this->STEM_7_S_V_O_B = false;
@@ -2045,6 +2074,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 7 SLOPE\n";
                                 this->STEM_7_S_V_O_B = false;
@@ -2084,6 +2114,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 8 SLOPE\n";
                                 this->STEM_8_S_V_C_B = false;
@@ -2092,6 +2123,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 8 SLOPE\n";
                                 this->STEM_8_S_V_C_B = false;
@@ -2127,6 +2159,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                               std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR STEM 8 SLOPE\n";
                                 this->STEM_8_S_V_O_B = false;
@@ -2135,6 +2168,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR STEM 8 SLOPE\n";
                                 this->STEM_8_S_V_O_B = false;
@@ -2212,6 +2246,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR KEY 1 SLOPE\n";
                         this->LOCK = false;
@@ -2219,6 +2254,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR KEY 1 SLOPE\n";
                         this->LOCK = false;
@@ -2251,6 +2287,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR KEY 2 SLOPE\n";
                         this->LOCK = false;
@@ -2258,6 +2295,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR 2 KEY SLOPE\n";
                         this->LOCK = false;
@@ -2293,6 +2331,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_X_L_B = false;
@@ -2302,6 +2341,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_X_L_B = false;
@@ -2355,6 +2395,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_M_L_B = false;
@@ -2364,6 +2405,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_M_L_B = false;
@@ -2417,6 +2459,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_R_L_B = false;
@@ -2425,6 +2468,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_R_L_B = false;
@@ -2473,6 +2517,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_L_R_B = false;
@@ -2481,6 +2526,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
                         this->CROSSFADER_L_R_B = false;
@@ -2539,6 +2585,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR DECK 1 TEMPO\n";
                         this->LOCK = false;
@@ -2546,6 +2593,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 TEMPO\n";
                         this->LOCK = false;
@@ -2673,6 +2721,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR DECK 2 TEMPO\n";
                         this->LOCK = false;
@@ -2680,6 +2729,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 TEMPO\n";
                         this->LOCK = false;
@@ -2808,6 +2858,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -2815,6 +2866,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -2904,6 +2956,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE POSITION\n";
                             this->LOCK = false;
@@ -2911,6 +2964,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE POSITION\n";
                             this->LOCK = false;
@@ -2922,6 +2976,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -2929,6 +2984,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3007,6 +3063,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3014,6 +3071,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3079,6 +3137,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 2 HOTCUE\n";
                             this->LOCK = false;
@@ -3086,6 +3145,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 2 HOTCUE\n";
                             this->LOCK = false;
@@ -3175,6 +3235,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE POSITION\n";
                             this->LOCK = false;
@@ -3182,6 +3243,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE POSITION\n";
                             this->LOCK = false;
@@ -3193,6 +3255,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3200,6 +3263,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3278,6 +3342,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID ARGUMENT FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3285,6 +3350,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE ARGUMENT FOR FOR DECK 1 HOTCUE\n";
                             this->LOCK = false;
@@ -3401,6 +3467,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR PLAY CUE POSITION ON DECK 1\n";
                         this->LOCK = false;
@@ -3408,6 +3475,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR PLAY CUE POSITION ON DECK 1\n";
                         this->LOCK = false;
@@ -3443,6 +3511,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "INVALID ARGUMENT FOR PLAY CUE POSITION ON DECK 2\n";
                         this->LOCK = false;
@@ -3450,6 +3519,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     catch (const std::out_of_range& e) {
+                        std::cout << e.what() << std::endl;
                         this->wuwei = true;
                         std::cout << "OUT OF RANGE ARGUMENT FOR PLAY CUE POSITION ON DECK 2\n";
                         this->LOCK = false;
@@ -3488,6 +3558,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID LOOPING POSITIONS FOR DECK 2\n";
                             this->LOCK = false;
@@ -3495,6 +3566,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
     
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 2\n";
                             this->LOCK = false;
@@ -3521,6 +3593,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID LOOPING BEATSIZE FOR DECK 2\n";
                             this->LOCK = false;
@@ -3528,6 +3601,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE LOOPING BEATSIZE FOR DECK 2\n";
                             this->LOCK = false;
@@ -3573,6 +3647,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID LOOPING POSITIONS FOR DECK 1\n";
                             this->LOCK = false;
@@ -3580,6 +3655,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE LOOPING POSITIONS FOR DECK 1\n";
                             this->LOCK = false;
@@ -3606,6 +3682,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::invalid_argument& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "INVALID LOOPING BEATSIZE FOR DECK 1\n";
                             this->LOCK = false;
@@ -3613,6 +3690,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         catch (const std::out_of_range& e) {
+                            std::cout << e.what() << std::endl;
                             this->wuwei = true;
                             std::cout << "OUT OF RANGE LOOPING BEATSIZE FOR DECK 1\n";
                             this->LOCK = false;
@@ -3659,6 +3737,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ HIGH OPEN\n";
                                 this->DECK_1_Q_H_O_B = false;
@@ -3667,6 +3746,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ HIGH OPEN\n";
                                 this->DECK_1_Q_H_O_B = false;
@@ -3701,6 +3781,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ HIGH CLOSE\n";
                                 this->DECK_1_Q_H_C_B = false;
@@ -3709,6 +3790,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ HIGH CLOSE\n";
                                 this->DECK_1_Q_H_C_B = false;
@@ -3745,6 +3827,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ MID OPEN\n";
                                 this->DECK_1_Q_M_O_B = false;
@@ -3753,6 +3836,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ MID OPEN\n";
                                 this->DECK_1_Q_M_O_B = false;
@@ -3787,6 +3871,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ MID CLOSE\n";
                                 this->DECK_1_Q_M_C_B = false;
@@ -3795,6 +3880,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ MID CLOSE\n";
                                 this->DECK_1_Q_M_C_B = false;
@@ -3831,6 +3917,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ LOW OPEN\n";
                                 this->DECK_1_Q_L_O_B = false;
@@ -3839,6 +3926,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ LOW OPEN\n";
                                 this->DECK_1_Q_L_O_B = false;
@@ -3873,6 +3961,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 1 EQ LOW CLOSE\n";
                                 this->DECK_1_Q_L_C_B = false;
@@ -3881,6 +3970,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 1 EQ LOW CLOSE\n";
                                 this->DECK_1_Q_L_C_B = false;
@@ -3919,6 +4009,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 2 EQ HIGH OPEN\n";
                                 this->DECK_2_Q_H_O_B = false;
@@ -3927,6 +4018,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ HIGH OPEN\n";
                                 this->DECK_2_Q_H_O_B = false;
@@ -3961,6 +4053,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 2 EQ HIGH CLOSE\n";
                                 this->DECK_2_Q_H_C_B = false;
@@ -3969,6 +4062,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ HIGH CLOSE\n";
                                 this->DECK_2_Q_H_C_B = false;
@@ -4005,6 +4099,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 2 EQ MID OPEN\n";
                                 this->DECK_2_Q_M_O_B = false;
@@ -4013,6 +4108,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ MID OPEN\n";
                                 this->DECK_2_Q_M_O_B = false;
@@ -4047,6 +4143,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 2 EQ MID CLOSE\n";
                                 this->DECK_2_Q_M_C_B = false;
@@ -4055,6 +4152,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ MID CLOSE\n";
                                 this->DECK_2_Q_M_C_B = false;
@@ -4091,6 +4189,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "INVALID ARGUMENT FOR DECK 2 EQ LOW OPEN\n";
                                 this->DECK_2_Q_L_O_B = false;
@@ -4099,6 +4198,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW OPEN\n";
                                 this->DECK_2_Q_L_O_B = false;
@@ -4133,6 +4233,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::invalid_argument& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW CLOSE\n";
                                 this->DECK_2_Q_L_C_B = false;
@@ -4141,6 +4242,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                             }
 
                             catch (const std::out_of_range& e) {
+                                std::cout << e.what() << std::endl;
                                 this->wuwei = true;
                                 std::cout << "OUT OF RANGE ARGUMENT FOR DECK 2 EQ LOW CLOSE\n";
                                 this->DECK_2_Q_L_C_B = false;
