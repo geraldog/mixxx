@@ -252,6 +252,14 @@ class AutoDJProcessor : public QObject {
 
     bool wuwei = false;
 
+    QString controlmixxx = "1";
+    QString controlmixxx_lock = "1";
+    QString confirmixxx = "1";
+    QString mixxxposition1 = "1";
+    QString mixxxposition2 = "1";
+    QString mixxxlooping1beatcounter = "1";
+    QString mixxxlooping2beatcounter = "1";
+
     uint64_t counter = 0;
     uint64_t DECK_1_Q_M_C_V = 0;
     uint64_t DECK_1_Q_M_O_V = 0;

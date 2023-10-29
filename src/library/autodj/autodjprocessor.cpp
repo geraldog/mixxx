@@ -873,6 +873,19 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         goto clean_exit;
     }
 
+    else if (this->controlmixxx == "1") {
+        QString basePathCC = this->m_pConfig->getSettingsPath() + "/";
+        std::cout << basePathCC.toStdString().c_str();
+        controlmixxx = basePathCC + "controlmixxx.txt";
+        controlmixxx_lock = basePathCC + "controlmixxx.txt.lock";
+        confirmixxx = basePathCC + "confirmixxx.txt";
+        mixxxposition1 = basePathCC + "mixxxposition1.txt";
+        mixxxposition2 = basePathCC + "mixxxposition2.txt";
+        mixxxlooping1beatcounter = basePathCC + "mixxxlooping1beatcounter.txt";
+        mixxxlooping2beatcounter = basePathCC + "mixxxlooping2beatcounter.txt";
+        goto clean_exit;
+    }
+
 
     else if (this->LOCK == true) {
         if (this->WIP1 == 1) {
@@ -954,7 +967,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                          hotCueSetter->set(1.0);
                          hotCueSetter->set(0.0);
                 
-                         confirmado.open("/home/dumbo/confirmixxx.txt");
+                         confirmado.open(this->confirmixxx.toStdString().c_str());
                          confirmado << std::to_string(this->counter) + "\n";
                          confirmado.close();
 
@@ -989,7 +1002,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_loopEnabled1->set(1.0);
                 }
 
-                confirmado.open("/home/dumbo/confirmixxx.txt");
+                confirmado.open(this->confirmixxx.toStdString().c_str());
                 confirmado << std::to_string(this->counter) + "\n";
                 confirmado.close();
 
@@ -1117,7 +1130,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                          hotCueSetter->set(1.0);
                          hotCueSetter->set(0.0);
                          delete hotCue22Status; 
-                         confirmado.open("/home/dumbo/confirmixxx.txt");
+                         confirmado.open(this->confirmixxx.toStdString().c_str());
                          confirmado << std::to_string(this->counter) + "\n";
                          confirmado.close();
 
@@ -1151,7 +1164,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_loopEnabled2->set(1.0);
                 }
 
-                confirmado.open("/home/dumbo/confirmixxx.txt");
+                confirmado.open(this->confirmixxx.toStdString().c_str());
                 confirmado << std::to_string(this->counter) + "\n";
                 confirmado.close();
 
@@ -1252,7 +1265,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 goto clean_exit;
             }
 
-            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado.open(this->confirmixxx.toStdString().c_str());
             confirmado << std::to_string(this->counter) + "\n";
             confirmado.close();
 
@@ -1328,7 +1341,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 goto clean_exit;
             }
 
-            confirmado.open("/home/dumbo/confirmixxx.txt");
+            confirmado.open(this->confirmixxx.toStdString().c_str());
             confirmado << std::to_string(this->counter) + "\n";
             confirmado.close();
 
@@ -1353,12 +1366,12 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
     else if (this->LOCK == false) {
 
-        if (FILE* file = fopen("/home/dumbo/controlmixxx.txt.lock", "r")) {
+        if (FILE* file = fopen(this->controlmixxx_lock.toStdString().c_str(), "r")) {
             fclose(file);
             goto clean_exit;
         }
 
-        controlbaby.open("/home/dumbo/controlmixxx.txt");
+        controlbaby.open(this->controlmixxx.toStdString().c_str());
         std::getline(controlbaby, comando);
         std::getline(controlbaby, contador);
         controlbaby.close();
@@ -1479,7 +1492,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_1_VOLUME = slopenumerico / 1000;
                                 this->STEM_1_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1524,7 +1537,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_1_VOLUME = slopenumerico / 1000;
                                 this->STEM_1_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1573,7 +1586,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_2_VOLUME = slopenumerico / 1000;
                                 this->STEM_2_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1618,7 +1631,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_2_VOLUME = slopenumerico / 1000;
                                 this->STEM_2_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1667,7 +1680,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_3_VOLUME = slopenumerico / 1000;
                                 this->STEM_3_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1712,7 +1725,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_3_VOLUME = slopenumerico / 1000;
                                 this->STEM_3_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1761,7 +1774,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_4_VOLUME = slopenumerico / 1000;
                                 this->STEM_4_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1806,7 +1819,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_4_VOLUME = slopenumerico / 1000;
                                 this->STEM_4_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1855,7 +1868,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_5_VOLUME = slopenumerico / 1000;
                                 this->STEM_5_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1900,7 +1913,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_5_VOLUME = slopenumerico / 1000;
                                 this->STEM_5_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1949,7 +1962,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_6_VOLUME = slopenumerico / 1000;
                                 this->STEM_6_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -1994,7 +2007,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_6_VOLUME = slopenumerico / 1000;
                                 this->STEM_6_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -2043,7 +2056,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_7_VOLUME = slopenumerico / 1000;
                                 this->STEM_7_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -2088,7 +2101,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_7_VOLUME = slopenumerico / 1000;
                                 this->STEM_7_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -2137,7 +2150,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_STEM_8_VOLUME = slopenumerico / 1000;
                                 this->STEM_8_S_V_C_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -2182,7 +2195,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_STEM_8_VOLUME = slopenumerico / 1000;
                                 this->STEM_8_S_V_O_V = 1000000;
   
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -2200,11 +2213,11 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_LoopToggle1->set(1);
                     this->looping1BeatCounter = 0;
 
-                    confirmado.open("/home/dumbo/mixxxlooping1beatcounter.txt");
+                    confirmado.open(this->mixxxlooping1beatcounter.toStdString().c_str());
                     confirmado << std::to_string(this->looping1BeatCounter) + "\n";
                     confirmado.close();
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado.open(this->confirmixxx.toStdString().c_str());
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
 
@@ -2218,11 +2231,11 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_LoopToggle2->set(1);
                     this->looping2BeatCounter = 0;
 
-                    confirmado.open("/home/dumbo/mixxxlooping2beatcounter.txt");
+                    confirmado.open(this->mixxxlooping2beatcounter.toStdString().c_str());
                     confirmado << std::to_string(this->looping2BeatCounter) + "\n";
                     confirmado.close();
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado.open(this->confirmixxx.toStdString().c_str());
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
 
@@ -2265,7 +2278,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_Key1->set(slopenumerico);
                     delete m_Key1;
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado.open(this->confirmixxx.toStdString().c_str());
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
 
@@ -2306,7 +2319,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     m_Key2->set(slopenumerico);
                     delete m_Key2;
 
-                    confirmado.open("/home/dumbo/confirmixxx.txt");
+                    confirmado.open(this->confirmixxx.toStdString().c_str());
                     confirmado << std::to_string(this->counter) + "\n";
                     confirmado.close();
 
@@ -2356,7 +2369,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->crescendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2372,7 +2385,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->diminuendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2420,7 +2433,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->crescendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2436,7 +2449,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->diminuendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2482,7 +2495,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->crescendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2494,7 +2507,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     else if (m_pCOCrossfader->get() <= -1.0) {
                         this->CROSSFADER_R_L_B = false;
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2540,7 +2553,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->crescendo_CROSS_X = slopenumerico / 1000;
                         this->CROSSFADER_X_V = 1000000;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2552,7 +2565,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     else if (m_pCOCrossfader->get() >= 1.0) {
                         this->CROSSFADER_L_R_B = false;
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2610,7 +2623,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     if (m_FileBpm1->get() == 0.0 || rateScale == 0.0) {
                         std::cout << "BPM IS UNDEFINED\n";
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2639,7 +2652,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         deck1PhaseSync->set(1.0);
                         deck1PhaseSync->set(0.0);
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2668,7 +2681,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         deck1PhaseSync->set(1.0);
                         deck1PhaseSync->set(0.0);
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2688,7 +2701,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         std::cout << "BPM IS EITHER THE SAME OR ELSE IT'S "
                                      "BEYOND LIMITS. LEAVING UNCHANGED\n";
                         m_Bpm1->set(0.0);
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2746,7 +2759,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                     if (m_FileBpm2->get() == 0.0 || rateScale == 0.0) {
                         std::cout << "BPM IS UNDEFINED\n";
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2770,7 +2783,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                         std::to_string(bpm_double2) + "\n";
                         m_Bpm2->set(dRateSlider);
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2803,7 +2816,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         deck2PhaseSync->set(1.0);
                         deck2PhaseSync->set(0.0);
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2823,7 +2836,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         std::cout << "BPM IS EITHER THE SAME OR ELSE IT'S "
                                      "BEYOND LIMITS. LEAVING UNCHANGED\n";
                         m_Bpm2->set(0.0);
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -2919,7 +2932,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                  hotCueSetter->set(1.0);
                                  hotCueSetter->set(0.0);
 
-                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado.open(this->confirmixxx.toStdString().c_str());
                                  confirmado << std::to_string(this->counter) + "\n";
                                  confirmado.close();
 
@@ -3107,7 +3120,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                  hotCueSetter->set(1.0);
                                  hotCueSetter->set(0.0);
 
-                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado.open(this->confirmixxx.toStdString().c_str());
                                  confirmado << std::to_string(this->counter) + "\n";
                                  confirmado.close();
 
@@ -3198,7 +3211,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                  hotCueSetter->set(1.0);
                                  hotCueSetter->set(0.0);
 
-                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado.open(this->confirmixxx.toStdString().c_str());
                                  confirmado << std::to_string(this->counter) + "\n";
                                  confirmado.close();
 
@@ -3386,7 +3399,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                  hotCueSetter->set(1.0);
                                  hotCueSetter->set(0.0);
 
-                                 confirmado.open("/home/dumbo/confirmixxx.txt");
+                                 confirmado.open(this->confirmixxx.toStdString().c_str());
                                  confirmado << std::to_string(this->counter) + "\n";
                                  confirmado.close();
 
@@ -3620,7 +3633,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         delete beatLoopActivate2;
                         delete m_loopRemove2;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -3710,7 +3723,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         delete beatLoopActivate1;
                         delete m_loopRemove1;
 
-                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado.open(this->confirmixxx.toStdString().c_str());
                         confirmado << std::to_string(this->counter) + "\n";
                         confirmado.close();
 
@@ -3760,7 +3773,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_1_HIGH = slopenumerico / 1000;
                                 this->DECK_1_Q_H_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -3804,7 +3817,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_1_HIGH = slopenumerico / 1000;
                                 this->DECK_1_Q_H_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -3850,7 +3863,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_1_MID = slopenumerico / 1000;
                                 this->DECK_1_Q_M_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -3894,7 +3907,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_1_MID = slopenumerico / 1000;
                                 this->DECK_1_Q_M_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -3940,7 +3953,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_1_LOW = slopenumerico / 1000;
                                 this->DECK_1_Q_L_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -3984,7 +3997,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_1_LOW = slopenumerico / 1000;
                                 this->DECK_1_Q_L_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4032,7 +4045,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_2_HIGH = slopenumerico / 1000;
                                 this->DECK_2_Q_H_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4076,7 +4089,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_2_HIGH = slopenumerico / 1000;
                                 this->DECK_2_Q_H_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4122,7 +4135,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_2_MID = slopenumerico / 1000;
                                 this->DECK_2_Q_M_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4166,7 +4179,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_2_MID = slopenumerico / 1000;
                                 this->DECK_2_Q_M_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4212,7 +4225,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->crescendo_EQ_2_LOW = slopenumerico / 1000;
                                 this->DECK_2_Q_L_O_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4256,7 +4269,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                                 this->diminuendo_EQ_2_LOW = slopenumerico / 1000;
                                 this->DECK_2_Q_L_C_V = 100000;
 
-                                confirmado.open("/home/dumbo/confirmixxx.txt");
+                                confirmado.open(this->confirmixxx.toStdString().c_str());
                                 confirmado << std::to_string(this->counter) + "\n";
                                 confirmado.close();
 
@@ -4868,7 +4881,7 @@ clean_exit:
     if (m_Playing1->get() == 1.0) {
         thisPlayPosition = m_PlayPosition1->get();
 
-        confirmado.open("/home/dumbo/mixxxposition1.txt");
+        confirmado.open(this->mixxxposition1.toStdString().c_str());
         confirmado << std::to_string(thisPlayPosition) + "\n";
         confirmado.close();
 
@@ -4879,7 +4892,7 @@ clean_exit:
                     std::cout << "PASSED A BEAT! " << std::to_string(beatDistance1->get()) << "\n";
                     this->loopingBeatDistance1 = 1.0;
                     this->looping1BeatCounter++;
-                    confirmado.open("/home/dumbo/mixxxlooping1beatcounter.txt");
+                    confirmado.open(this->mixxxlooping1beatcounter.toStdString().c_str());
                     confirmado << std::to_string(this->looping1BeatCounter) + "\n";
                     confirmado.close();
                 }
@@ -4902,7 +4915,7 @@ clean_exit:
     if (m_Playing2->get() == 1.0) {
         thisPlayPosition = m_PlayPosition2->get();
 
-        confirmado.open("/home/dumbo/mixxxposition2.txt");
+        confirmado.open(this->mixxxposition2.toStdString().c_str());
         confirmado << std::to_string(thisPlayPosition) + "\n";
         confirmado.close();
 
@@ -4913,7 +4926,7 @@ clean_exit:
                     std::cout << "PASSED A BEAT! " << std::to_string(beatDistance2->get()) << "\n";
                     this->loopingBeatDistance2 = 1.0;
                     this->looping2BeatCounter++;
-                    confirmado.open("/home/dumbo/mixxxlooping2beatcounter.txt");
+                    confirmado.open(this->mixxxlooping2beatcounter.toStdString().c_str());
                     confirmado << std::to_string(this->looping2BeatCounter) + "\n";
                     confirmado.close();
                 }
@@ -5760,7 +5773,7 @@ void AutoDJProcessor::playerTrackLoaded(DeckAttributes* pDeck, TrackPointer pTra
     if (this->deck2Loading == true) {
         this->track2Loaded = pRightDeck->getLoadedTrack();
         std::ofstream confirmado;
-        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado.open(this->confirmixxx.toStdString().c_str());
         confirmado << std::to_string(this->counter) + "\n";
         confirmado.close();
 
@@ -5778,7 +5791,7 @@ void AutoDJProcessor::playerTrackLoaded(DeckAttributes* pDeck, TrackPointer pTra
     if (this->deck1Loading == true) {
         this->track1Loaded = pLeftDeck->getLoadedTrack();
         std::ofstream confirmado;
-        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado.open(this->confirmixxx.toStdString().c_str());
         confirmado << std::to_string(this->counter) + "\n";
         confirmado.close();
 
@@ -6024,7 +6037,7 @@ void AutoDJProcessor::slotStemPlaying(int stemNumber) {
         this->stem3Playing = false;
         this->stem4Playing = false;
 
-        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado.open(this->confirmixxx.toStdString().c_str());
         confirmado << std::to_string(this->counter) + "\n";
         confirmado.close();
 
@@ -6047,7 +6060,7 @@ void AutoDJProcessor::slotStemPlaying(int stemNumber) {
         this->stem7Playing = false;
         this->stem8Playing = false;
 
-        confirmado.open("/home/dumbo/confirmixxx.txt");
+        confirmado.open(this->confirmixxx.toStdString().c_str());
         confirmado << std::to_string(this->counter) + "\n";
         confirmado.close();
 
