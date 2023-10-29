@@ -1,106 +1,31 @@
-# Mixxx
-
-[![GitHub latest tag](https://img.shields.io/github/tag/mixxxdj/mixxx.svg)](https://mixxx.org/download)
-[![Packaging status](https://repology.org/badge/tiny-repos/mixxx.svg)](https://repology.org/metapackage/mixxx/versions)
-[![Build status](https://github.com/mixxxdj/mixxx/actions/workflows/build.yml/badge.svg)](https://github.com/mixxxdj/mixxx/actions/workflows/build.yml)
-[![Coverage status](https://coveralls.io/repos/github/mixxxdj/mixxx/badge.svg)](https://coveralls.io/github/mixxxdj/mixxx)
-[![Zulip chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://mixxx.zulipchat.com)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://mixxx.org/donate)
+# Mixxx augmented with Stems and Programmable AutoDJ
 
 [Mixxx] is Free DJ software that gives you everything you need to perform live
 DJ mixes. Mixxx works on GNU/Linux, Windows, and macOS.
 
-## Quick Start
+This branch is a hacky-as-hell way to have Stems working with what I call programmable AutoDJ. Basically what we have is a hijacked AutoDJ callback, which via regular txt files communicates outside and inside towards Mixxx.
 
-To get started with Mixxx:
+The file padj.py contains some Python logic to effectively steer Mixxx into mixing and particularly Stems mixing. The mixes are reproducible but this is hacky-as-hell - and that means buggy, specially if you make a mistake.
 
-1. For live use, [download the latest stable version][download-stable].
-2. For experimentation and testing, [download a development release][download-testing].
-3. To live on the bleeding edge, clone the repo: `git clone https://github.com/mixxxdj/mixxx.git`
+I tried to make the reference as agnostic as I could, text file communication should be supported on all platforms that Mixxx runs. You still have to have a separated/mdx_extra_q directory on your home directory and you'll have to replace all instances of my user (dumbo) on src/library/autodj/autodjprocessor.cpp with your user or other acceptable path on your machine.
 
-## Bug tracker
+Then just compile Mixxx from source and remember to create the files you'll need - except for the lock files they aren't created automatically. For example, on a Linux shell:
 
-The Mixxx team uses [Github Issues][issues] to manage Mixxx development.
+$ touch controlmixxx.txt
+$ touch confirmixxx.txt
+$ touch mixxxposition1.txt
+$ touch mixxxposition2.txt
+$ touch mixxxlooping1beatcounter.txt
+$ touch mixxxlooping2beatcounter.txt
 
-Have a bug or feature request? [File a bug on Github][fileabug].
+Also, make sure to "zero-out" the relevant command and control txt files with the following commands:
 
-Want to get involved in Mixxx development? Assign yourself a bug from the [easy
-bug list][easybugs] and get started!
+$ echo -ne "P10\n3\n" > controlmixxx.txt
+$ echo -ne "-1\n" > confirmixxx.txt
 
-## Building Mixxx
-
-First, open a terminal (on Windows, use "x64 Native Tools Command Prompt for
-[VS 2019][visualstudio2019]"), download the mixxx
-source code and navigate to it:
-
-    $ git clone https://github.com/mixxxdj/mixxx.git
-    $ cd mixxx
-
-Fetch the required dependencies and set up the build environment (on Windows,
-macOS and Debian/Ubuntu, you can do that by running
-`tools\windows_buildenv.bat`, `source tools/macos_buildenv.sh setup` or `source
-tools/debian_buildenv.sh setup` respectively), then run:
-
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ cmake --build .
-
-There should now be a `mixxx` executable in the current directory that you can
-run. Alternatively, can generate a package using `cpack`.
-
-## Documentation
-
-For help using Mixxx, there are a variety of options:
-
-- [Mixxx manual][manual]
-- [Mixxx wiki][wiki]
-- [Frequently Asked Questions][FAQ]
-- [Hardware Compatibility]
-- [Creating Skins]
-
-## Translation
-
-Help to spread Mixxx with translations into more languages, as well as to update and ensure the accuracy of existing translations.
-
-- [Help translate content]
-- [Mixxx i18n wiki]
-- [Mixxx localization forum]
-- [Mixxx glossary]
-
-## Community
-
-Mixxx is a vibrant community of hackers, DJs and artists. To keep track of
-development and community news:
-
-- Chat with us on [Zulip][zulip].
-- Follow us on [Twitter] and [Facebook].
-- Subscribe to the [Mixxx Blog][blog].
-- Post on the [Mixxx forums][discourse].
+After that, you can safely turn on AutoDJ as usual, and subsequently run your own version of padj.py to program your Robot DJ :)
 
 ## License
 
 Mixxx is released under the GPLv2. See the LICENSE file for a full copy of the
 license.
-
-[mixxx]: https://mixxx.org
-[download-stable]: https://mixxx.org/download/#stable
-[download-testing]: https://mixxx.org/download/#testing
-[issues]: https://github.com/mixxxdj/mixxx/issues
-[fileabug]: https://github.com/mixxxdj/mixxx/issues/new/choose
-[twitter]: https://twitter.com/mixxxdj
-[facebook]: https://www.facebook.com/pages/Mixxx-DJ-Software/21723485212
-[blog]: https://mixxx.org/news/
-[manual]: https://manual.mixxx.org/
-[wiki]: https://github.com/mixxxdj/mixxx/wiki
-[faq]: https://github.com/mixxxdj/mixxx/wiki/Faq
-[visualstudio2019]: https://docs.microsoft.com/visualstudio/install/install-visual-studio?view=vs-2019
-[easybugs]: https://github.com/mixxxdj/mixxx/issues?q=is%3Aopen+is%3Aissue+label%3Aeasy
-[creating skins]: https://mixxx.org/wiki/doku.php/Creating-Skins
-[help translate content]: https://www.transifex.com/projects/p/mixxxdj
-[Mixxx i18n wiki]: https://github.com/mixxxdj/mixxx/wiki/Internationalization
-[Mixxx localization forum]: https://mixxx.discourse.group/c/translation/13
-[Mixxx glossary]: https://www.transifex.com/projects/p/mixxxdj/glossary/l/en/
-[hardware compatibility]: https://manual.mixxx.org/2.3/en/hardware/manuals.html
-[zulip]: https://mixxx.zulipchat.com/
-[discourse]: https://mixxx.discourse.group/
