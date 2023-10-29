@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+message(STATUS "CMAKE_VERSION: ${CMAKE_VERSION}")
+
 # CMAKE_CXX_COMPILER_ID: Distinguish between "AppleClang" and "Clang"
 if(POLICY CMP0025)
   cmake_policy(SET CMP0025 NEW)
@@ -1429,6 +1431,7 @@ else()
   if(QOPENGL)
     target_sources(mixxx-lib PRIVATE
       src/shaders/endoftrackshader.cpp
+      src/shaders/patternshader.cpp
       src/shaders/rgbashader.cpp
       src/shaders/rgbshader.cpp
       src/shaders/shader.cpp
@@ -1517,7 +1520,7 @@ endif()
 
 # QML Debugging
 #if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#  target_compile_definitions(mixxx-lib PRIVATE QT_QML_DEBUG)
+#  target_compile_definitions(mixxx-lib PUBLIC QT_QML_DEBUG)
 #  message(STATUS "Enabling QML Debugging! This poses a security risk as Mixxx will open a TCP port for debugging")
 #endif()
 
@@ -2098,6 +2101,7 @@ add_executable(mixxx-test
   src/test/wwidgetstack_test.cpp
   src/util/moc_included_test.cpp
 )
+target_precompile_headers(mixxx-test REUSE_FROM mixxx-lib)
 find_package(GTest CONFIG REQUIRED)
 set_target_properties(mixxx-test PROPERTIES AUTOMOC ON)
 target_link_libraries(mixxx-test PRIVATE mixxx-lib mixxx-gitinfostore GTest::gtest GTest::gmock)
@@ -2149,11 +2153,15 @@ if(DOWNLOAD_MANUAL AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/res/Mixxx-Manual.
     STATUS MANUAL_PDF_DOWNLOAD
     TLS_VERIFY ON
   )
-  if(NOT MANUAL_PDF_DOWNLOAD EQUAL 0)
-    message(FATAL_ERROR "Manual PDF download failed. Either download it yourself "
-      "and move it to '${CMAKE_CURRENT_SOURCE_DIR}/res/Mixxx-Manual.pdf' or "
-      "reconfigure with -DDOWNLOAD_MANUAL=OFF to build without included "
-      "manual.")
+  list(GET MANUAL_PDF_DOWNLOAD 0 MANUAL_PDF_DOWNLOAD_ERROR)
+  if(NOT MANUAL_PDF_DOWNLOAD_ERROR EQUAL 0)
+    list(GET MANUAL_PDF_DOWNLOAD 1 MANUAL_PDF_DOWNLOAD_MESSGAE)
+    message(FATAL_ERROR "Manual PDF download failed with: "
+        "${MANUAL_PDF_DOWNLOAD_MESSGAE} Code: ${MANUAL_PDF_DOWNLOAD_ERROR}. "
+        "Either download it yourself and move it to "
+        "'${CMAKE_CURRENT_SOURCE_DIR}/res/Mixxx-Manual.pdf' or "
+        "reconfigure with -DDOWNLOAD_MANUAL=OFF to build without included "
+        "manual.")
   endif()
   file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/res/Mixxx-Manual.pdf" "${CMAKE_CURRENT_SOURCE_DIR}/res/Mixxx-Manual.pdf")
 endif()
@@ -2513,7 +2521,7 @@ target_link_libraries(mixxx-lib PRIVATE Vorbis::vorbis Vorbis::vorbisenc Vorbis:
 
 # PortAudio
 find_package(PortAudio REQUIRED)
-target_link_libraries(mixxx-lib PRIVATE PortAudio::PortAudio)
+target_link_libraries(mixxx-lib PUBLIC PortAudio::PortAudio)
 
 # PortAudio Ring Buffer
 add_library(PortAudioRingBuffer STATIC EXCLUDE_FROM_ALL
@@ -2536,11 +2544,17 @@ target_link_libraries(mixxx-lib PUBLIC mixxx-proto)
 target_include_directories(mixxx-lib SYSTEM PUBLIC lib/rigtorp/SPSCQueue/include)
 
 # Qt
+set(QT_EXTRA_COMPONENTS "")
 if(QT6)
   find_package(QT 6.2 NAMES Qt6 COMPONENTS Core REQUIRED)
-  set(QT6_NEW_COMPONENTS "SvgWidgets;Core5Compat")
+  list(APPEND QT_EXTRA_COMPONENTS "SvgWidgets")
+  list(APPEND QT_EXTRA_COMPONENTS "Core5Compat")
 else()
   find_package(QT 5.12 NAMES Qt5 COMPONENTS Core REQUIRED)
+endif()
+if(QML)
+  list(APPEND QT_EXTRA_COMPONENTS "Quick")
+  list(APPEND QT_EXTRA_COMPONENTS "QuickControls2")
 endif()
 find_package(Qt${QT_VERSION_MAJOR}
   COMPONENTS
@@ -2557,7 +2571,7 @@ find_package(Qt${QT_VERSION_MAJOR}
     Test
     Widgets
     Xml
-    ${QT6_NEW_COMPONENTS}
+    ${QT_EXTRA_COMPONENTS}
   REQUIRED
 )
 # PUBLIC is required below to find included headers
@@ -2575,8 +2589,8 @@ target_link_libraries(mixxx-lib PUBLIC
   Qt${QT_VERSION_MAJOR}::Test
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Xml)
-if(QT6)
-  foreach(COMPONENT ${QT6_NEW_COMPONENTS})
+if(QT_EXTRA_COMPONENTS)
+  foreach(COMPONENT ${QT_EXTRA_COMPONENTS})
     target_link_libraries(mixxx-lib PUBLIC Qt6::${COMPONENT})
   endforeach()
 
@@ -2706,14 +2720,14 @@ elseif(UNIX AND NOT APPLE)
   else()
     find_package(X11 REQUIRED)
     find_package(Qt5 COMPONENTS X11Extras REQUIRED)
-    target_link_libraries(mixxx-lib PRIVATE Qt5::X11Extras)
+    target_link_libraries(mixxx-lib PUBLIC Qt5::X11Extras)
   endif()
   if(${X11_FOUND})
     target_include_directories(mixxx-lib SYSTEM PUBLIC "${X11_INCLUDE_DIR}")
     target_link_libraries(mixxx-lib PRIVATE "${X11_LIBRARIES}")
   endif()
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus REQUIRED)
-  target_link_libraries(mixxx-lib PRIVATE
+  target_link_libraries(mixxx-lib PUBLIC
     Qt${QT_VERSION_MAJOR}::DBus
   )
 elseif(WIN32)
@@ -2972,7 +2986,7 @@ if(COREAUDIO)
     src/sources/v1/legacyaudiosourceadapter.cpp
     lib/apple/CAStreamBasicDescription.cpp
   )
-  target_compile_definitions(mixxx-lib PRIVATE __COREAUDIO__)
+  target_compile_definitions(mixxx-lib PUBLIC __COREAUDIO__)
   target_include_directories(mixxx-lib SYSTEM PUBLIC lib/apple)
 endif()
 
@@ -2993,7 +3007,7 @@ if(FAAD)
   )
   target_compile_definitions(mixxx-lib PUBLIC __FAAD__)
   if(MP4v2_FOUND)
-    target_compile_definitions(mixxx-lib PRIVATE __MP4V2__)
+    target_compile_definitions(mixxx-lib PUBLIC __MP4V2__)
     target_link_libraries(mixxx-lib PRIVATE MP4v2::MP4v2)
   else()
     target_link_libraries(mixxx-lib PRIVATE MP4::MP4)
@@ -3360,14 +3374,6 @@ if(WAVPACK)
   target_link_libraries(mixxx-lib PRIVATE WavPack::wavpack)
 endif()
 
-if (APPLOCAL_COMPONENT_DEFINED)
-    set(CPACK_COMPONENT_applocal_HIDDEN TRUE)
-    # In order to run Mixx from the build directory install applocal components
-    add_custom_command(
-        TARGET mixxx POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -DCOMPONENT=applocal -DCMAKE_INSTALL_PREFIX="${CMAKE_CURRENT_BINARY_DIR}" -P cmake_install.cmake)
-endif()
-
 # Configure file with build options
 file(RELATIVE_PATH MIXXX_INSTALL_DOCDIR_RELATIVE_TO_DATADIR "${CMAKE_INSTALL_PREFIX}/${MIXXX_INSTALL_DATADIR}" "${CMAKE_INSTALL_PREFIX}/${MIXXX_INSTALL_DOCDIR}")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/src/config.h" @ONLY)
@@ -3441,6 +3447,17 @@ if(WIN32)
 endif()
 
 include(CPack)
+
+if (APPLOCAL_COMPONENT_DEFINED)
+    cpack_add_component(applocal
+        HIDDEN
+        REQUIRED)
+
+    # In order to run Mixx from the build directory install applocal components
+    add_custom_command(
+        TARGET mixxx POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -DCOMPONENT=applocal -DCMAKE_INSTALL_PREFIX="${CMAKE_CURRENT_BINARY_DIR}" -P cmake_install.cmake)
+endif()
 
 if(APPLE AND MACOS_BUNDLE)
     set(BUNDLE_NAME "${MIXXX_INSTALL_PREFIX}")
