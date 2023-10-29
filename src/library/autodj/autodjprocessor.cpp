@@ -2342,6 +2342,180 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         goto clean_exit;
                     }
                 }
+
+                else if (comando[1] == 'M') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_M_L_B = false;
+                        this->CROSSFADER_M_R_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_M_L_B = false;
+                        this->CROSSFADER_M_R_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    if (m_pCOCrossfader->get() <= 0) {
+                        this->CROSSFADER_M_R_B = true;
+
+                        this->crescendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 1000000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    else if (m_pCOCrossfader->get() >= 0) {
+                        this->CROSSFADER_M_L_B = true;
+
+                        this->diminuendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 1000000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+                }
+
+                else if (comando[1] == 'L') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_R_L_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_R_L_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    if (m_pCOCrossfader->get() > -1.0) {
+                        this->CROSSFADER_R_L_B = true;
+
+                        this->crescendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 1000000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    else if (m_pCOCrossfader->get() <= -1.0) {
+                        this->CROSSFADER_R_L_B = false;
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+                }
+
+                else if (comando[1] == 'R') {
+                    for (long unsigned int usecamisinha = 2;
+                            usecamisinha <= comando.length();
+                            usecamisinha++) {
+                        slope = slope + comando[usecamisinha];
+                    }
+
+                    try {
+                        slopenumerico = std::stod(slope);
+                    }
+
+                    catch (const std::invalid_argument& e) {
+                        this->wuwei = true;
+                        std::cout << "INVALID ARGUMENT FOR CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_L_R_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    catch (const std::out_of_range& e) {
+                        this->wuwei = true;
+                        std::cout << "OUT OF RANGE ARGUMENT CROSSFADER INVERSION SLOPE\n";
+                        this->CROSSFADER_L_R_B = false;
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    if (m_pCOCrossfader->get() < 1.0) {
+                        this->CROSSFADER_L_R_B = true;
+
+                        this->crescendo_CROSS_X = slopenumerico / 1000;
+                        this->CROSSFADER_X_V = 1000000;
+
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+
+                    else if (m_pCOCrossfader->get() >= 1.0) {
+                        this->CROSSFADER_L_R_B = false;
+                        confirmado.open("/home/dumbo/confirmixxx.txt");
+                        confirmado << std::to_string(this->counter) + "\n";
+                        confirmado.close();
+
+                        this->counter++;
+
+                        this->LOCK = false;
+                        goto clean_exit;
+                    }
+                }
             }
 
             else if (comando[0] == 'T') {
@@ -4154,6 +4328,25 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
         this->CROSSFADER_X_V--;
     }
 
+    if (this->CROSSFADER_M_L_B == true && this->CROSSFADER_X_V > 0) {
+        m_pCOCrossfader->set(m_pCOCrossfader->get() - diminuendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
+
+    if (this->CROSSFADER_M_R_B == true && this->CROSSFADER_X_V > 0) {
+        m_pCOCrossfader->set(m_pCOCrossfader->get() + crescendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
+
+    if (this->CROSSFADER_R_L_B == true && this->CROSSFADER_X_V > 0) {
+        m_pCOCrossfader->set(m_pCOCrossfader->get() - diminuendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
+
+    if (this->CROSSFADER_L_R_B == true && this->CROSSFADER_X_V > 0) {
+        m_pCOCrossfader->set(m_pCOCrossfader->get() + crescendo_CROSS_X);
+        this->CROSSFADER_X_V--;
+    }
 
     if (this->DECK_1_Q_L_C_B == true && (this->DECK_1_Q_L_C_V <= 0 || m_EQ_1_LOW->get() <= 0)) {
         this->DECK_1_Q_L_C_B = false;
@@ -4297,6 +4490,30 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
         std::cout << "CROSSFADE DONE. STOPPING DECK 1\n";
         m_Playing1->set(0.0);
+    }
+
+    if (this->CROSSFADER_M_L_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() <= 0.0)) {
+        this->CROSSFADER_M_L_B = false;
+        std::cout << "CROSSFADER CENTERED\n";
+    }
+
+    if (this->CROSSFADER_M_R_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() >= 0.0)) {
+        this->CROSSFADER_M_R_B = false;
+        std::cout << "CROSSFADER CENTERED\n";
+    }
+
+    if (this->CROSSFADER_R_L_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() <= -1.0)) {
+        this->CROSSFADER_R_L_B = false;
+        std::cout << "CROSSFADER CUT TO THE LEFT\n";
+    }
+
+    if (this->CROSSFADER_L_R_B == true &&
+            (this->CROSSFADER_X_V <= 0 || m_pCOCrossfader->get() >= 1.0)) {
+        this->CROSSFADER_L_R_B = false;
+        std::cout << "CROSSFADER CUT TO THE RIGHT\n";
     }
 
     if (this->stemsDeck1Playing == true && m_Playing1->get() == 1.0) {

@@ -325,6 +325,12 @@ class AutoDJProcessor : public QObject {
     bool CROSSFADER_X_L_B = false;
     bool CROSSFADER_X_R_B = false;
 
+    bool CROSSFADER_M_L_B = false;
+    bool CROSSFADER_M_R_B = false;
+
+    bool CROSSFADER_L_R_B = false;
+    bool CROSSFADER_R_L_B = false;
+
     double diminuendo_EQ_1_MID;
     double crescendo_EQ_1_MID;
     double diminuendo_EQ_1_LOW;
