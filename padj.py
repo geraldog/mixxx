@@ -4,7 +4,7 @@ import os
 
 def DSLSequentialCommand(indexConfirm: int, indexWrite: int, DSLCommand: str)->tuple:
     while (True):
-        checkerboard = open("/home/dumbo/confirmixxx.txt", "r")
+        checkerboard = open("/home/dumbo/.mixxx/confirmixxx.txt", "r")
         canIPlayWithMadness = checkerboard.readline()
         checkerboard.close()
 
@@ -15,8 +15,8 @@ def DSLSequentialCommand(indexConfirm: int, indexWrite: int, DSLCommand: str)->t
             time.sleep(0.004)
 
         if (indexRead == indexConfirm):
-            lockFile = os.open("/home/dumbo/controlmixxx.txt.lock", os.O_CREAT|os.O_EXCL|os.O_RDWR)
-            controlXY = open("/home/dumbo/controlmixxx.txt", "w")
+            lockFile = os.open("/home/dumbo/.mixxx/controlmixxx.txt.lock", os.O_CREAT|os.O_EXCL|os.O_RDWR)
+            controlXY = open("/home/dumbo/.mixxx/controlmixxx.txt", "w")
             print(DSLCommand)
             controlXY.write(DSLCommand + "\n" + str(indexWrite) + "\n")
             controlXY.close()
@@ -24,7 +24,7 @@ def DSLSequentialCommand(indexConfirm: int, indexWrite: int, DSLCommand: str)->t
             indexConfirm += 1
             indexWrite += 1
             os.close(lockFile)
-            os.unlink("/home/dumbo/controlmixxx.txt.lock")
+            os.unlink("/home/dumbo/.mixxx/controlmixxx.txt.lock")
             break
 
         else:
@@ -35,7 +35,7 @@ def DSLSequentialCommand(indexConfirm: int, indexWrite: int, DSLCommand: str)->t
 
 def DSLPositionalCommand(indexConfirm: int, indexWrite: int, DSLCommand: str, playPosition: float, deckToWatch: int)->tuple:
     while (True):
-        checkerboard = open("/home/dumbo/mixxxposition" + str(deckToWatch) + ".txt", "r")
+        checkerboard = open("/home/dumbo/.mixxx/mixxxposition" + str(deckToWatch) + ".txt", "r")
         canIPlayWithMadness = checkerboard.readline()
         checkerboard.close()
     
@@ -47,7 +47,7 @@ def DSLPositionalCommand(indexConfirm: int, indexWrite: int, DSLCommand: str, pl
             continue
     
         if (positionNow >= playPosition):
-            checkerboard = open("/home/dumbo/confirmixxx.txt", "r")
+            checkerboard = open("/home/dumbo/.mixxx/confirmixxx.txt", "r")
             canIPlayWithMadness = checkerboard.readline()
             checkerboard.close()
 
@@ -58,8 +58,8 @@ def DSLPositionalCommand(indexConfirm: int, indexWrite: int, DSLCommand: str, pl
                 time.sleep(0.004)
 
             if (indexRead == indexConfirm):
-                lockFile = os.open("/home/dumbo/controlmixxx.txt.lock", os.O_CREAT|os.O_EXCL|os.O_RDWR)
-                controlXY = open("/home/dumbo/controlmixxx.txt", "w")
+                lockFile = os.open("/home/dumbo/.mixxx/controlmixxx.txt.lock", os.O_CREAT|os.O_EXCL|os.O_RDWR)
+                controlXY = open("/home/dumbo/.mixxx/controlmixxx.txt", "w")
                 print(DSLCommand)
                 controlXY.write(DSLCommand + "\n" + str(indexWrite) + "\n")
                 controlXY.close()
@@ -67,7 +67,7 @@ def DSLPositionalCommand(indexConfirm: int, indexWrite: int, DSLCommand: str, pl
                 indexConfirm += 1
                 indexWrite += 1
                 os.close(lockFile)
-                os.unlink("/home/dumbo/controlmixxx.txt.lock")
+                os.unlink("/home/dumbo/.mixxx/controlmixxx.txt.lock")
 
                 break
  
@@ -150,6 +150,27 @@ def faderInvert(indexConfirm: int, indexWrite: int, slope: float, nowOrLater: bo
         indexConfirm, indexWrite = DSLPositionalCommand(indexConfirm, indexWrite, "FX" + str(slope), playPosition, deckToWatch)
     return (indexConfirm, indexWrite)
 
+def faderCenter(indexConfirm: int, indexWrite: int, slope: float, nowOrLater: bool, playPosition: float, deckToWatch: int)->tuple:
+    if (nowOrLater):
+        indexConfirm, indexWrite = DSLSequentialCommand(indexConfirm, indexWrite, "FM" + str(slope))
+    else:
+        indexConfirm, indexWrite = DSLPositionalCommand(indexConfirm, indexWrite, "FM" + str(slope), playPosition, deckToWatch)
+    return (indexConfirm, indexWrite)
+
+def faderCutLeft(indexConfirm: int, indexWrite: int, slope: float, nowOrLater: bool, playPosition: float, deckToWatch: int)->tuple:
+    if (nowOrLater):
+        indexConfirm, indexWrite = DSLSequentialCommand(indexConfirm, indexWrite, "FL" + str(slope))
+    else:
+        indexConfirm, indexWrite = DSLPositionalCommand(indexConfirm, indexWrite, "FL" + str(slope), playPosition, deckToWatch)
+    return (indexConfirm, indexWrite)
+
+def faderCutRight(indexConfirm: int, indexWrite: int, slope: float, nowOrLater: bool, playPosition: float, deckToWatch: int)->tuple:
+    if (nowOrLater):
+        indexConfirm, indexWrite = DSLSequentialCommand(indexConfirm, indexWrite, "FR" + str(slope))
+    else:
+        indexConfirm, indexWrite = DSLPositionalCommand(indexConfirm, indexWrite, "FR" + str(slope), playPosition, deckToWatch)
+    return (indexConfirm, indexWrite)
+
 indexConfirm = int("-1") 
 indexWrite = int("1")
 
@@ -166,16 +187,27 @@ indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 1, False, 1
 #indexConfirm, indexWrite = beatLoop(indexConfirm, indexWrite, 1, 15, True, 0, 0)
 #indexConfirm, indexWrite = cueMark(indexConfirm, indexWrite, 1, 5, True, 0, 0)
 
+indexConfirm, indexWrite = faderCenter(indexConfirm, indexWrite, 1.0, True, 0, 0)
+
+indexConfirm, indexWrite = deckLoad(indexConfirm, indexWrite, 2, "/home/dumbo/12 Carmencita.mp3", True, 0, 0)
+
+indexConfirm, indexWrite = playDeck(indexConfirm, indexWrite, 2, 0.1, True, 0, 0)
+indexConfirm, indexWrite = setBPM(indexConfirm, indexWrite, 2, 105.0, True, 0, 0)
+indexConfirm, indexWrite = activateStems(indexConfirm, indexWrite, 2, True, 0, 0)
+indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 6, False, 1000.0, True, 0, 0)
+indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 7, False, 1000.0, True, 0, 0)
+indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 8, False, 1000.0, True, 0, 0)
+
 indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 2, False, 0.9, False, 0.8, 1)
 indexConfirm, indexWrite = openOrCloseStem(indexConfirm, indexWrite, 3, False, 0.9, True, 0, 0)
 
 indexConfirm, indexWrite = deckLoad(indexConfirm, indexWrite, 2, "/home/dumbo/DICK_RIPS/Os Mutantes - A Arte de Os Mutantes/18 - Os Mutantes - É Proibido Proibir (ft. Caetano Veloso).flac", True, 0, 0)
 
-indexConfirm, indexWrite = playDeck(indexConfirm, indexWrite, 2, 0.1, True, 0, 0)
+indexConfirm, indexWrite = playDeck(indexConfirm, indexWrite, 2, 0.309747, True, 0, 0)
 indexConfirm, indexWrite = setBPM(indexConfirm, indexWrite, 2, 105.0, True, 0, 0)
 indexConfirm, indexWrite = activateStems(indexConfirm, indexWrite, 2, True, 0, 0)
 
-indexConfirm, indexWrite = faderInvert(indexConfirm, indexWrite, 0.36, True, 0, 0)
+indexConfirm, indexWrite = faderCutRight(indexConfirm, indexWrite, 0.36, True, 0, 0)
 
 indexConfirm, indexWrite = cueMark(indexConfirm, indexWrite, 2, 2, False, 0.612206, 2)
 indexConfirm, indexWrite = cueGotoAndSet(indexConfirm, indexWrite, 2, 3, 0.737791, True, 0, 0)
