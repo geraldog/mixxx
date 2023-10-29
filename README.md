@@ -7,9 +7,9 @@ This branch is a hacky-as-hell way to have Stems working with what I call progra
 
 The file padj.py contains some Python logic to effectively steer Mixxx into mixing and particularly Stems mixing. The mixes are reproducible but this is hacky-as-hell - and that means buggy, specially if you make a mistake.
 
-I tried to make the reference as agnostic as I could, text file communication should be supported on all platforms that Mixxx runs. You still have to have a separated/mdx_extra_q directory on your home directory and you'll have to replace all instances of my user (dumbo) on src/library/autodj/autodjprocessor.cpp with your user or other acceptable path on your machine.
+I tried to make the reference as agnostic as I could, text file communication should be supported on all platforms that Mixxx runs. You still have to have a separated/mdx_extra_q directory on your home directory loaded with the stems you want to use.
 
-Then just compile Mixxx from source and remember to create the files you'll need - except for the lock files they aren't created automatically. For example, on a Linux shell:
+Remember to create the files you'll need - only the lock file is created automatically. For example, on a Linux shell:
 
 ```$ touch controlmixxx.txt```
 
@@ -28,6 +28,8 @@ Also, make sure to "zero-out" the relevant command and control txt files with th
 ```$ echo -ne "P10\n3\n" > controlmixxx.txt```
 
 ```$ echo -ne "-1\n" > confirmixxx.txt```
+
+Remember to always "zero-out" in such a way every time you start Mixxx.
 
 After that, you can safely turn on AutoDJ as usual, and subsequently run your own version of padj.py to program your Robot DJ :)
 
