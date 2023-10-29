@@ -3164,13 +3164,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 if (comando[1] == '1') {
                     std::cout << "OLD DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
 
-                    this->pathToSong1 = QString("");
+                    std::wstring acquiredPath;
 
                     for (long unsigned int usecamisinha = 2;
                             usecamisinha < comando.length();
                             usecamisinha++) {
-                        this->pathToSong1 = this->pathToSong1 + QString(comando[usecamisinha]);
+                        acquiredPath = acquiredPath + comando[usecamisinha];
                     }
+
+                    this->pathToSong1 = QString::fromWCharArray(acquiredPath.c_str());
 
                     std::cout << "NEW DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
 
@@ -3186,13 +3188,15 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    this->pathToSong2 = "";
+                    std::wstring acquiredPath;
 
                     for (long unsigned int usecamisinha = 2;
                             usecamisinha < comando.length();
                             usecamisinha++) {
-                        this->pathToSong2 = this->pathToSong2 + QString(comando[usecamisinha]);
+                        acquiredPath = acquiredPath + comando[usecamisinha];
                     }
+
+                    this->pathToSong2 = QString::fromWCharArray(acquiredPath.c_str());
 
                     m_Playing2->set(0.0);
 
@@ -4543,10 +4547,10 @@ clean_stem_deck_2_exit:
 
 clean_exit:
     if (m_Playing1->get() == 1.0) {
-        double playPosition1 = m_PlayPosition1->get();
+        thisPlayPosition = m_PlayPosition1->get();
 
         confirmado.open("/home/dumbo/mixxxposition1.txt");
-        confirmado << std::to_string(playPosition1) + "\n";
+        confirmado << std::to_string(thisPlayPosition) + "\n";
         confirmado.close();
 
         if (m_loopEnabled1->get() == 1.0) {
@@ -4577,10 +4581,10 @@ clean_exit:
     }
 
     if (m_Playing2->get() == 1.0) {
-        double playPosition2 = m_PlayPosition2->get();
+        thisPlayPosition = m_PlayPosition2->get();
 
         confirmado.open("/home/dumbo/mixxxposition2.txt");
-        confirmado << std::to_string(playPosition2) + "\n";
+        confirmado << std::to_string(thisPlayPosition) + "\n";
         confirmado.close();
 
         if (m_loopEnabled2->get() == 1.0) {
