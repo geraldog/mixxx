@@ -835,8 +835,13 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_loopEnabled2 = new ControlProxy("[Channel2]", "loop_enabled");
 
     std::wifstream controlbaby;
+
+#ifdef __WINDOWS__
+    setlocale(LC_ALL, ".UTF8");
+#else
     std::locale loc("");
     controlbaby.imbue(loc);
+#endif
 
     std::wstring comando;
     std::wstring contador;
@@ -1205,7 +1210,6 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             goto clean_exit;
         }
             
-
         std::cout << this->pathToSong1.toStdString() + "\n";
 
         if (Playing1Queue == 2 && leftDecko.getLoadedTrack()->getLocation() == this->pathToSong1) {
