@@ -834,28 +834,21 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     ControlProxy* m_loopEnabled1 = new ControlProxy("[Channel1]", "loop_enabled");
     ControlProxy* m_loopEnabled2 = new ControlProxy("[Channel2]", "loop_enabled");
 
-    std::wifstream controlbaby;
+    std::ifstream controlbaby;
 
-#ifdef __WINDOWS__
-    setlocale(LC_ALL, ".UTF8");
-#else
-    std::locale loc("");
-    controlbaby.imbue(loc);
-#endif
-
-    std::wstring comando;
-    std::wstring contador;
+    std::string comando;
+    std::string contador;
 
     uint64_t contagiros;
 
-    std::wstring slope;
+    std::string slope;
     double slopenumerico;
 
-    std::wstring loopin1;
-    std::wstring loopout1;
+    std::string loopin1;
+    std::string loopout1;
 
-    std::wstring loopin2;
-    std::wstring loopout2;
+    std::string loopin2;
+    std::string loopout2;
 
     double loopin_double1;
     double loopout_double1;
@@ -863,8 +856,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
     double loopin_double2;
     double loopout_double2;
 
-    std::wstring loopBeatSize1;
-    std::wstring loopBeatSize2;
+    std::string loopBeatSize1;
+    std::string loopBeatSize2;
 
     double loopBeatSize_double1;
     double loopBeatSize_double2;
@@ -2588,7 +2581,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         goto clean_exit;
                     }
 
-                    std::wstring bpmAsked1;
+                    std::string bpmAsked1;
                     double bpm_double1;
 
                     for (long unsigned int usecamisinha = 2;
@@ -2724,7 +2717,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         this->LOCK = false;
                         goto clean_exit;
                     }
-                    std::wstring bpmAsked2;
+                    std::string bpmAsked2;
                     double bpm_double2;
 
                     for (long unsigned int usecamisinha = 2;
@@ -2860,7 +2853,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
             else if (comando[0] == 'H') {
                 if (comando[1] == '1') {
                     if (comando[2] == 'M') {
-                        std::wstring hotCueAsked;
+                        std::string hotCueAsked;
                         unsigned long long hotCueNumber;
 
                         for (long unsigned int usecamisinha = 3;
@@ -2949,8 +2942,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     else if (comando[2] == 'X') {
-                        std::wstring hotCueAsked;
-                        std::wstring positionRequested;
+                        std::string hotCueAsked;
+                        std::string positionRequested;
                         unsigned long long hotCueNumber;
                         double positionToGoto;
 
@@ -3065,7 +3058,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     else if (comando[2] == 'G') {
-                        std::wstring hotCueAsked;
+                        std::string hotCueAsked;
                         unsigned long long hotCueNumber;
 
                         for (long unsigned int usecamisinha = 3;
@@ -3139,7 +3132,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
                 else if (comando[1] == '2') {
                     if (comando[2] == 'M') {
-                        std::wstring hotCueAsked;
+                        std::string hotCueAsked;
                         unsigned long long hotCueNumber;
 
                         for (long unsigned int usecamisinha = 3;
@@ -3228,8 +3221,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
                     
                     else if (comando[2] == 'X') {
-                        std::wstring hotCueAsked;
-                        std::wstring positionRequested;
+                        std::string hotCueAsked;
+                        std::string positionRequested;
                         unsigned long long hotCueNumber;
                         double positionToGoto;
 
@@ -3344,7 +3337,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                     }
 
                     else if (comando[2] == 'G') {
-                        std::wstring hotCueAsked;
+                        std::string hotCueAsked;
                         unsigned long long hotCueNumber;
 
                         for (long unsigned int usecamisinha = 3;
@@ -3421,7 +3414,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 if (comando[1] == '1') {
                     std::cout << "OLD DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
 
-                    std::wstring acquiredPath;
+                    std::string acquiredPath;
 
                     for (long unsigned int usecamisinha = 2;
                             usecamisinha < comando.length();
@@ -3429,7 +3422,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         acquiredPath = acquiredPath + comando[usecamisinha];
                     }
 
-                    this->pathToSong1 = QString::fromWCharArray(acquiredPath.c_str());
+                    this->pathToSong1 = QString::fromUtf8(acquiredPath.c_str());
 
                     std::cout << "NEW DECK 1 PATH: " + this->pathToSong1.toStdString() + "\n";
 
@@ -3445,7 +3438,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    std::wstring acquiredPath;
+                    std::string acquiredPath;
 
                     for (long unsigned int usecamisinha = 2;
                             usecamisinha < comando.length();
@@ -3453,7 +3446,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         acquiredPath = acquiredPath + comando[usecamisinha];
                     }
 
-                    this->pathToSong2 = QString::fromWCharArray(acquiredPath.c_str());
+                    this->pathToSong2 = QString::fromUtf8(acquiredPath.c_str());
 
                     m_Playing2->set(0.0);
 
@@ -3470,7 +3463,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
 
             else if (comando[0] == 'P') {
                 if (comando[1] == '1') {
-                    std::wstring cuePosition1;
+                    std::string cuePosition1;
                     double cuePosition1_double;
 
                     for (long unsigned int usecamisinha = 2;
@@ -3514,7 +3507,7 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                 }
 
                 else if (comando[1] == '2') {
-                    std::wstring cuePosition2;
+                    std::string cuePosition2;
                     double cuePosition2_double;
 
                     for (long unsigned int usecamisinha = 2;
@@ -3570,8 +3563,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         try {
-                            loopin_double2 = std::stod(std::wstring(L"0.") + std::wstring(loopin2.c_str()));
-                            loopout_double2 = std::stod(std::wstring(L"0.") + std::wstring(loopout2.c_str()));
+                            loopin_double2 = std::stod(std::string("0.") + std::string(loopin2.c_str()));
+                            loopout_double2 = std::stod(std::string("0.") + std::string(loopout2.c_str()));
                         }
 
                         catch (const std::invalid_argument& e) {
@@ -3659,8 +3652,8 @@ void AutoDJProcessor::playerPositionChanged(DeckAttributes* pAttributes,
                         }
 
                         try {
-                            loopin_double1 = std::stod(std::wstring(L"0.") + std::wstring(loopin1.c_str()));
-                            loopout_double1 = std::stod(std::wstring(L"0.") + std::wstring(loopout1.c_str()));
+                            loopin_double1 = std::stod(std::string("0.") + std::string(loopin1.c_str()));
+                            loopout_double1 = std::stod(std::string("0.") + std::string(loopout1.c_str()));
                         }
 
                         catch (const std::invalid_argument& e) {
