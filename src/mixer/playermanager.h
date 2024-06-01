@@ -8,8 +8,6 @@
 
 #include "analyzer/trackanalysisscheduler.h"
 #include "engine/channelhandle.h"
-#include "library/library.h"
-#include "library/trackcollectionmanager.h"
 #include "preferences/usersettings.h"
 #include "track/track_decl.h"
 #include "util/compatibility/qmutex.h"
@@ -260,6 +258,7 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
 
     // Emitted when the number of decks changes.
     void numberOfDecksChanged(int decks);
+    void numberOfSamplersChanged(int samplers);
 
     void trackAnalyzerProgress(TrackId trackId, AnalyzerProgress analyzerProgress);
     void trackAnalyzerIdle();
@@ -297,12 +296,12 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     EffectsManager* m_pEffectsManager;
     EngineMixer* m_pEngine;
     SamplerBank* m_pSamplerBank;
-    ControlObject* m_pCONumDecks;
-    ControlObject* m_pCONumSamplers;
-    ControlObject* m_pCONumPreviewDecks;
     ControlObject* m_pCONumStems;
-    ControlObject* m_pCONumMicrophones;
-    ControlObject* m_pCONumAuxiliaries;
+    std::unique_ptr<ControlObject> m_pCONumDecks;
+    std::unique_ptr<ControlObject> m_pCONumSamplers;
+    std::unique_ptr<ControlObject> m_pCONumPreviewDecks;
+    std::unique_ptr<ControlObject> m_pCONumMicrophones;
+    std::unique_ptr<ControlObject> m_pCONumAuxiliaries;
     parented_ptr<ControlProxy> m_pAutoDjEnabled;
 
     TrackAnalysisScheduler::Pointer m_pTrackAnalysisScheduler;

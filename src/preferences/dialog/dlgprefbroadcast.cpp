@@ -1,10 +1,9 @@
-#include <QtDebug>
-#include <QInputDialog>
-#include <QMetaMethod>
-#include <QMetaProperty>
-#include <QAbstractItemDelegate>
-#include <QMessageBox>
+#include "preferences/dialog/dlgprefbroadcast.h"
+
 #include <QHeaderView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QtDebug>
 
 // shout.h checks for WIN32 to see if we are on Windows
 #ifdef WIN64
@@ -21,7 +20,7 @@
 #include "defs_urls.h"
 #include "encoder/encodersettings.h"
 #include "moc_dlgprefbroadcast.cpp"
-#include "preferences/dialog/dlgprefbroadcast.h"
+#include "preferences/broadcastsettingsmodel.h"
 #include "recording/defs_recording.h"
 #include "util/logger.h"
 
@@ -129,6 +128,13 @@ DlgPrefBroadcast::DlgPrefBroadcast(QWidget *parent,
      }
 
      // Encoding format combobox
+     connect(comboBoxEncodingFormat,
+             QOverload<int>::of(&QComboBox::currentIndexChanged),
+             this,
+             [this]() {
+                 ogg_dynamicupdate->setEnabled(
+                         comboBoxEncodingFormat->currentData() == ENCODING_OGG);
+             });
      comboBoxEncodingFormat->addItem(tr("MP3"), ENCODING_MP3);
      comboBoxEncodingFormat->addItem(tr("Ogg Vorbis"), ENCODING_OGG);
 #ifdef __OPUS__
@@ -509,6 +515,7 @@ void DlgPrefBroadcast::getValuesFromProfile(BroadcastProfilePtr profile) {
     enableUtf8Metadata->setChecked(charset == "UTF-8");
 
     // OGG "dynamicupdate" checkbox
+    ogg_dynamicupdate->setEnabled(profile->getFormat() == ENCODING_OGG);
     ogg_dynamicupdate->setChecked(profile->getOggDynamicUpdate());
 }
 

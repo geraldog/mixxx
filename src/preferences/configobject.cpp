@@ -51,7 +51,13 @@ QString computeResourcePathImpl() {
                 }
                 line = in.readLine();
             }
-            DEBUG_ASSERT(QDir(qResourcePath).exists());
+            if (!QDir(qResourcePath).exists()) {
+                reportCriticalErrorAndQuit(
+                        "Resource path listed in " + kCMakeCacheFile +
+                        " does not exist. Did you move the build directory? "
+                        "Hint: Set an alternative resource path with "
+                        "'--resource-path <path>'.");
+            }
         }
 #if defined(__UNIX__)
         else if (mixxxDir.cd(QStringLiteral("../share/mixxx"))) {
@@ -63,7 +69,12 @@ QString computeResourcePathImpl() {
         else {
             qResourcePath = QCoreApplication::applicationDirPath();
         }
-#elif defined(__APPLE__)
+#elif defined(Q_OS_IOS)
+        // On iOS the bundle contains the resources directly.
+        else {
+            qResourcePath = QCoreApplication::applicationDirPath();
+        }
+#elif defined(Q_OS_MACOS)
         else if (mixxxDir.cd("../Resources")) {
             // Release configuration
             qResourcePath = mixxxDir.absolutePath();
@@ -76,7 +87,10 @@ QString computeResourcePathImpl() {
     }
 
     if (qResourcePath.isEmpty()) {
-        reportCriticalErrorAndQuit("qConfigPath is empty, this can not be so -- did our developer forget to define one of __UNIX__, __WINDOWS__, __APPLE__??");
+        reportCriticalErrorAndQuit(
+                "qResourcePath is empty, this should not happen -- did our "
+                "developers forget to define __UNIX__, __WINDOWS__ or "
+                "__APPLE__??");
     }
 
     // If the directory does not end with a "/", add one

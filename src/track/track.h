@@ -3,6 +3,7 @@
 #include <QList>
 #include <QObject>
 #include <QUrl>
+#include <memory>
 
 #include "audio/streaminfo.h"
 #include "sources/metadatasource.h"
@@ -14,7 +15,6 @@
 #include "util/color/predefinedcolorpalettes.h"
 #include "util/compatibility/qmutex.h"
 #include "util/fileaccess.h"
-#include "util/memory.h"
 #include "waveform/waveform.h"
 
 class Track : public QObject {
@@ -89,10 +89,11 @@ class Track : public QObject {
 
     // Returns absolute path to the file, including the filename.
     QString getLocation() const {
-        if (!m_fileAccess.info().hasLocation()) {
+        const auto fileInfo = getFileInfo();
+        if (!fileInfo.hasLocation()) {
             return {};
         }
-        return m_fileAccess.info().location();
+        return fileInfo.location();
     }
 
     /// Set the file type

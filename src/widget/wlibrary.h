@@ -1,16 +1,17 @@
 #pragma once
 
-#include <QEvent>
 #include <QMap>
 #include <QStackedWidget>
 #include <QString>
 
-#include "library/libraryview.h"
-#include "skin/legacy/skincontext.h"
 #include "util/compatibility/qmutex.h"
 #include "widget/wbasewidget.h"
 
-class KeyboardEventFilter;
+class LibraryView;
+class WTrackTableView;
+class TrackId;
+class QDomNode;
+class SkinContext;
 
 class WLibrary : public QStackedWidget, public WBaseWidget {
     Q_OBJECT
@@ -28,12 +29,15 @@ class WLibrary : public QStackedWidget, public WBaseWidget {
     bool registerView(const QString& name, QWidget* view);
 
     LibraryView* getActiveView() const;
-
+    WTrackTableView* getCurrentTrackTableView() const;
     // This returns true if the current view is or has a WTracksTableView and
     // contains trackId, otherwise false.
     // This is primarily used to disable the "Select track in library" track menu action
     // to avoid unintended behaviour if the current view has no tracks table.
     bool isTrackInCurrentView(const TrackId& trackId);
+
+    void saveCurrentViewState() const;
+    void restoreCurrentViewState() const;
 
     // Alpha value for row color background
     static constexpr double kDefaultTrackTableBackgroundColorOpacity = 0.125; // 12.5% opacity

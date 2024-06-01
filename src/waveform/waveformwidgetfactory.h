@@ -9,7 +9,6 @@
 #include "skin/legacy/skincontext.h"
 #include "util/performancetimer.h"
 #include "util/singleton.h"
-#include "waveform/waveform.h"
 #include "waveform/widgets/waveformwidgettype.h"
 
 class WVuMeterLegacy;
@@ -100,7 +99,7 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     int findHandleIndexFromType(WaveformWidgetType::Type type);
 
     /// Returns the desired surface format for the OpenGLWindow
-    static QSurfaceFormat getSurfaceFormat();
+    static QSurfaceFormat getSurfaceFormat(UserSettingsPointer config = nullptr);
 
   protected:
     bool setWidgetType(
@@ -131,8 +130,6 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     void addVuMeter(WVuMeterBase* pWidget);
 
     void startVSync(GuiTick* pGuiTick, VisualsManager* pVisualsManager);
-    void setVSyncType(int vsType);
-    int getVSyncType();
 
     void setPlayMarkerPosition(double position);
     double getPlayMarkerPosition() const { return m_playMarkerPosition; }
@@ -161,8 +158,13 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
   private slots:
     void render();
     void swap();
+    void swapAndRender();
+    void slotFrameSwapped();
 
   private:
+    void renderSelf();
+    void swapSelf();
+
     void evaluateWidgets();
     template<typename WaveformT>
     QString buildWidgetDisplayName() const;
@@ -170,6 +172,7 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     int findIndexOf(WWaveformViewer* viewer) const;
 
     WaveformWidgetType::Type findTypeFromHandleIndex(int index);
+    QString getDisplayNameFromType(WaveformWidgetType::Type type);
 
     //All type of available widgets
 

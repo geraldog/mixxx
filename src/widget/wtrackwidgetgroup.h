@@ -1,6 +1,5 @@
 #pragma once
 
-#include "skin/legacy/skincontext.h"
 #include "track/track_decl.h"
 #include "track/trackid.h"
 #include "util/parented_ptr.h"
@@ -38,6 +37,7 @@ class WTrackWidgetGroup : public WWidgetGroup, public TrackDropTarget {
   private:
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
 
     void updateColor();

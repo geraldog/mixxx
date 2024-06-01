@@ -1,16 +1,12 @@
 #include "track/track.h"
 
 #include <QDebug>
-#include <QDirIterator>
 #include <atomic>
 
-#include "engine/engine.h"
 #include "library/library_prefs.h"
 #include "moc_track.cpp"
 #include "sources/metadatasource.h"
-#include "track/trackref.h"
 #include "util/assert.h"
-#include "util/color/color.h"
 #include "util/logger.h"
 
 namespace {
@@ -292,7 +288,6 @@ mixxx::TrackRecord Track::getRecord(
 bool Track::replaceRecord(
         mixxx::TrackRecord newRecord,
         mixxx::BeatsPointer pOptionalBeats) {
-    const auto newKey = newRecord.getGlobalKey();
     const auto newReplayGain = newRecord.getMetadata().getTrackInfo().getReplayGain();
     const auto newColor = newRecord.getColor();
     const auto newRating = newRecord.getRating();
@@ -303,14 +298,13 @@ bool Track::replaceRecord(
         return false;
     }
 
-    const auto oldKey = m_record.getGlobalKey();
     const auto oldReplayGain = m_record.getMetadata().getTrackInfo().getReplayGain();
     const auto oldColor = m_record.getColor();
     const auto oldRating = m_record.getRating();
 
     bool bpmUpdatedFlag;
     if (pOptionalBeats) {
-        bpmUpdatedFlag = trySetBeatsWhileLocked(std::move(pOptionalBeats));
+        bpmUpdatedFlag = trySetBeatsWhileLocked(pOptionalBeats);
         if (recordUnchanged && !bpmUpdatedFlag) {
             return false;
         }
@@ -331,10 +325,7 @@ bool Track::replaceRecord(
     markDirtyAndUnlock(&locked);
 
     if (bpmUpdatedFlag) {
-        emitBeatsAndBpmUpdated();
-    }
-    if (oldKey != newKey) {
-        emit keyChanged();
+        emit beatsUpdated();
     }
     if (oldReplayGain != newReplayGain) {
         emit replayGainUpdated(newReplayGain);
@@ -394,7 +385,7 @@ bool Track::trySetBpmWhileLocked(mixxx::Bpm bpm) {
         auto pBeats = mixxx::Beats::fromConstTempo(getSampleRate(),
                 cuePosition,
                 bpm);
-        return trySetBeatsWhileLocked(std::move(pBeats));
+        return trySetBeatsWhileLocked(pBeats);
     } else if (getBeatsPointerBpm(m_pBeats, getDuration()) != bpm) {
         // Continue with the regular cases
         const auto newBeats = m_pBeats->trySetBpm(bpm);
@@ -955,7 +946,7 @@ void Track::shiftCuePositionsMillis(double milliseconds) {
         return;
     }
     double frames = m_record.getStreamInfoFromSource()->getSignalInfo().millis2frames(milliseconds);
-    for (const CuePointer& pCue : qAsConst(m_cuePoints)) {
+    for (const CuePointer& pCue : std::as_const(m_cuePoints)) {
         pCue->shiftPositionFrames(frames);
     }
 
@@ -1215,13 +1206,13 @@ bool Track::setCuePointsWhileLocked(const QList<CuePointer>& cuePoints) {
         return false;
     }
     // disconnect existing cue points
-    for (const auto& pCue : qAsConst(m_cuePoints)) {
+    for (const auto& pCue : std::as_const(m_cuePoints)) {
         disconnect(pCue.get(), nullptr, this, nullptr);
     }
 
     m_cuePoints = cuePoints;
     // connect new cue points
-    for (const auto& pCue : qAsConst(m_cuePoints)) {
+    for (const auto& pCue : std::as_const(m_cuePoints)) {
         DEBUG_ASSERT(pCue->thread() == thread());
         // Start listening to cue point updates AFTER setting
         // the track id. Otherwise we would receive unwanted
@@ -1278,7 +1269,7 @@ bool Track::importPendingCueInfosWhileLocked() {
     // user data that cannot be expressed in Serato. https://github.com/mixxxdj/mixxx/issues/11530
     // For now the save route is to skip the imports if Mixxx cues already exist.
     // TODO() Consider a merge strategy.
-    for (const CuePointer& pCue : qAsConst(m_cuePoints)) {
+    for (const CuePointer& pCue : std::as_const(m_cuePoints)) {
         if (!m_pCueInfoImporterPending->hasCueOfType(pCue->getType())) {
             cuePoints.append(pCue);
         } else {
@@ -1491,7 +1482,7 @@ bool Track::exportSeratoMetadata() {
             streamInfo->getSignalInfo().getSampleRate();
     QList<mixxx::CueInfo> cueInfos;
     cueInfos.reserve(m_cuePoints.size());
-    for (const CuePointer& pCue : qAsConst(m_cuePoints)) {
+    for (const CuePointer& pCue : std::as_const(m_cuePoints)) {
         cueInfos.append(pCue->getCueInfo(sampleRate));
     }
 

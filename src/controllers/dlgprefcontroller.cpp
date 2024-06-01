@@ -5,19 +5,23 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QInputDialog>
-#include <QStandardPaths>
-#include <QTableWidget>
-#include <QTableWidgetItem>
+#include <QKeyEvent>
 
 #include "controllers/controller.h"
+#include "controllers/controllerinputmappingtablemodel.h"
 #include "controllers/controllerlearningeventfilter.h"
 #include "controllers/controllermanager.h"
+#include "controllers/controllermappinginfoenumerator.h"
+#include "controllers/controlleroutputmappingtablemodel.h"
+#include "controllers/controlpickermenu.h"
 #include "controllers/defs_controllers.h"
+#include "controllers/dlgcontrollerlearning.h"
 #include "controllers/midi/legacymidicontrollermapping.h"
+#include "controllers/midi/midicontroller.h"
 #include "defs_urls.h"
 #include "moc_dlgprefcontroller.cpp"
 #include "preferences/usersettings.h"
-#include "util/versionstore.h"
+#include "util/string.h"
 
 namespace {
 const QString kMappingExt(".midi.xml");
@@ -51,7 +55,7 @@ DlgPrefController::DlgPrefController(
     // Create text color for the file and wiki links
     createLinkColor();
 
-    m_pControlPickerMenu = new ControlPickerMenu(this);
+    m_pControlPickerMenu = make_parented<ControlPickerMenu>(this);
 
     initTableView(m_ui.m_pInputMappingTableView);
     initTableView(m_ui.m_pOutputMappingTableView);
@@ -163,6 +167,10 @@ DlgPrefController::DlgPrefController(
 }
 
 DlgPrefController::~DlgPrefController() {
+}
+
+void DlgPrefController::slotRecreateControlPickerMenu() {
+    m_pControlPickerMenu = make_parented<ControlPickerMenu>(this);
 }
 
 void DlgPrefController::showLearningWizard() {

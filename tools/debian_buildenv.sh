@@ -99,10 +99,7 @@ case "$1" in
             protobuf-compiler \
             qt5keychain-dev \
             qtdeclarative5-dev \
-            qml-module-qtquick-controls \
-            qml-module-qtquick-controls2 \
-            qml-module-qt-labs-qmlmodels \
-            qml-module-qtquick-shapes \
+            qtscript5-dev \
             "${PACKAGES_EXTRA[@]}"
         ;;
     *)

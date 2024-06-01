@@ -578,7 +578,9 @@ void Tooltips::addStandardTooltips() {
 
     add("sync_leader")
             << tr("Enable Sync Leader")
-            << tr("When enabled, this device will serve as the sync leader for all other decks.");
+            << tr("When enabled, this device will serve as the sync leader for all other decks.")
+            << tr("This is relevant when a dynamic tempo track is loaded to a sync leader deck."
+                  "In that case, other synced devices will adopt the changing tempo.");
 
     add("rate")
             << tr("Speed Control")
@@ -630,9 +632,14 @@ void Tooltips::addStandardTooltips() {
     add("hotcue") << tr("Hotcue")
                   << QString("%1: %2").arg(leftClick,
                              tr("If hotcue is set, jumps to the hotcue."))
+                  << tr("If hotcue is a loop cue, toggles the loop and jumps to "
+                        "if the loop is behind the play position.")
                   << tr("If hotcue is not set, sets the hotcue to the current "
                         "play position.")
                   << quantizeSnap
+                  << tr("If the play position is inside an active loop, "
+                        "stores the loop as loop cue.")
+                  << " " // add linebreak, '\n' would result in two linebreaks
                   << QString("%1: %2").arg(rightClick,
                              tr("Opens a menu to clear hotcues or edit their "
                                 "labels and colors."))

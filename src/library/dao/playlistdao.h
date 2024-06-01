@@ -2,7 +2,6 @@
 
 #include <QHash>
 #include <QObject>
-#include <QSqlDatabase>
 #include <QSet>
 
 #include "library/dao/dao.h"
@@ -27,6 +26,7 @@ const QString PLAYLISTTRACKSTABLE_DATETIMEADDED = QStringLiteral("pl_datetime_ad
 #define AUTODJ_TABLE "Auto DJ"
 
 class AutoDJProcessor;
+class QSqlDatabase;
 
 constexpr int kInvalidPlaylistId = -1;
 
@@ -96,7 +96,7 @@ class PlaylistDAO : public QObject, public virtual DAO {
     // Returns the maximum position of the given playlist
     int getMaxPosition(const int playlistId) const;
     // Remove a track from all playlists
-    void removeTracksFromPlaylists(const QList<TrackId>& trackIds);
+    void removeTracksFromPlaylists(const QList<TrackId>& trackIds, bool purged = false);
     // removes all hidden and purged Tracks from the playlist
     void removeHiddenTracks(const int playlistId);
     // Remove a track from a playlist
@@ -139,7 +139,12 @@ class PlaylistDAO : public QObject, public virtual DAO {
     void lockChanged(const QSet<int>& playlistIds);
     void trackAdded(int playlistId, TrackId trackId, int position);
     void trackRemoved(int playlistId, TrackId trackId, int position);
-    void tracksChanged(const QSet<int>& playlistIds); // added/removed/reordered
+    // added / removed / un/locked. Triggers playlist features to update the sidebar
+    void playlistContentChanged(const QSet<int>& playlistIds);
+    // Separate signals for PlaylistTableModel
+    void tracksAdded(const QSet<int>& playlistIds);
+    void tracksMoved(const QSet<int>& playlistIds);
+    void tracksRemoved(const QSet<int>& playlistIds);
     void tracksRemovedFromPlayedHistory(const QSet<TrackId>& playedTrackIds);
 
   private:

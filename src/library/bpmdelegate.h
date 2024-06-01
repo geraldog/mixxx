@@ -1,11 +1,8 @@
 #pragma once
 
-#include <QCheckBox>
-#include <QModelIndex>
-#include <QStyleOptionViewItem>
-
 #include "library/tableitemdelegate.h"
 
+class QCheckBox;
 
 class BPMDelegate : public TableItemDelegate {
     Q_OBJECT
@@ -18,7 +15,6 @@ class BPMDelegate : public TableItemDelegate {
             const QModelIndex& index) const override;
 
   private:
-    QTableView* m_pTableView;
     QCheckBox* m_pCheckBox;
     QItemEditorFactory* m_pFactory;
 };

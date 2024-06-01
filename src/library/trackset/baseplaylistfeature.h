@@ -1,14 +1,9 @@
 #pragma once
 
-#include <QAction>
-#include <QList>
 #include <QModelIndex>
-#include <QObject>
-#include <QPair>
 #include <QPointer>
 #include <QSet>
 #include <QString>
-#include <QUrl>
 
 #include "library/dao/playlistdao.h"
 #include "library/trackset/basetracksetfeature.h"
@@ -17,9 +12,10 @@
 class WLibrary;
 class KeyboardEventFilter;
 class PlaylistTableModel;
-class TrackCollectionManager;
 class TreeItem;
 class WLibrarySidebar;
+class QAction;
+class QUrl;
 
 class BasePlaylistFeature : public BaseTrackSetFeature {
     Q_OBJECT
@@ -29,7 +25,9 @@ class BasePlaylistFeature : public BaseTrackSetFeature {
             UserSettingsPointer pConfig,
             PlaylistTableModel* pModel,
             const QString& rootViewName,
-            const QString& iconName);
+            const QString& iconName,
+            const QString& countsDurationTableName,
+            bool keepHiddenTracks = false);
     ~BasePlaylistFeature() override = default;
 
     TreeItemModel* sidebarModel() const override;
@@ -84,7 +82,6 @@ class BasePlaylistFeature : public BaseTrackSetFeature {
 
     virtual void updateChildModel(const QSet<int>& playlistIds);
     virtual void clearChildModel();
-    virtual QString fetchPlaylistLabel(int playlistId) = 0;
 
     /// borrows pChild which must not be null, TODO: use gsl::not_null
     virtual void decorateChild(TreeItem* pChild, int playlistId) = 0;
@@ -95,6 +92,8 @@ class BasePlaylistFeature : public BaseTrackSetFeature {
     // on failure.
     QModelIndex indexFromPlaylistId(int playlistId);
     bool isChildIndexSelectedInSidebar(const QModelIndex& index);
+
+    QString createPlaylistLabel(const QString& name, int count, int duration) const;
 
     PlaylistDAO& m_playlistDao;
     QModelIndex m_lastClickedIndex;
@@ -117,6 +116,7 @@ class BasePlaylistFeature : public BaseTrackSetFeature {
 
     PlaylistTableModel* m_pPlaylistTableModel;
     QSet<int> m_playlistIdsOfSelectedTrack;
+    const QString m_countsDurationTableName;
 
   private slots:
     void slotTrackSelected(TrackId trackId);
@@ -127,6 +127,9 @@ class BasePlaylistFeature : public BaseTrackSetFeature {
     void connectPlaylistDAO();
     virtual QString getRootViewHtml() const = 0;
     void markTreeItem(TreeItem* pTreeItem);
+    QString fetchPlaylistLabel(int playlistId);
 
     TrackId m_selectedTrackId;
+
+    const bool m_keepHiddenTracks;
 };

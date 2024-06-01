@@ -1,14 +1,12 @@
 #include "library/bpmdelegate.h"
 
+#include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QItemEditorCreatorBase>
 #include <QItemEditorFactory>
 #include <QPainter>
-#include <QPalette>
-#include <QRect>
 #include <QTableView>
 
-#include "library/trackmodel.h"
 #include "moc_bpmdelegate.cpp"
 
 // We override the typical QDoubleSpinBox editor by registering this class with
@@ -23,7 +21,7 @@ class BpmEditorCreator : public QItemEditorCreatorBase {
         QDoubleSpinBox* pBpmSpinbox = new QDoubleSpinBox(parent);
         pBpmSpinbox->setFrame(false);
         pBpmSpinbox->setMinimum(0);
-        pBpmSpinbox->setMaximum(1000);
+        pBpmSpinbox->setMaximum(9999);
         pBpmSpinbox->setSingleStep(1e-3);
         pBpmSpinbox->setDecimals(8);
         pBpmSpinbox->setObjectName("LibraryBPMSpinBox");
@@ -37,7 +35,6 @@ class BpmEditorCreator : public QItemEditorCreatorBase {
 
 BPMDelegate::BPMDelegate(QTableView* pTableView)
         : TableItemDelegate(pTableView),
-          m_pTableView(pTableView),
           m_pCheckBox(new QCheckBox(m_pTableView)) {
     m_pCheckBox->setObjectName("LibraryBPMButton");
     // NOTE(rryan): Without ensurePolished the first render of the QTableView
@@ -84,11 +81,8 @@ void BPMDelegate::paintItem(QPainter* painter,const QStyleOptionViewItem &option
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    if (m_pTableView != nullptr) {
-        QStyle* style = m_pTableView->style();
-        if (style != nullptr) {
-            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter,
-                               m_pCheckBox);
-        }
+    QStyle* style = m_pTableView->style();
+    if (style != nullptr) {
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_pCheckBox);
     }
 }

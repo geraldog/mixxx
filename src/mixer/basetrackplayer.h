@@ -1,25 +1,23 @@
 #pragma once
 
-#include <QObject>
-#include <QScopedPointer>
-#include <QString>
+#include <memory>
 
 #include "engine/channels/enginechannel.h"
-#include "engine/channels/enginedeck.h"
 #include "mixer/baseplayer.h"
 #include "preferences/usersettings.h"
 #include "track/replaygain.h"
 #include "track/track_decl.h"
 #include "track/trackid.h"
 #include "util/color/rgbcolor.h"
-#include "util/memory.h"
 #include "util/parented_ptr.h"
+#include "util/performancetimer.h"
 
 class EngineMixer;
 class ControlObject;
-class ControlPotmeter;
 class ControlProxy;
 class EffectsManager;
+class QString;
+class EngineDeck;
 
 constexpr int kUnreplaceDelay = 500;
 
@@ -46,7 +44,7 @@ class BaseTrackPlayer : public BasePlayer {
     virtual void slotCloneFromGroup(const QString& group) = 0;
     virtual void slotCloneDeck() = 0;
     virtual void slotEjectTrack(double) = 0;
-    virtual void slotSetTrackRating(int rating) = 0;
+    virtual void slotTrackRatingChangeRequest(int){};
 
   signals:
     void newTrackLoaded(TrackPointer pLoadedTrack);
@@ -73,13 +71,13 @@ class BaseTrackPlayerImpl : public BaseTrackPlayer {
 
     TrackPointer getLoadedTrack() const final;
 
-    // TODO(XXX): Only exposed to let the passthrough AudioInput get
-    // connected. Delete me when EngineMixer supports AudioInput assigning.
+    /// TODO(XXX): Only exposed to let the passthrough AudioInput get
+    /// connected. Delete me when EngineMixer supports AudioInput assigning.
     EngineDeck* getEngineDeck() const;
 
     void setupEqControls() final;
 
-    // For testing, loads a fake track.
+    /// For testing, loads a fake track.
     TrackPointer loadFakeTrack(bool bPlay, double filebpm);
 
   public slots:
@@ -90,11 +88,12 @@ class BaseTrackPlayerImpl : public BaseTrackPlayer {
     void slotTrackLoaded(TrackPointer pNewTrack, TrackPointer pOldTrack);
     void slotLoadFailed(TrackPointer pTrack, const QString& reason);
     void slotSetReplayGain(mixxx::ReplayGain replayGain);
-    // When the replaygain is adjusted, we modify the track pregain
-    // to compensate so there is no audible change in volume.
+    /// When the replaygain is adjusted, we modify the track pregain
+    /// to compensate so there is no audible change in volume.
     void slotAdjustReplayGain(mixxx::ReplayGain replayGain);
     void slotSetTrackColor(const mixxx::RgbColor::optional_t& color);
-    void slotSetTrackRating(int rating) final;
+    /// Slot for change signals from WStarRating (absolute values)
+    void slotTrackRatingChangeRequest(int rating) final;
     void slotPlayToggled(double);
 
   private slots:
@@ -105,6 +104,8 @@ class BaseTrackPlayerImpl : public BaseTrackPlayer {
     void slotLoadTrackFromDeck(double deck);
     void slotLoadTrackFromSampler(double sampler);
     void slotTrackColorChangeRequest(double value);
+    /// Slot for change signals from up/down controls (relative values)
+    void slotTrackRatingChangeRequestRelative(int change);
     void slotVinylControlEnabled(double v);
     void slotWaveformZoomValueChangeRequest(double pressed);
     void slotWaveformZoomUp(double pressed);
@@ -159,13 +160,22 @@ class BaseTrackPlayerImpl : public BaseTrackPlayer {
     // TODO() these COs are reconnected during runtime
     // This may lock the engine
     std::unique_ptr<ControlObject> m_pFileBPM;
+    std::unique_ptr<ControlObject> m_pVisualBpm;
     parented_ptr<ControlProxy> m_pKey;
+    std::unique_ptr<ControlObject> m_pVisualKey;
+
+    std::unique_ptr<ControlObject> m_pTimeElapsed;
+    std::unique_ptr<ControlObject> m_pTimeRemaining;
+    std::unique_ptr<ControlObject> m_pEndOfTrack;
 
     std::unique_ptr<ControlPushButton> m_pShiftCuesEarlier;
     std::unique_ptr<ControlPushButton> m_pShiftCuesEarlierSmall;
     std::unique_ptr<ControlPushButton> m_pShiftCuesLater;
     std::unique_ptr<ControlPushButton> m_pShiftCuesLaterSmall;
     std::unique_ptr<ControlObject> m_pShiftCues;
+
+    std::unique_ptr<ControlPushButton> m_pStarsUp;
+    std::unique_ptr<ControlPushButton> m_pStarsDown;
 
     std::unique_ptr<ControlObject> m_pUpdateReplayGainFromPregain;
 

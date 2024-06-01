@@ -5,14 +5,14 @@
 #include "library/dao/trackschema.h"
 #include "library/trackcollection.h"
 #include "library/trackcollectionmanager.h"
-#include "mixer/playermanager.h"
+#include "library/trackset/crate/crate.h"
 #include "moc_cratetablemodel.cpp"
 #include "track/track.h"
 #include "util/db/fwdsqlquery.h"
 
 namespace {
 
-const QString kModelName = "crate";
+const QString kModelName = QStringLiteral("crate");
 
 } // anonymous namespace
 
@@ -35,9 +35,9 @@ void CrateTableModel::selectCrate(CrateId crateId) {
     QString currSearch = currentSearch();
     if (m_selectedCrate.isValid()) {
         if (!currSearch.trimmed().isEmpty()) {
-            m_searchTexts.insert(m_selectedCrate.value(), currSearch);
+            m_searchTexts.insert(m_selectedCrate, currSearch);
         } else {
-            m_searchTexts.remove(m_selectedCrate.value());
+            m_searchTexts.remove(m_selectedCrate);
         }
     }
 
@@ -77,7 +77,7 @@ void CrateTableModel::selectCrate(CrateId crateId) {
             m_pTrackCollectionManager->internalCollection()->getTrackSource());
 
     // Restore search text
-    setSearch(m_searchTexts.value(m_selectedCrate.value()));
+    setSearch(m_searchTexts.value(m_selectedCrate));
     setDefaultSort(fieldIndex("artist"), Qt::AscendingOrder);
 }
 
@@ -131,6 +131,7 @@ TrackModel::Capabilities CrateTableModel::getCapabilities() const {
             Capability::LoadToPreviewDeck |
             Capability::RemoveCrate |
             Capability::ResetPlayed |
+            Capability::Hide |
             Capability::RemoveFromDisk |
             Capability::Analyze;
 
@@ -166,6 +167,17 @@ int CrateTableModel::addTracks(
 
     select();
     return trackIds.size();
+}
+
+bool CrateTableModel::isLocked() {
+    Crate crate;
+    if (!m_pTrackCollectionManager->internalCollection()
+                    ->crates()
+                    .readCrateById(m_selectedCrate, &crate)) {
+        qWarning() << "Failed to read create" << m_selectedCrate;
+        return false;
+    }
+    return crate.isLocked();
 }
 
 void CrateTableModel::removeTracks(const QModelIndexList& indices) {
@@ -205,18 +217,17 @@ void CrateTableModel::removeTracks(const QModelIndexList& indices) {
 QString CrateTableModel::modelKey(bool noSearch) const {
     if (m_selectedCrate.isValid()) {
         if (noSearch) {
-            return kModelName + QStringLiteral(":") +
-                    QString::number(m_selectedCrate.value());
+            return kModelName + QChar(':') + m_selectedCrate.toString();
         }
-        return kModelName + QStringLiteral(":") +
-                QString::number(m_selectedCrate.value()) +
-                QStringLiteral("#") +
+        return kModelName + QChar(':') +
+                m_selectedCrate.toString() +
+                QChar('#') +
                 currentSearch();
     } else {
         if (noSearch) {
             return kModelName;
         }
-        return kModelName + QStringLiteral("#") +
+        return kModelName + QChar('#') +
                 currentSearch();
     }
 }

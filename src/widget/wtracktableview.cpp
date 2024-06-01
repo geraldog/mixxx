@@ -215,7 +215,7 @@ void WTrackTableView::loadTrackModel(QAbstractItemModel* model, bool restoreStat
     // tableview is focused -- and would not restore the previous style when
     // it's unfocused. This can not be overwritten with qss, so it can screw up
     // the skin design. Also, due to selectionModel()->selectedRows() it is not
-    // even useful to highlight the focused column because all colmsn are highlighted.
+    // even useful to indicate the focused column because all columns are highlighted.
     header->setHighlightSections(false);
     header->setSortIndicatorShown(m_sorting);
     header->setDefaultAlignment(Qt::AlignLeft);
@@ -338,7 +338,7 @@ void WTrackTableView::initTrackMenu() {
     connect(m_pTrackMenu.get(),
             &WTrackMenu::loadTrackToPlayer,
             this,
-            &WTrackTableView::loadTrackToPlayer);
+            &WLibraryTableView::loadTrackToPlayer);
 
     connect(m_pTrackMenu,
             &WTrackMenu::trackMenuVisible,
@@ -349,7 +349,7 @@ void WTrackTableView::initTrackMenu() {
     // after removing tracks from the view via track menu, restore a usable
     // selection/currentIndex for navigation via keyboard & controller
     connect(m_pTrackMenu,
-            &WTrackMenu::restoreCurrentIndex,
+            &WTrackMenu::restoreCurrentViewStateOrIndex,
             this,
             &WTrackTableView::slotrestoreCurrentIndex);
 }
@@ -357,6 +357,7 @@ void WTrackTableView::initTrackMenu() {
 // slot
 void WTrackTableView::slotMouseDoubleClicked(const QModelIndex& index) {
     // Read the current TrackDoubleClickAction setting
+    // TODO simplify this casting madness
     int doubleClickActionConfigValue =
             m_pConfig->getValue(mixxx::library::prefs::kTrackDoubleClickActionConfigKey,
                     static_cast<int>(DlgPrefLibrary::TrackDoubleClickAction::LoadToDeck));
@@ -463,7 +464,7 @@ void WTrackTableView::slotDeleteTracksFromDisk() {
     saveCurrentIndex();
     m_pTrackMenu->loadTrackModelIndices(indices);
     m_pTrackMenu->slotRemoveFromDisk();
-    // WTrackmenu emits restoreCurrentIndex()
+    // WTrackmenu emits restoreCurrentViewStateOrIndex()
 }
 
 void WTrackTableView::slotUnhide() {
@@ -511,7 +512,7 @@ void WTrackTableView::contextMenuEvent(QContextMenuEvent* event) {
 
     // Create the right-click menu
     m_pTrackMenu->popup(event->globalPos());
-    // WTrackmenu emits restoreCurrentIndex() if required
+    // WTrackmenu emits restoreCurrentViewStateOrIndex() if required
 }
 
 void WTrackTableView::onSearch(const QString& text) {
@@ -549,6 +550,11 @@ void WTrackTableView::onSearch(const QString& text) {
 void WTrackTableView::onShow() {
 }
 
+void WTrackTableView::mousePressEvent(QMouseEvent* pEvent) {
+    DragAndDropHelper::mousePressed(pEvent);
+    WLibraryTableView::mousePressEvent(pEvent);
+}
+
 void WTrackTableView::mouseMoveEvent(QMouseEvent* pEvent) {
     // Only use this for drag and drop if the LeftButton is pressed we need to
     // check for this because mousetracking is activated and this function is
@@ -566,17 +572,20 @@ void WTrackTableView::mouseMoveEvent(QMouseEvent* pEvent) {
         return;
     }
     //qDebug() << "MouseMoveEvent";
-    // Iterate over selected rows and append each item's location url to a list.
-    QList<QString> locations;
-    const QModelIndexList indices = selectionModel()->selectedRows();
 
-    for (const QModelIndex& index : indices) {
-        if (!index.isValid()) {
-            continue;
+    if (DragAndDropHelper::mouseMoveInitiatesDrag(pEvent)) {
+        // Iterate over selected rows and append each item's location url to a list.
+        QList<QString> locations;
+        const QModelIndexList indices = selectionModel()->selectedRows();
+
+        for (const QModelIndex& index : indices) {
+            if (!index.isValid()) {
+                continue;
+            }
+            locations.append(trackModel->getTrackLocation(index));
         }
-        locations.append(trackModel->getTrackLocation(index));
+        DragAndDropHelper::dragTrackLocations(locations, this, "library");
     }
-    DragAndDropHelper::dragTrackLocations(locations, this, "library");
 }
 
 // Drag enter event, happens when a dragged item hovers over the track table view
@@ -822,11 +831,17 @@ TrackModel* WTrackTableView::getTrackModel() const {
 void WTrackTableView::keyPressEvent(QKeyEvent* event) {
     switch (event->key()) {
     case kPropertiesShortcutKey: {
+        // Return invokes the double-click action.
         // Ctrl+Return opens track properties dialog.
         // Ignore it if any cell editor is open.
-        // Note: the shortcut is displayed in the track context menu
-        if ((event->modifiers() & kPropertiesShortcutModifier) &&
-                state() != QTableView::EditingState) {
+        // Note: we use kPropertiesShortcutKey/~Mofifier here and in
+        // in WTrackMenu to display the shortcut.
+        if (state() == QTableView::EditingState) {
+            break;
+        }
+        if (event->modifiers().testFlag(Qt::NoModifier)) {
+            slotMouseDoubleClicked(currentIndex());
+        } else if ((event->modifiers() & kPropertiesShortcutModifier)) {
             QModelIndexList indices = selectionModel()->selectedRows();
             if (indices.length() == 1) {
                 m_pTrackMenu->loadTrackModelIndices(indices);
@@ -845,6 +860,47 @@ void WTrackTableView::keyPressEvent(QKeyEvent* event) {
     }
 }
 
+void WTrackTableView::resizeEvent(QResizeEvent* event) {
+    // When the tracks view shrinks in height, e.g. when other skin regions expand,
+    // and if the row was visible before resizing, scroll to it afterwards.
+
+    // these heights are the actual inner region without header, scrollbars and padding
+    int oldHeight = event->oldSize().height();
+    int newHeight = event->size().height();
+
+    if (newHeight >= oldHeight) {
+        QTableView::resizeEvent(event);
+        return;
+    }
+
+    QModelIndex currIndex = currentIndex();
+    int currRow = currIndex.row();
+    int rHeight = rowHeight(currRow);
+
+    if (currRow < 0 || rHeight == 0) { // true if currIndex is invalid
+        QTableView::resizeEvent(event);
+        return;
+    }
+
+    // y-pos of the top edge, negative value means above viewport boundary
+    int posInView = rowViewportPosition(currRow);
+    // Check if the row is visible.
+    // Note: don't use viewport()->height() because that may already have changed
+    bool rowWasVisible = posInView > 0 && posInView - rHeight < oldHeight;
+
+    QTableView::resizeEvent(event);
+
+    if (!rowWasVisible) {
+        return;
+    }
+
+    // Check if the item is fully visible. If not, scroll to show it
+    posInView = rowViewportPosition(currRow);
+    if (posInView - rHeight < 0 || posInView + rHeight > newHeight) {
+        scrollTo(currIndex);
+    }
+}
+
 void WTrackTableView::hideOrRemoveSelectedTracks() {
     QModelIndexList indices = selectionModel()->selectedRows();
     if (indices.isEmpty()) {
@@ -857,16 +913,33 @@ void WTrackTableView::hideOrRemoveSelectedTracks() {
     }
 
     TrackModel::Capability cap;
-    if (pTrackModel->hasCapabilities(TrackModel::Capability::Hide)) {
-        cap = TrackModel::Capability::Hide;
-    } else if (pTrackModel->hasCapabilities(TrackModel::Capability::Remove)) {
+    // Remove is the primary action if allowed (playlists and crates).
+    // Else we test for remove capability.
+    // In the track menu the hotkey is shown for 'Remove ..' actions, or if there
+    // is no remove action, for 'Hide ..'. Hence, to match the hotkey, do Hide
+    // only if the track model doesn't support any Remove actions.
+    if (pTrackModel->hasCapabilities(TrackModel::Capability::Remove)) {
         cap = TrackModel::Capability::Remove;
     } else if (pTrackModel->hasCapabilities(TrackModel::Capability::RemoveCrate)) {
         cap = TrackModel::Capability::RemoveCrate;
     } else if (pTrackModel->hasCapabilities(TrackModel::Capability::RemovePlaylist)) {
         cap = TrackModel::Capability::RemovePlaylist;
-    } else {
+    } else if (pTrackModel->hasCapabilities(TrackModel::Capability::Hide)) {
+        cap = TrackModel::Capability::Hide;
+    } else { // Locked playlists and crates
         return;
+    }
+
+    switch (cap) {
+    case TrackModel::Capability::Remove:
+    case TrackModel::Capability::RemoveCrate:
+    case TrackModel::Capability::RemovePlaylist: {
+        if (pTrackModel->isLocked()) {
+            return;
+        }
+    default:
+        break;
+    }
     }
 
     if (pTrackModel->getRequireConfirmationToHideRemoveTracks()) {

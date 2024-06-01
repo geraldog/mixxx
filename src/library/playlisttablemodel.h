@@ -1,13 +1,16 @@
 #pragma once
 
-#include "library/basesqltablemodel.h"
 #include "library/trackset/tracksettablemodel.h"
+#include "util/duration.h"
 
 class PlaylistTableModel final : public TrackSetTableModel {
     Q_OBJECT
 
   public:
-    PlaylistTableModel(QObject* parent, TrackCollectionManager* pTrackCollectionManager, const char* settingsNamespace, bool keepDeletedTracks = false);
+    PlaylistTableModel(QObject* parent,
+            TrackCollectionManager* pTrackCollectionManager,
+            const char* settingsNamespace,
+            bool keepHiddenTracks = false);
     ~PlaylistTableModel() final = default;
 
     void selectPlaylist(int playlistId = -1 /* kInvalidPlaylistId */);
@@ -28,6 +31,9 @@ class PlaylistTableModel final : public TrackSetTableModel {
     int addTracks(const QModelIndex& index, const QList<QString>& locations) final;
     bool isLocked() final;
 
+    /// Get the total duration of all tracks referenced by the given model indices
+    mixxx::Duration getTotalDuration(const QModelIndexList& indices);
+
     Capabilities getCapabilities() const final;
 
     QString modelKey(bool noSearch) const override;
@@ -39,6 +45,6 @@ class PlaylistTableModel final : public TrackSetTableModel {
     void initSortColumnMapping() override;
 
     int m_iPlaylistId;
-    bool m_keepDeletedTracks;
+    bool m_keepHiddenTracks;
     QHash<int, QString> m_searchTexts;
 };

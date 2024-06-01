@@ -24,13 +24,13 @@ WPushButton,
 #LibraryFeatureControls QRadioButton,
 WRecordingDuration,
 WTime,
-WTrackText,
 WTrackProperty,
 QSpinBox,
 WBeatSpinBox,
 QToolTip,
 WTrackTableViewHeader,
 WTrackTableViewHeader QMenu,
+WTrackTableViewHeader QMenu QCheckBox,
 WTrackTableViewHeader::section,
 WLibrarySidebar QMenu,
 WLibraryTextBrowser,
@@ -101,7 +101,7 @@ QToolTip,
 WLibrarySidebar QMenu,
 WLibrarySidebar QMenu::item,
 WTrackTableViewHeader QMenu,
-WTrackTableViewHeader QMenu::item,
+WTrackTableViewHeader QMenu QCheckBox,
 WLibraryTextBrowser QMenu,
 WTrackMenu,
 WTrackMenu::item,
@@ -153,8 +153,9 @@ WBeatSpinBox,
 #MainMenu QMenu::indicator:unchecked:selected,
 WLibrarySidebar QMenu::item:selected,
 WLibrarySidebar QMenu::indicator:unchecked:selected,
-WTrackTableViewHeader QMenu::item:selected,
-WTrackTableViewHeader QMenu::indicator:unchecked:selected,
+WTrackTableViewHeader QMenu QCheckBox:selected,
+WTrackTableViewHeader QMenu QCheckBox:focus,
+WTrackTableViewHeader QMenu QCheckBox:hover,
 WLibraryTextBrowser QMenu::item:selected,
 WTrackMenu::item:selected,
 WTrackMenu QMenu::item:selected,
@@ -172,6 +173,16 @@ WEffectSelector::indicator:unchecked:selected,
   color: #000;
   /* remove OS focus indicator */
   outline: none;
+  }
+  /* required on Windows since the QAbstractItemViews don't inherit styles from
+     the respective QComboBoxes */
+  WEffectSelector QAbstractItemView,
+  WEffectChainPresetSelector QAbstractItemView,
+  WSearchLineEdit QAbstractItemView {
+    selection-color: #000;
+    selection-background-color: lightgray;
+    border: 0px;
+    outline: none;
   }
   /* Remove 3D border from unchecked effects checkmark space */
   WEffectSelector::item:selected,
@@ -299,6 +310,7 @@ WEffectSelector QAbstractScrollArea,
   WSearchLineEdit::indicator,
   WSearchLineEdit::drop-down,
   WSearchLineEdit::indicator:unchecked,
+  WTrackTableViewHeader QMenu QCheckBox,
   #fadeModeCombobox::checked,
   #fadeModeCombobox::indicator,
   #fadeModeCombobox::drop-down,
@@ -327,7 +339,7 @@ WEffectSelector QAbstractScrollArea,
   /* checked checkbox */
   /* checkbox in Crate name context menu: "[ ] Auto DJ Track Source"  */
   WLibrarySidebar QMenu::indicator:checked,
-  WTrackTableViewHeader QMenu::indicator:checked,
+  WTrackTableViewHeader QMenu QCheckBox::indicator:checked,
   WTrackMenu QMenu QCheckBox::indicator:checked,
   WEffectSelector::indicator:checked,
   #fadeModeCombobox::indicator:checked {
@@ -379,7 +391,7 @@ WEffectSelector QAbstractScrollArea,
   }
 
   WLibrarySidebar QMenu::indicator,
-  WTrackTableViewHeader QMenu::indicator,
+  WTrackTableViewHeader QMenu QCheckBox::indicator,
   WTrackMenu QMenu QCheckBox::indicator {
     border-width: 1px;
     border-style: solid;
@@ -963,6 +975,10 @@ QPushButton#pushButtonRepeatPlaylist {
 
 #HotcueButton {
     background-color: #aab2b7;
+}
+#HotcueButton[displayValue="1"][type="loop"],
+#HotcueButton[displayValue="2"][type="loop"] {
+    image: url(skin:/btn/btn_hotcue_loop.png) no-repeat;
 }
 
 WRateRange {

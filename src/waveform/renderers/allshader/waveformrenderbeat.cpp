@@ -2,13 +2,11 @@
 
 #include <QDomNode>
 
-#include "control/controlobject.h"
 #include "skin/legacy/skincontext.h"
 #include "track/track.h"
 #include "waveform/renderers/allshader/matrixforwidgetgeometry.h"
-#include "waveform/widgets/allshader/waveformwidget.h"
+#include "waveform/renderers/waveformwidgetrenderer.h"
 #include "widget/wskincolor.h"
-#include "widget/wwidget.h"
 
 namespace allshader {
 
@@ -22,7 +20,7 @@ void WaveformRenderBeat::initializeGL() {
 }
 
 void WaveformRenderBeat::setup(const QDomNode& node, const SkinContext& context) {
-    m_color.setNamedColor(context.selectString(node, "BeatColor"));
+    m_color = QColor(context.selectString(node, "BeatColor"));
     m_color = WSkinColor::getCorrectColor(m_color).toRgb();
 }
 
@@ -42,6 +40,8 @@ void WaveformRenderBeat::paintGL() {
     if (alpha == 0) {
         return;
     }
+
+    const float devicePixelRatio = m_waveformRenderer->getDevicePixelRatio();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -93,9 +93,7 @@ void WaveformRenderBeat::paintGL() {
         double xBeatPoint =
                 m_waveformRenderer->transformSamplePositionInRendererWorld(beatPosition);
 
-        xBeatPoint = std::floor(xBeatPoint);
-
-        xBeatPoint -= 0.5;
+        xBeatPoint = qRound(xBeatPoint * devicePixelRatio) / devicePixelRatio;
 
         const float x1 = static_cast<float>(xBeatPoint);
         const float x2 = x1 + 1.f;

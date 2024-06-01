@@ -35,6 +35,7 @@ class WTrackTableView : public WLibraryTableView {
     bool hasFocus() const override;
     void setFocus() override;
     void keyPressEvent(QKeyEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
     void activateSelectedTrack() override;
     void loadSelectedTrackToGroup(const QString& group, bool play) override;
     void assignNextTrackColor() override;
@@ -105,6 +106,7 @@ class WTrackTableView : public WLibraryTableView {
     void selectionChanged(const QItemSelection &selected,
                           const QItemSelection &deselected) override;
 
+    void mousePressEvent(QMouseEvent* pEvent) override;
     // Mouse move event, implemented to hide the text and show an icon instead
     // when dragging.
     void mouseMoveEvent(QMouseEvent *pEvent) override;

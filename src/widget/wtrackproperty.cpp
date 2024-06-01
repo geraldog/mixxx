@@ -1,31 +1,12 @@
 #include "widget/wtrackproperty.h"
 
 #include <QDebug>
-#include <QUrl>
 
-#include "control/controlobject.h"
 #include "moc_wtrackproperty.cpp"
+#include "skin/legacy/skincontext.h"
 #include "track/track.h"
 #include "util/dnd.h"
 #include "widget/wtrackmenu.h"
-
-namespace {
-constexpr WTrackMenu::Features kTrackMenuFeatures =
-        WTrackMenu::Feature::SearchRelated |
-        WTrackMenu::Feature::Playlist |
-        WTrackMenu::Feature::Crate |
-        WTrackMenu::Feature::Metadata |
-        WTrackMenu::Feature::Reset |
-        WTrackMenu::Feature::Analyze |
-        WTrackMenu::Feature::BPM |
-        WTrackMenu::Feature::Color |
-        WTrackMenu::Feature::RemoveFromDisk |
-        WTrackMenu::Feature::FileBrowser |
-        WTrackMenu::Feature::Properties |
-        WTrackMenu::Feature::UpdateReplayGainFromPregain |
-        WTrackMenu::Feature::FindOnWeb |
-        WTrackMenu::Feature::SelectInLibrary;
-} // namespace
 
 WTrackProperty::WTrackProperty(
         QWidget* pParent,
@@ -46,12 +27,17 @@ WTrackProperty::~WTrackProperty() {
 void WTrackProperty::setup(const QDomNode& node, const SkinContext& context) {
     WLabel::setup(node, context);
 
-    m_property = context.selectString(node, "Property");
+    QString property = context.selectString(node, "Property");
+    if (property.isEmpty()) {
+        return;
+    }
 
     // Check if property with that name exists in Track class
-    if (Track::staticMetaObject.indexOfProperty(m_property.toUtf8().constData()) == -1) {
-        qWarning() << "WTrackProperty: Unknown track property:" << m_property;
+    if (Track::staticMetaObject.indexOfProperty(property.toUtf8().constData()) == -1) {
+        qWarning() << "WTrackProperty: Unknown track property:" << property;
+        return;
     }
+    m_property = property;
 }
 
 void WTrackProperty::slotTrackLoaded(TrackPointer pTrack) {
@@ -83,7 +69,11 @@ void WTrackProperty::slotTrackChanged(TrackId trackId) {
 
 void WTrackProperty::updateLabel() {
     if (m_pCurrentTrack) {
-        QVariant property = m_pCurrentTrack->property(m_property.toUtf8().constData());
+        if (m_property.isEmpty()) {
+            return;
+        }
+        QVariant property =
+                m_pCurrentTrack->property(m_property.toUtf8().constData());
         if (property.isValid() && property.canConvert<QString>()) {
             setText(property.toString());
             return;
@@ -92,42 +82,58 @@ void WTrackProperty::updateLabel() {
     setText("");
 }
 
-void WTrackProperty::mouseMoveEvent(QMouseEvent* event) {
-    if (event->buttons().testFlag(Qt::LeftButton) && m_pCurrentTrack) {
+void WTrackProperty::mousePressEvent(QMouseEvent* pEvent) {
+    DragAndDropHelper::mousePressed(pEvent);
+}
+
+void WTrackProperty::mouseMoveEvent(QMouseEvent* pEvent) {
+    if (m_pCurrentTrack && DragAndDropHelper::mouseMoveInitiatesDrag(pEvent)) {
         DragAndDropHelper::dragTrack(m_pCurrentTrack, this, m_group);
     }
 }
 
-void WTrackProperty::mouseDoubleClickEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
-    if (m_pCurrentTrack) {
-        ensureTrackMenuIsCreated();
-        m_pTrackMenu->loadTrack(m_pCurrentTrack, m_group);
-        m_pTrackMenu->showDlgTrackInfo(m_property);
+void WTrackProperty::mouseDoubleClickEvent(QMouseEvent* pEvent) {
+    Q_UNUSED(pEvent);
+    if (!m_pCurrentTrack) {
+        return;
     }
+    ensureTrackMenuIsCreated();
+    m_pTrackMenu->loadTrack(m_pCurrentTrack, m_group);
+    m_pTrackMenu->showDlgTrackInfo(m_property);
 }
 
-void WTrackProperty::dragEnterEvent(QDragEnterEvent* event) {
-    DragAndDropHelper::handleTrackDragEnterEvent(event, m_group, m_pConfig);
+void WTrackProperty::dragEnterEvent(QDragEnterEvent* pEvent) {
+    DragAndDropHelper::handleTrackDragEnterEvent(pEvent, m_group, m_pConfig);
 }
 
-void WTrackProperty::dropEvent(QDropEvent* event) {
-    DragAndDropHelper::handleTrackDropEvent(event, *this, m_group, m_pConfig);
+void WTrackProperty::dropEvent(QDropEvent* pEvent) {
+    DragAndDropHelper::handleTrackDropEvent(pEvent, *this, m_group, m_pConfig);
 }
 
-void WTrackProperty::contextMenuEvent(QContextMenuEvent* event) {
-    event->accept();
+void WTrackProperty::contextMenuEvent(QContextMenuEvent* pEvent) {
+    pEvent->accept();
     if (m_pCurrentTrack) {
         ensureTrackMenuIsCreated();
         m_pTrackMenu->loadTrack(m_pCurrentTrack, m_group);
-        // Create the right-click menu
-        m_pTrackMenu->popup(event->globalPos());
+        // Show the right-click menu
+        m_pTrackMenu->popup(pEvent->globalPos());
     }
 }
 
 void WTrackProperty::ensureTrackMenuIsCreated() {
     if (m_pTrackMenu.get() == nullptr) {
         m_pTrackMenu = make_parented<WTrackMenu>(
-                this, m_pConfig, m_pLibrary, kTrackMenuFeatures);
+                this, m_pConfig, m_pLibrary, WTrackMenu::kDeckTrackMenuFeatures);
     }
+    // Before and after the loaded tracks file has been removed from disk,
+    // instruct the library to save and restore the current index for
+    // keyboard/controller navigation.
+    connect(m_pTrackMenu,
+            &WTrackMenu::saveCurrentViewState,
+            this,
+            &WTrackProperty::saveCurrentViewState);
+    connect(m_pTrackMenu,
+            &WTrackMenu::restoreCurrentViewStateOrIndex,
+            this,
+            &WTrackProperty::restoreCurrentViewState);
 }

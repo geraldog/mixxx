@@ -133,6 +133,13 @@ BaseTrackTableModel::BaseTrackTableModel(
             &PlayerInfo::trackChanged,
             this,
             &BaseTrackTableModel::slotTrackChanged);
+    CoverArtCache* pCache = CoverArtCache::instance();
+    if (pCache) {
+        connect(pCache,
+                &CoverArtCache::coverFound,
+                this,
+                &BaseTrackTableModel::slotCoverFound);
+    }
 }
 
 void BaseTrackTableModel::initTableColumnsAndHeaderProperties(
@@ -442,6 +449,16 @@ QVariant BaseTrackTableModel::data(
         return QBrush(bgColor);
     }
 
+    // Return the preferred (default) width of the Color column.
+    // This works around inconsistencies when the width is determined by
+    // color values. See https://github.com/mixxxdj/mixxx/issues/12850
+    if (role == Qt::SizeHintRole) {
+        const auto field = mapColumn(index.column());
+        if (field == ColumnCache::COLUMN_LIBRARYTABLE_COLOR) {
+            return QSize(defaultColumnWidth() / 2, 0);
+        }
+    }
+
     // Only retrieve a value for supported roles
     if (role != Qt::DisplayRole &&
             role != Qt::EditRole &&
@@ -546,17 +563,23 @@ QVariant BaseTrackTableModel::composeCoverArtToolTipHtml(
     unsigned int absoluteHeightOfCoverartToolTip = static_cast<int>(
             pViewScreen->availableGeometry().height() *
             kRelativeHeightOfCoverartToolTip);
-    // Get image from cover art cache
-    CoverArtCache* pCache = CoverArtCache::instance();
-    QPixmap pixmap = QPixmap(absoluteHeightOfCoverartToolTip,
-            absoluteHeightOfCoverartToolTip); // Height also used as default for the width, in assumption that covers are squares
-    pixmap = pCache->tryLoadCover(this,
-            getCoverInfo(index),
-            absoluteHeightOfCoverartToolTip,
-            CoverArtCache::Loading::NoSignal);
+    const auto coverInfo = getCoverInfo(index);
+    if (!coverInfo.hasImage()) {
+        return QPixmap();
+    }
+    m_toolTipIndex = index;
+    QPixmap pixmap = CoverArtCache::getCachedCover(
+            coverInfo,
+            absoluteHeightOfCoverartToolTip);
     if (pixmap.isNull()) {
-        // Cache miss -> Don't show a tooltip
-        return QVariant();
+        // Cache miss -> Don't show a tooltip, refresh cache
+        // Height used for the width, in assumption that covers are squares
+        CoverArtCache::requestUncachedCover(
+                this,
+                coverInfo,
+                absoluteHeightOfCoverartToolTip);
+        //: Tooltip text on the cover art column shown when the cover is read from disk
+        return tr("Fetching image ...");
     }
     QByteArray data;
     QBuffer buffer(&data);
@@ -592,7 +615,7 @@ QVariant BaseTrackTableModel::roleValue(
             // Same value as for Qt::DisplayRole (see below)
             break;
         }
-        M_FALLTHROUGH_INTENDED;
+        [[fallthrough]];
     // NOTE: for export we need to fall through to Qt::DisplayRole,
     // so do not add any other role cases here, or the export
     // will be empty
@@ -713,8 +736,9 @@ QVariant BaseTrackTableModel::roleValue(
                 if (role == Qt::ToolTipRole || role == kDataExportRole) {
                     return QString::number(bpm.value(), 'f', 4);
                 } else {
-                    // custom precision, set in DlgPrefLibrary
-                    return QString::number(bpm.value(), 'f', s_bpmColumnPrecision);
+                    // Use the locale here to make the display and editor consistent.
+                    // Custom precision, set in DlgPrefLibrary.
+                    return QLocale().toString(bpm.value(), 'f', s_bpmColumnPrecision);
                 }
             } else {
                 return QChar('-');
@@ -1105,3 +1129,15 @@ bool BaseTrackTableModel::updateTrackMood(
     return m_pTrackCollectionManager->updateTrackMood(pTrack, mood);
 }
 #endif // __EXTRA_METADATA__
+
+void BaseTrackTableModel::slotCoverFound(
+        const QObject* pRequester,
+        const CoverInfo& coverInfo,
+        const QPixmap& pixmap) {
+    Q_UNUSED(pixmap);
+    if (pRequester != this ||
+            getTrackLocation(m_toolTipIndex) != coverInfo.trackLocation) {
+        return;
+    }
+    emit dataChanged(m_toolTipIndex, m_toolTipIndex, {Qt::ToolTipRole});
+}

@@ -5,15 +5,13 @@
 
 #include "control/controlvalue.h"
 #include "engine/controls/enginecontrol.h"
-#include "engine/controls/ratecontrol.h"
 #include "preferences/usersettings.h"
 #include "track/beats.h"
-#include "track/cue.h"
 #include "track/track_decl.h"
 
 class ControlPushButton;
 class ControlObject;
-
+class RateControl;
 class LoopMoveControl;
 class BeatJumpControl;
 class BeatLoopingControl;
@@ -79,6 +77,12 @@ class LoopingControl : public EngineControl {
 
     bool isLoopingEnabled() {
         return m_bLoopingEnabled;
+    }
+    bool isAdjustLoopInActive() {
+        return m_bAdjustingLoopIn;
+    }
+    bool isAdjustLoopOutActive() {
+        return m_bAdjustingLoopOut;
     }
     bool isLoopRollActive() {
         return m_bLoopRollActive;

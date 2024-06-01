@@ -2,12 +2,19 @@
 
 #include <QDesktopServices>
 
+#include "control/controlproxy.h"
+#include "controllers/controller.h"
 #include "controllers/controllermanager.h"
 #include "controllers/defs_controllers.h"
 #include "controllers/dlgprefcontroller.h"
 #include "defs_urls.h"
 #include "moc_dlgprefcontrollers.cpp"
 #include "preferences/dialog/dlgpreferences.h"
+#include "util/string.h"
+
+namespace {
+const QString kAppGroup = QStringLiteral("[App]");
+} // namespace
 
 DlgPrefControllers::DlgPrefControllers(DlgPreferences* pPreferences,
         UserSettingsPointer pConfig,
@@ -17,7 +24,11 @@ DlgPrefControllers::DlgPrefControllers(DlgPreferences* pPreferences,
           m_pDlgPreferences(pPreferences),
           m_pConfig(pConfig),
           m_pControllerManager(pControllerManager),
-          m_pControllersRootItem(pControllersRootItem) {
+          m_pControllersRootItem(pControllersRootItem),
+          m_pNumDecks(make_parented<ControlProxy>(
+                  kAppGroup, QStringLiteral("num_decks"), this)),
+          m_pNumSamplers(make_parented<ControlProxy>(
+                  kAppGroup, QStringLiteral("num_samplers"), this)) {
     setupUi(this);
     // Create text color for the cue mode link "?" to the manual
     createLinkColor();
@@ -83,19 +94,19 @@ void DlgPrefControllers::slotUpdate() {
 }
 
 void DlgPrefControllers::slotCancel() {
-    for (DlgPrefController* pControllerDlg : qAsConst(m_controllerPages)) {
+    for (DlgPrefController* pControllerDlg : std::as_const(m_controllerPages)) {
         pControllerDlg->slotCancel();
     }
 }
 
 void DlgPrefControllers::slotApply() {
-    for (DlgPrefController* pControllerDlg : qAsConst(m_controllerPages)) {
+    for (DlgPrefController* pControllerDlg : std::as_const(m_controllerPages)) {
         pControllerDlg->slotApply();
     }
 }
 
 void DlgPrefControllers::slotResetToDefaults() {
-    for (DlgPrefController* pControllerDlg : qAsConst(m_controllerPages)) {
+    for (DlgPrefController* pControllerDlg : std::as_const(m_controllerPages)) {
         pControllerDlg->slotResetToDefaults();
     }
 }
@@ -176,6 +187,11 @@ void DlgPrefControllers::setupControllerWidgets() {
                 &DlgPrefController::mappingEnded,
                 m_pDlgPreferences,
                 &DlgPreferences::show);
+        // Recreate the control picker menus when decks or samplers are added
+        m_pNumDecks->connectValueChanged(pControllerDlg,
+                &DlgPrefController::slotRecreateControlPickerMenu);
+        m_pNumSamplers->connectValueChanged(pControllerDlg,
+                &DlgPrefController::slotRecreateControlPickerMenu);
 
         m_controllerPages.append(pControllerDlg);
 
