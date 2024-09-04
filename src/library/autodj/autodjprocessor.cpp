@@ -572,7 +572,6 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
                 &DeckAttributes::rateChanged,
                 this,
                 &AutoDJProcessor::playerRateChanged);
-<<<<<<< HEAD
         connect(m_pPlayerManager->getStem(1),
                 &Stem::stemPlaying,
                 this,
