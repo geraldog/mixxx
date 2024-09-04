@@ -121,7 +121,7 @@ PlayerManager::PlayerManager(UserSettingsPointer pConfig,
                   ConfigKey(kAppGroup, QStringLiteral("num_samplers")), true, true)),
           m_pCONumPreviewDecks(std::make_unique<ControlObject>(
                   ConfigKey(kAppGroup, QStringLiteral("num_preview_decks")), true, true)),
-          m_pCONumStems(new ControlObject(
+          m_pCONumStems(std::make_unique<ControlObject>(
                   ConfigKey(kAppGroup, QStringLiteral("num_stems")), true, true)),
           m_pCONumMicrophones(std::make_unique<ControlObject>(
                   ConfigKey(kAppGroup, QStringLiteral("num_microphones")), true, true)),
