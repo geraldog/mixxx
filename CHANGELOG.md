@@ -1,5 +1,55 @@
 # Changelog
 
+## [2.4.2](https://github.com/mixxxdj/mixxx/milestone/43?closed=1) (unreleased)
+
+### Controller Mappings
+
+* Korg Kaoss DJ: Update script [#12683](https://github.com/mixxxdj/mixxx/pull/12683)
+* Novation Dicer: Remove flanger mapping with quickeffect toggle
+  [#13196](https://github.com/mixxxdj/mixxx/pull/13196)
+  [#13134](https://github.com/mixxxdj/mixxx/issues/13134)
+* Numark PartyMix: Fix EQ (script binding) display name [#13255](https://github.com/mixxxdj/mixxx/pull/13255)
+* Numark Scratch: Add initial mapping
+  [#4834](https://github.com/mixxxdj/mixxx/pull/4834)
+  [#13375](https://github.com/mixxxdj/mixxx/pull/13375)
+* Sony SIXAXIS: Fix mapping [#13319](https://github.com/mixxxdj/mixxx/pull/13319)
+
+### Fixes
+
+* Handle not supported files when dragging to waveforms and spinnies
+  [#13208](https://github.com/mixxxdj/mixxx/pull/13208)
+  [#13271](https://github.com/mixxxdj/mixxx/pull/13271)
+  [#13275](https://github.com/mixxxdj/mixxx/pull/13275)
+* Fix Sqlite 3.45 builds by using only single quotes for SQL strings
+  [#13247](https://github.com/mixxxdj/mixxx/pull/13247)
+  [#13257](https://github.com/mixxxdj/mixxx/pull/13257)
+* LateNight: Use default colors for sampler overviews (like main decks) [#13274](https://github.com/mixxxdj/mixxx/pull/13274)
+* Library: Allow to drop files to decks with unsupported or no file extensions
+  [#13209](https://github.com/mixxxdj/mixxx/pull/13209)
+  [#13204](https://github.com/mixxxdj/mixxx/issues/13204)
+* Update build environment with libdjinterop 0.21.0 [#13288](https://github.com/mixxxdj/mixxx/pull/13288)
+* Move to GitHub workflow runner macos-12
+  [#13296](https://github.com/mixxxdj/mixxx/pull/13296)
+  [#13248](https://github.com/mixxxdj/mixxx/issues/13248)
+* Recording: with empty config, save default split size immediately
+  [#13304](https://github.com/mixxxdj/mixxx/pull/13304)
+* Allow to drop files with supported MIME type regardless off the file extensions
+  [#13209](https://github.com/mixxxdj/mixxx/pull/13209)
+  [#13204](https://github.com/mixxxdj/mixxx/issues/13204)
+* Add support for Ubuntu Oracular Oriole and remove Lunar Lobster
+  [#13348](https://github.com/mixxxdj/mixxx/pull/13348)
+* Recordbox: Fix string decoding issues
+  [#13293](https://github.com/mixxxdj/mixxx/pull/13293)
+  [#13291](https://github.com/mixxxdj/mixxx/issues/13291)
+* Mixer preferences: Don't update EQs/QuickEffects while applying [#13333](https://github.com/mixxxdj/mixxx/pull/13333)
+* Hardware preferences: Fix UX when applying config with missing/busy devices
+  [#13312](https://github.com/mixxxdj/mixxx/pull/13312)
+* Fix minor 64 bit CPU performance issue [#13355](https://github.com/mixxxdj/mixxx/pull/13355)
+* Fix clicks at loop-out when looping into lead-in [#13294](https://github.com/mixxxdj/mixxx/pull/13294)
+* Fix wrong pitch value on startup, caused by `components.Pot`
+  [#11814](https://github.com/mixxxdj/mixxx/issues/11814)
+  [#13463](https://github.com/mixxxdj/mixxx/pull/13463)
+
 ## [2.4.1](https://github.com/mixxxdj/mixxx/milestone/41?closed=1) (2024-05-08)
 
 ### Controller Mappings
@@ -170,7 +220,7 @@
   [#4806](https://github.com/mixxxdj/mixxx/pull/4806)
   [#11873](https://github.com/mixxxdj/mixxx/pull/11873)
   [#11872](https://github.com/mixxxdj/mixxx/issues/11872)
-* Add support for overriding analyzis settings about variable/constant BPM on a per-track basis [#10931](https://github.com/mixxxdj/mixxx/pull/10931)
+* Add support for overriding analysis settings about variable/constant BPM on a per-track basis [#10931](https://github.com/mixxxdj/mixxx/pull/10931)
 * Add menu for looking up track metadata at Discogs, SoundCloud and LastFM [#4772](https://github.com/mixxxdj/mixxx/pull/4772) [#4836](https://github.com/mixxxdj/mixxx/pull/4836)
 * Add "Delete Track Files" action, does "Move to Trash" with Qt >= 5.15
   [#4560](https://github.com/mixxxdj/mixxx/pull/4560)
@@ -1005,7 +1055,7 @@
   [#11327](https://github.com/mixxxdj/mixxx/issues/11327)
 * LateNight: brighter fx parameter buttons
   [#11397](https://github.com/mixxxdj/mixxx/pull/11397)
-* Fix drift in analyzis data after exporting metadata to MP3 files with ID3v1.1 tags
+* Fix drift in analysis data after exporting metadata to MP3 files with ID3v1.1 tags
   [#11168](https://github.com/mixxxdj/mixxx/pull/11168)
   [#11159](https://github.com/mixxxdj/mixxx/issues/11159)
 * Fix broadcasting using Opus encoding
@@ -1396,7 +1446,7 @@
 * Add controller mapping for Denon MC7000 [#2546](https://github.com/mixxxdj/mixxx/pull/2546)
 * Add controller mapping for Stanton DJC.4 [#2607](https://github.com/mixxxdj/mixxx/pull/2607)
 * Fix broadcasting via broadcast/recording input [#9959](https://github.com/mixxxdj/mixxx/issues/9959) [#2743](https://github.com/mixxxdj/mixxx/pull/2743)
-* Only apply ducking gain in manual ducking mode when talkover is enabed [#7668](https://github.com/mixxxdj/mixxx/issues/7668) [#8995](https://github.com/mixxxdj/mixxx/issues/8995) [#8795](https://github.com/mixxxdj/mixxx/issues/8795) [#2759](https://github.com/mixxxdj/mixxx/pull/2759)
+* Only apply ducking gain in manual ducking mode when talkover is enabled [#7668](https://github.com/mixxxdj/mixxx/issues/7668) [#8995](https://github.com/mixxxdj/mixxx/issues/8995) [#8795](https://github.com/mixxxdj/mixxx/issues/8795) [#2759](https://github.com/mixxxdj/mixxx/pull/2759)
 * Ignore MIDI Clock Messages (0xF8) because they are not usable in Mixxx and inhibited the screensaver [#2786](https://github.com/mixxxdj/mixxx/pull/2786)
 
 ## [2.2.3](https://launchpad.net/mixxx/+milestone/2.2.3) (2019-11-24)

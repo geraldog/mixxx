@@ -572,6 +572,7 @@ AutoDJProcessor::AutoDJError AutoDJProcessor::toggleAutoDJ(bool enable) {
                 &DeckAttributes::rateChanged,
                 this,
                 &AutoDJProcessor::playerRateChanged);
+<<<<<<< HEAD
         connect(m_pPlayerManager->getStem(1),
                 &Stem::stemPlaying,
                 this,
@@ -5895,6 +5896,22 @@ void AutoDJProcessor::playerRateChanged(DeckAttributes* pAttributes) {
         return;
     }
     calculateTransition(fromDeck, getOtherDeck(fromDeck), false);
+}
+
+void AutoDJProcessor::playlistFirstTrackChanged() {
+    if constexpr (sDebug) {
+        qDebug() << this << "playlistFirstTrackChanged";
+    }
+    if (m_eState != ADJ_DISABLED) {
+        DeckAttributes* pLeftDeck = getLeftDeck();
+        DeckAttributes* pRightDeck = getRightDeck();
+
+        if (!pLeftDeck->isPlaying()) {
+            loadNextTrackFromQueue(*pLeftDeck);
+        } else if (!pRightDeck->isPlaying()) {
+            loadNextTrackFromQueue(*pRightDeck);
+        }
+    }
 }
 
 void AutoDJProcessor::setTransitionTime(int time) {
