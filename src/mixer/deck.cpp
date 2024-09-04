@@ -1,4 +1,5 @@
 #include "mixer/deck.h"
+#include "mixer/playermanager.h"
 
 #include "track/track.h"
 #include "control/controlobject.h"

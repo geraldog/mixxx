@@ -1,5 +1,6 @@
 #include "mixer/stem.h"
 #include "mixer/deck.h"
+#include "mixer/playermanager.h"
 #include "track/track.h"
 #include <QRegularExpression>
 #include "moc_stem.cpp"

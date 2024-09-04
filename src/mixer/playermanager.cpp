@@ -170,8 +170,6 @@ PlayerManager::~PlayerManager() {
     delete m_pCOPNumStems.fetchAndStoreAcquire(nullptr);
     delete m_pCOPNumPreviewDecks.fetchAndStoreAcquire(nullptr);
 
-    delete m_pCONumStems;
-
     if (m_pTrackAnalysisScheduler) {
         m_pTrackAnalysisScheduler->stop();
         m_pTrackAnalysisScheduler.reset();

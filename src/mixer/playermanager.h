@@ -296,7 +296,8 @@ class PlayerManager : public QObject, public PlayerManagerInterface {
     EffectsManager* m_pEffectsManager;
     EngineMixer* m_pEngine;
     SamplerBank* m_pSamplerBank;
-    ControlObject* m_pCONumStems;
+    
+    std::unique_ptr<ControlObject> m_pCONumStems;
     std::unique_ptr<ControlObject> m_pCONumDecks;
     std::unique_ptr<ControlObject> m_pCONumSamplers;
     std::unique_ptr<ControlObject> m_pCONumPreviewDecks;
